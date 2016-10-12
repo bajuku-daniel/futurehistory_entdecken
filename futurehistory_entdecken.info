@@ -1,0 +1,9 @@
+name = Futurehistory Entdecken  
+description = Provides a googlemap for the Futurehistory Module and a Views style plugin for futurehistory field.
+package = Futurehistory
+core = 7.x
+dependencies[] = futurehistory
+files[] = futurehistory_entdecken_poi_bbox.inc 
+files[] = futurehistory_entdecken_poi_bbox_argument.inc 
+files[] = views_plugin_argument_default_bboxquery.inc
+files[] = futurehistory_entdecken_plugin_style_google_map.inc
