@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Views style plugin for futurehistory.
+ */
+
+/**
+ * Implements hook_views_api()
+ */
+function futurehistory_entdecken_views_api() {
+  return array('api' => 3);
+}

@@ -1,0 +1,261 @@
+/* -------------------------------------------------------------------- 
+ * Entdecken Map base Layout
+ * ------------------------------------------------------------------ */
+.nav-no-border {
+  border:none!important;
+}
+
+.entdecken-container {
+  min-height:500px;
+}
+
+#row-entdecken {
+  display:block;
+  height:100%;
+  width:100%;
+  position:absolute;
+}
+
+#entdecken-map {
+  min-height:500px;
+  display:block;
+}
+#entdecken-map-nav {
+  min-height:500px;
+}
+
+#thumbnail-navigation {
+  display:block;
+  margin-bottom:10px;
+  height:60px;
+  color:#fff;
+}
+
+
+#thumbnail-pois {
+  clear:both;
+  overflow:auto;
+  min-height:430px;
+}
+
+
+/* -------------------------------------------------------------------- 
+ *  Filter and Poi box and buttons
+ * ------------------------------------------------------------------ */
+
+#thumbnail-navigation-filter-button {
+  width:50%;
+  height:60px; 
+  display:block;
+  background-color:#1A67AD;
+  float:left;
+  padding-top: 20px;
+  text-align: center;
+  border-right:1px solid #fff;
+}
+
+#thumbnail-navigation-sort-button {
+  width:50%;
+  height:60px; 
+  display:block;
+  float:right;
+  background-color:#1A67AD;
+  padding-top: 20px;
+  text-align: center;
+}
+
+#thumbnail-navigation-filter-button:hover, #thumbnail-navigation-sort-button:hover  {
+  cursor: pointer; cursor: hand;
+  background-color:#669AC9;
+}
+
+#thumbnail-filter-box {
+  padding:20px;
+  display:none;
+  width:400px;
+  height:400px;
+  background-color:rgba(255, 255, 255, 1);
+  right:0px;
+  position:absolute;
+  z-index:3;
+}
+
+#thumbnail-sort-box {
+  padding:20px;
+  display:none;
+  width:400px;
+  height:220px;
+  background-color:rgba(255, 255, 255, 1);
+  right:0px;
+  position:absolute;
+  z-index:3;
+}
+
+#sort_selector .sort-box {
+  border-bottom: 1px solid #8E8E8E;  
+  margin-bottom: 10px;
+  padding-bottom: 20px;
+}
+.sort-close a, .filter-close a {
+  padding-top: 10px;
+  padding-bottom:10px;
+  width:100%;
+  background-color: #e5e6e7;
+  color: #424242;
+  margin-top: 20px;
+  display: block;
+  text-align:center;
+  border-radius: 15px;
+}
+.sort-close a:hover, .filter-close a:hover {
+  background-color: #424242;
+  color: #e5e6e7;
+  text-decoration:none;
+}
+
+
+#fh-reset-filter, #sammlungen_selector, #time_slider_box   {
+  border-bottom: 1px solid #8E8E8E;  
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+
+}
+
+/* -------------------------------------------------------------------- 
+ * Date selection slider 
+ * ------------------------------------------------------------------ */
+#time_slider_box {
+  padding: 8px 8px 2px;
+}
+#time_display {
+  padding-top: 2px; 
+  padding-left: 8px;
+}
+/* 
+ * Display valid range in Violet text and slider 
+ */
+#time_range {
+  border: 0; 
+  color: #A04E9C; 
+  font-weight: normal;
+}
+div.ui-slider-range.ui-widget-header {
+  background: #A04E9C; 
+}
+
+
+/* -------------------------------------------------------------------- 
+ * style the thumbnails
+ * ------------------------------------------------------------------ */
+
+
+#thumbnail-pois li {
+  height:130px;
+  background:#424242;
+  margin-bottom:5px;
+  list-style: outside none none;
+  text-align: center;
+  position:relative;
+  cursor: pointer; cursor: hand;
+}
+#thumbnail-pois li.hovered .ansicht_title, #thumbnail-pois li.active .ansicht_title {
+  /* background-color: #A04E9C */
+  color:#A04E9C;
+}
+
+
+#thumbnail-pois li img {
+  max-width:100%;
+  max-height:100%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  margin: auto;
+  position: absolute;
+}
+
+#thumbnail-pois .ansicht_title {
+  background-color: rgba(255, 255, 255, 0.88);
+  padding: 3px 5px;
+  position: relative;
+  z-index: 2;
+  text-align:left;
+}
+
+
+/* -------------------------------------------------------------------- 
+ * style the thumbnail controls
+ * --------------------------------------------------------------------
+*/
+
+.thumbnail-control {
+  height:70px;
+  width: 100%;
+  display:none;  
+}
+
+.thumbnail-control .left {
+  display: block;
+  float: left;
+  width: 50%;
+}
+.thumbnail-control .left a, .thumbnail-control .right a  {
+  clear:both;
+  display:block;
+  margin-top:10px;
+}
+.thumbnail-control .left i, .thumbnail-control .right i {
+  display: block;
+  float: left;
+  margin-right: 10px;
+  font-size:38px;
+ 
+}
+
+.thumbnail-control .left i {
+  font-size:42px;
+}
+
+.thumbnail-control .right {
+  display: block;
+  float: left;
+  width: 50%;
+}
+
+
+/* -------------------------------------------------------------------- 
+ * Responsive Settings 
+ * --------------------------------------------------------------------
+*/
+.col-sm-4, .col-xs-4 {
+  padding-left:0px!important;
+  padding-right:0px!important;
+}
+
+.entdecken-container .row {
+  margin:0px;
+}
+
+
+/* -------------------------------------------------------------------- 
+ * move Karte | Satellit Dialog to bottom 
+ * ------------------------------------------------------------------ 
+ * DF ausgeschaltet
+
+#newpos_map_selector {
+  margin: 0px 0px 0px -3px;
+  z-index: 1000001;
+  position: absolute;
+  left: 0px;
+  top: 320px;
+  right: 806px;
+  height: 79px;
+  cursor: pointer;
+  display: block;
+}
+*/
+
+/*.gmnoprint {
+  display: none;
+}*/
