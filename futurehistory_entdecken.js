@@ -75,11 +75,11 @@
   // Function: delMapArrowAll
   // remove my  all direction polygons on map 
   Drupal.futurehistoryEntdecken.delMapArrowAll = function(mapId) {
-    for ( var i = 0; i < Drupal.futurehistoryEntdecken[mapId].markers.length; i++) {
-      Drupal.futurehistoryEntdecken.delMapArrow(Drupal.futurehistoryEntdecken[mapId].markers[i]);
-      Drupal.futurehistoryEntdecken[mapId].markers[i].activated = false;
-      for (var j = 0; j < Drupal.futurehistoryEntdecken[mapId].markers[i].hidePOIs.length; j++) {
-        Drupal.futurehistoryEntdecken.delMapArrow(Drupal.futurehistoryEntdecken[mapId].markers[i].hidePOIs[j]);
+    for ( var i = 0; i < m.length; i++) {
+      Drupal.futurehistoryEntdecken.delMapArrow(m[i]);
+      m[i].activated = false;
+      for (var j = 0; j < m[i].hidePOIs.length; j++) {
+        Drupal.futurehistoryEntdecken.delMapArrow(m[i].hidePOIs[j]);
       }
     }
   } 
@@ -258,51 +258,6 @@
     }
   };
 
-  Drupal.futurehistoryEntdecken.DrawActive = function(mapId) {
-    // remember me Activist
-    // first deactivate all
-    var UseIcon = fh_marker_blue;
-    for ( var i = 0; i< Drupal.futurehistoryEntdecken[mapId].markers.length; i++) {
-      Drupal.futurehistoryEntdecken.delMapArrow(Drupal.futurehistoryEntdecken[mapId].markers[i]);
-      Drupal.futurehistoryEntdecken[mapId].markers[i].activated = false;
-
-      // Detect marker in cluster?
-      UseIcon = fh_marker_blue;
-      for ( var c = 0; c < FHclusterIDs.length; c++) {
-        if (FHclusterIDs[c] === Drupal.futurehistoryEntdecken[mapId].markers[i].id) {
-          UseIcon = fh_marker_trans;
-          break;
-        }
-      }
-      //Drupal.futurehistoryEntdecken[mapId].markers[i].setIcon(UseIcon);
-      Drupal.futurehistoryEntdecken[mapId].markers[i].setZIndex(google.maps.Marker.MAX_ZINDEX - 1);
-      $('#thumbnail-pois li#thumb_'+Drupal.futurehistoryEntdecken[mapId].markers[i].id+'').removeClass('active');
-      $('#tc-'+Drupal.futurehistoryEntdecken[mapId].markers[i].id+'').hide();
-    }
-    // second iterate on Activists
-    for ( var n = 0; n < last_active_NIDs.length; n++) {
-      for ( var i = 0; i< Drupal.futurehistoryEntdecken[mapId].markers.length; i++) {
-        if (last_active_NIDs[n] === Drupal.futurehistoryEntdecken[mapId].markers[i].id) {
-          Drupal.futurehistoryEntdecken[mapId].markers[i].activated = true;
-      
-          // Detect marker in cluster?
-          UseIcon = fh_marker_violet;
-          for ( var c = 0; c < FHclusterIDs.length; c++) {
-            if (FHclusterIDs[c] === Drupal.futurehistoryEntdecken[mapId].markers[i].id) {
-              UseIcon = fh_marker_trans;
-              break;
-            }
-          }
-          //Drupal.futurehistoryEntdecken[mapId].markers[i].setIcon(UseIcon);
-          Drupal.futurehistoryEntdecken[mapId].markers[i].setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
-          //Drupal.futurehistoryEntdecken.setMapArrow(mapId, Drupal.futurehistoryEntdecken[mapId].markers[i]);
-          $('#thumbnail-pois li#thumb_'+last_active_NIDs[n]+'').addClass('active');
-          $('#tc-'+last_active_NIDs[n]+'').slideDown("slow");
-        }
-      }
-    }
-  }
-
   // Function: setMapMarkers
   // design and create the Markers
   Drupal.futurehistoryEntdecken.setMapMarkers = function(marker_content, mapId) {
@@ -438,7 +393,7 @@
               //Drupal.futurehistoryEntdecken.deactivateMarker(mapId, marker.id);
               $('#thumbnail-pois li#thumb_'+marker.id+'').removeClass('active');
               $('#tc-'+marker.id+'').hide();
-              Drupal.futurehistoryEntdecken.delMapArrowAll();
+              //Drupal.futurehistoryEntdecken.delMapArrowAll(mapId);
               marker.activated = false;
             } else {
               console.log('click on undefined');
@@ -1056,6 +1011,7 @@ Drupal.futurehistoryEntdecken.MarkerClusterer.prototype.removeMarker_ = function
     return false;
   }
 
+  console.log('C m null ', marker);
   marker.setMap(null);
 
   this.markers_.splice(index, 1);
@@ -1444,6 +1400,7 @@ Drupal.futurehistoryEntdecken.Cluster.prototype.isMarkerAlreadyAdded = function(
  */
 Drupal.futurehistoryEntdecken.Cluster.prototype.addMarker = function(marker) {
   if (this.isMarkerAlreadyAdded(marker)) {
+    console.log('C AlreadyAdded ', marker.id);
     return false;
   }
 
@@ -1465,22 +1422,24 @@ Drupal.futurehistoryEntdecken.Cluster.prototype.addMarker = function(marker) {
 
   var len = this.markers_.length;
 
-  // ??? modified linde, not all single poinzts in every zoomlevel were drawn
-  //if (len < this.minClusterSize_ && marker.getMap() != this.map_) {
-  // Min cluster size not reached so show the marker.
-  // ok, hier noch der getIcon-Trick für die Persistenz:
+  // ??? modified linde, not all single points in every zoomlevel were drawn
+  if (len < this.minClusterSize_ && marker.getMap() != this.map_) {
+    // Min cluster size not reached so show the marker.
+    // ok, hier noch der getIcon-Trick für die Persistenz:
     marker.setIcon(marker.getIcon());
     marker.setMap(this.map_);
-  //}
+  }
 
   if (len == this.minClusterSize_) {
     // Hide the markers that were showing.
+    console.log('C hide marker ', marker.id);
     for (var i = 0; i < len; i++) {
       this.markers_[i].setMap(null);
     }
   }
 
   if (len >= this.minClusterSize_) {
+    console.log('C marker null', marker.id);
     marker.setMap(null);
   }
 
