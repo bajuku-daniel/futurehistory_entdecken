@@ -351,12 +351,14 @@
       for ( var r = 0; r < RAW.length; r++) {
         if (this.Nid == RAW[r].id) {
           var already_there = true;
+          console.log('a ', this.Nid);
           break;
         }
         // ...kann auch in hiddenliste sein.....
         for (var x = 0; x < RAW[r].hideIds.length; x++) {
           if (this.Nid == RAW[r].hideIds[x].id) {
             already_there = true;
+            console.log('c ', this.Nid);
             break;
           }
         }
@@ -365,15 +367,15 @@
 
       if (!already_there) {
         raw_changed = true;
-        console.log('RAW new marker ');
         var markerPosition = new google.maps.LatLng(this.lat, this.lon);
         var marker = new google.maps.Marker({
           position: markerPosition,
           map: Drupal.futurehistoryEntdecken[mapId].map,
           title: this.title,
           id: this.Nid,
-          icon: fh_marker_trans
+          icon: fh_marker_blue
         });
+        marker.Jahr = this.Jahr;
         // glue our view stuff to the marker-obj
         marker.direction = this.direction;
         marker.angle = this.angle;
@@ -389,37 +391,40 @@
 
         // filter hidden marker, build list of hidden children
         for ( var r = 0; r < RAW.length; r++) {
-           var dist = google.maps.geometry.spherical.computeDistanceBetween(RAW[r].position, marker.position);
-           if (dist < double_swell) {
-             RAW[r].hidePOIs.push(marker);
-             //RAW[r].title = marker.title +  ' + ' + RAW[r].title;
-             RAW[r].title = this.title;
-             RAW[r].hideother = true;
-             RAW[r].hideIds.push(marker.id);
-             marker.hidden = true;
-             //console.log('marker double ', marker.id);
-             break;
-           }
+          if (marker.id != RAW[r].id) {
+            var dist = google.maps.geometry.spherical.computeDistanceBetween(RAW[r].position, marker.position);
+            if (dist < double_swell) {
+              marker.hidden = true;
+              RAW[r].hidePOIs.push(marker);
+              RAW[r].hideother = true;
+              RAW[r].hideIds.push(marker.id);
+              console.log('add hidden ', marker.id, ' to ', RAW[r].id);
+              break;
+            }
+          }
         }
         if (!marker.hidden) {
+          console.log('RAW new marker ', this.Nid);
           insert_marker = true;
           // Add Event to highlight the marker and thumbnail 
           google.maps.event.addListener(marker, 'click', function() {
             if (marker.activated === false) {
-              console.log('click on inactive');
+              console.log('click on inactive', marker);
               marker.activated = true;
               // Unique Active Icon per marker on click
               // deactivate all other
               for (var i = 0; i < RAW.length; i++) {
-                if (RAW[i].viewpos) {
-                  Drupal.futurehistoryEntdecken.delMapArrow(RAW[i]);
-                  console.log('del viewpos ', RAW[i].id);
-                }
-                if (RAW[i].hideother) {
-                  // + symbol
-                  RAW[i].setIcon(fh_marker_blue);
-                } else {
-                  RAW[i].setIcon(fh_marker_blue);
+                if (RAW[i].id != marker.id) {
+                  if (RAW[i].viewpos) {
+                    Drupal.futurehistoryEntdecken.delMapArrow(RAW[i]);
+                    console.log('del viewpos ', RAW[i].id);
+                  }
+                  if (RAW[i].hideother) {
+                    // + symbol
+                    RAW[i].setIcon(fh_marker_blue);
+                  } else {
+                    RAW[i].setIcon(fh_marker_blue);
+                  }
                 }
               }
               if (marker.hideother) {
@@ -440,7 +445,7 @@
               $('#tc-'+marker.id+'').slideDown("slow");
 
             } else if (marker.activated === true) {
-              console.log('click on active');
+              console.log('click on active', marker);
               console.log('see ', RAW.length);
               marker.setIcon(fh_marker_blue);
               marker.activated = false;
@@ -461,22 +466,22 @@
     }); // eof each marker
 
     
+    var TRANS = [];
     // remove makers outside box / filter criteria
     var persistent = false;
     for ( var r = 0; r < RAW.length; r++) {
       persistent = false;
       for ( var x = 0; x < new_set.length; x++) {
         if (new_set[x] == RAW[r].id) {
-          persistent = true;
+          TRANS.push(RAW[r]);
+          console.log('ptest ok ', RAW[r].id);
           break;
         }
       }
-      if (!persistent) {
-        // und raus damit
-        RAW.splice(r, 1);
-        raw_changed = true;
-      }
     }
+    RAW = TRANS;
+    // wie diff ermitteln?
+    raw_changed = true;
 
     if (raw_changed) {
       if (!$.isEmptyObject(markerCluster)) {
@@ -1476,10 +1481,11 @@ Drupal.futurehistoryEntdecken.Cluster.prototype.addMarker = function(marker) {
 
   var len = this.markers_.length;
 
-  // ??? modified linde, not all single poinzts in every zoomlevel were drawn
+  // modified linde, not all single poinzts in every zoomlevel were drawn
   if (len < this.minClusterSize_ && marker.getMap() != this.map_) {
     // Min cluster size not reached so show the marker.
-    marker.setIcon(fh_marker_blue);
+    // ok, hier noch der getIcon-Trick für die Persistenz:
+    marker.setIcon(marker.getIcon());
     marker.setMap(this.map_);
   }
 
@@ -1967,6 +1973,7 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
         });
 
  
+/*
         // switch the map type on established zoom level 
         google.maps.event.addListener(Drupal.futurehistoryEntdecken[mapId].map, 'zoom_changed', function() { 
           var zoomLevel = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
@@ -1978,6 +1985,7 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
             Drupal.futurehistoryEntdecken[mapId].map.setTilt(0);
           }
         });
+*/
         
         // start google maps IDLE function and ask for the boundingbox .getBounds
         // todo: maybe the idle function is not the best choice? the pois load realy slow
