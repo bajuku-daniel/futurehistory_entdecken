@@ -281,8 +281,11 @@ class futurehistory_entdecken_plugin_style_google_map extends views_plugin_style
     $protocol = empty($_SERVER['HTTPS']) ? 'http' : 'https';
     drupal_add_js($protocol . '://maps.googleapis.com/maps/api/js?key=AIzaSyCHmLzcxDDh2_JJ2oB6ma8YwMFiohtZC2c&signed_in=false&libraries=places,geometry', array('type' => 'external'));
     if ($this->options['use_marker_clusterer']) {
-      drupal_add_js($protocol . '://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js', array('type' => 'external'));
+      // drupal_add_js($protocol . '://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js', array('type' => 'external'));
+      // linde 2016-10-06: changed to
+      // drupal_add_js($protocol . '://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js', array('type' => 'external'));
     }
+    //drupal_add_js(drupal_get_path('module', 'futurehistory_entdecken') . '/markerclusterer.js');
     drupal_add_js(drupal_get_path('module', 'futurehistory_entdecken') . '/futurehistory_entdecken.js');
     drupal_add_js(drupal_get_path('module', 'futurehistory_entdecken') . '/js-plugins/jquery.scrollTo.min.js');
     $bbox_raw = (isset($_GET['bbox']) ? $_GET['bbox'] : 'noBbox');
@@ -308,9 +311,6 @@ class futurehistory_entdecken_plugin_style_google_map extends views_plugin_style
         'data-scroll-wheel' => (int)!$this->options['map_disable_scroll_wheel'],
         'data-disable-double-click-zoom' => (int)$this->options['map_disable_double_click_zoom'],
         'bbox' => $bbox_raw,
-
-
-
       ),
       'markers' =>  $markers,
     ));
