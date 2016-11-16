@@ -286,6 +286,7 @@
   Drupal.futurehistoryEntdecken.setMapMarkers = function(marker_content, mapId) {
 
     var LAST = RAW;
+    RAW = [];
 
     $.each(marker_content, function() {
       var markerPosition = new google.maps.LatLng(this.lat, this.lon);
@@ -319,7 +320,7 @@
     var double_swell = 5;
 
     // filter hidden marker, build list of hidden children
-    //console.log('in RAW before hidden-filter ', RAW.length);
+    console.log('in RAW before hidden-filter ', RAW.length);
     for ( var r = 0; r < RAW.length; r++) {
       RAW[r].setIcon(fh_marker_blue);
       RAW[r].hidden_active_counter = 0;
@@ -340,7 +341,7 @@
         }
       } // inner loop
     } // outer loop
-    //console.log('in RAW after hidden-filter ', RAW.length);
+    console.log('in RAW after hidden-filter ', RAW.length);
 
     // Build Cluster depending on zoom
     //if(Drupal.futurehistoryEntdecken[mapId].map.getZoom() < 18) {
@@ -361,7 +362,7 @@
       for ( var m = 0; m < RAW.length; m++) {
         for ( var c = 0; c < FHclusterIDs.length; c++) {
           if (FHclusterIDs[c] == RAW[m].id) {
-            //console.log('in Cluster ', RAW[m].id);
+            console.log('in Cluster ', RAW[m].id);
             RAW.splice(m, 1);
             break;
           }
