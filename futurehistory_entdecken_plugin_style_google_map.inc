@@ -2,15 +2,12 @@
 
 class futurehistory_entdecken_plugin_style_google_map extends views_plugin_style {
 
-
-
-
   /**
    * Set default options
    */
   function option_definition() {
     $options = parent::option_definition();
-    
+
     $options['map_width'] = array('default' => '100%');
     $options['map_height'] = array('default' => '400px');
     $options['map_center'] = array('default' => '0,0');
@@ -31,10 +28,9 @@ class futurehistory_entdecken_plugin_style_google_map extends views_plugin_style
     $options['map_disable_double_click_zoom'] = array('default' => FALSE);
     $options['marker_position_field'] = array('default' => '');
 
-    
     return $options;
   }
-  
+
   /**
    * Options form.
    */
@@ -199,7 +195,7 @@ class futurehistory_entdecken_plugin_style_google_map extends views_plugin_style
       '#default_value' => $this->options['map_disable_double_click_zoom'],
     );
   }
-  
+
   /**
    * Render the display in this style.
    */
@@ -207,7 +203,7 @@ class futurehistory_entdecken_plugin_style_google_map extends views_plugin_style
     if (isset($this->view->live_preview) && $this->view->live_preview) {
       return t('Selected style are not compatible with live preview.');
     }
-    
+
     $futurehistory_field = '';
     foreach ($this->view->field as $field_name => $field_handler) {
       if (isset($field_handler->field_info) && $field_handler->field_info['type'] == 'futurehistory_field') {
@@ -218,7 +214,7 @@ class futurehistory_entdecken_plugin_style_google_map extends views_plugin_style
     if (!$futurehistory_field) {
       return t('Add futurehistory field to fields list.');
     }
-    
+
     $this->view->field[$futurehistory_field]->options['exclude'] = TRUE;
     $this->render_fields($this->view->result);
 
@@ -227,26 +223,30 @@ class futurehistory_entdecken_plugin_style_google_map extends views_plugin_style
       if (!$row->{'field_' . $futurehistory_field}) {
         continue;
       }
-      
+
       $marker_icon = '';
       if ($this->options['marker_icon_field']) {
         $marker_icon = $this->get_field($row_index, $this->options['marker_icon_field']);
       }
-      
+
       $marker_url = '';
       if ($this->options['marker_url_field']) {
         $marker_url = $this->get_field($row_index, $this->options['marker_url_field']);
       }
-      
+
       $marker_title = '';
       if ($this->options['marker_title_field']) {
         $marker_title = $this->get_field($row_index, $this->options['marker_title_field']);
         $marker_title = strip_tags($marker_title);
         $marker_title = decode_entities($marker_title);
       }
-     
-      
-      //get the Koordinates from the futurehistory field 
+
+      // get all portal dates
+      //ATTENTION : needs field "jahr" in the MAP as raw view
+
+      $portal_dates[] = $row->field_field_jahr[0]['raw']['value'];
+
+      //get the Koordinates from the futurehistory field
       $this->view->row_index = $row_index;
       $marker_content = $this->row_plugin->render($row);
       foreach ($row->{'field_' . $futurehistory_field} as $field_value) {
@@ -262,21 +262,39 @@ class futurehistory_entdecken_plugin_style_google_map extends views_plugin_style
     }
     unset($this->view->row_index);
 
+    // sort all dates and get first/last
+    sort($portal_dates);
+    $portal_date_first = reset($portal_dates);
+    $portal_date_last = end($portal_dates);
+    //and add to the JS drupal settings
+    drupal_add_js(array(
+      'futurehistoryEntdecken' => array(
+        'first_date' => $portal_date_first,
+        'last_date' => $portal_date_last,
+      ),
+    ), 'setting');
+
+
+
     drupal_add_library('system', 'ui');
     drupal_add_library('system', 'ui.spinner');
     drupal_add_library('system', 'ui.slider');
-    drupal_add_library('system', 'jquery.cookie'); 
-    // wo ist der hook?  drupal_add_library('system', 'ui.selectmenu'); 
+    drupal_add_library('system', 'jquery.cookie');
+    // wo ist der hook?  drupal_add_library('system', 'ui.selectmenu');
     drupal_add_css(drupal_get_path('module', 'futurehistory_entdecken') . '/futurehistory_entdecken.css');
 
 
     $map_id = drupal_html_id('futurehistory-entdecken-' . $this->view->name . '-' . $this->view->current_display);
     drupal_alter('futurehistory_entdecken_markers', $markers, $this->view);
-    drupal_add_js(array(
-      'futurehistoryEntdeckenMarkers' => array(
-        $map_id => $markers,
-      ),
-    ), 'setting');
+
+    //Daniel Frings -> i think here is something wrong -> do we need all markers in the drupal settings?
+    // drupal_add_js(array(
+    //   'futurehistoryEntdeckenMarkers' => array(
+    //     $map_id => $markers,
+    //   ),
+    // ), 'setting');
+
+
 
     $protocol = empty($_SERVER['HTTPS']) ? 'http' : 'https';
     drupal_add_js($protocol . '://maps.googleapis.com/maps/api/js?key=AIzaSyCHmLzcxDDh2_JJ2oB6ma8YwMFiohtZC2c&signed_in=false&libraries=places,geometry', array('type' => 'external'));
@@ -289,7 +307,7 @@ class futurehistory_entdecken_plugin_style_google_map extends views_plugin_style
     drupal_add_js(drupal_get_path('module', 'futurehistory_entdecken') . '/futurehistory_entdecken.js');
     drupal_add_js(drupal_get_path('module', 'futurehistory_entdecken') . '/js-plugins/jquery.scrollTo.min.js');
     $bbox_raw = (isset($_GET['bbox']) ? $_GET['bbox'] : 'noBbox');
-    
+
     return theme($this->theme_functions(), array(
       'view' => $this->view,
       'options' => $this->options,

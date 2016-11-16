@@ -4,7 +4,7 @@
   //fixed and initial values
 
   //var markerCluster;
-  var RAW = []; 
+  var RAW = [];
   var InitYearRange = [ 1000, 2016 ];
   //we need the initial center if someone starts from a bookmark without a cookie - lets see germany
   var initial_center_lat = 51.0847813;
@@ -28,7 +28,7 @@
   //var line_a = [];
   //var line_b = [];
   var pie = [];
-  // Filterbox kategorie: initial all 
+  // Filterbox kategorie: initial all
   var kategorie = ['Erinnern', 'Stadtbild', 'Tourismus'];
 
   // Style the gmap markers blue and violet
@@ -68,7 +68,7 @@
     new google.maps.Point(0, 0), //origin
     new google.maps.Point(7, 32) //anchor point
   );
-  
+
   //google map style elements
   var map_styles = [ { "featureType": "poi.park", "stylers": [ { "visibility": "on" } ] },{ "featureType": "poi.attraction", "stylers": [ { "visibility": "on" } ] },{ "featureType": "poi.business", "stylers": [ { "visibility": "off" } ] },{ "featureType": "poi.government", "stylers": [ { "visibility": "on" } ] },{ "featureType": "poi.medical", "stylers": [ { "visibility": "off" } ] },{ "featureType": "poi.school", "stylers": [ { "visibility": "off" } ] },{ "featureType": "poi.place_of_worship", "stylers": [ { "visibility": "on" } ] },{ "featureType": "poi.school", "stylers": [ { "visibility": "off" } ] }];
 
@@ -110,9 +110,9 @@
               Drupal.futurehistoryEntdecken.delMapArrow(RAW[i].hidePOIs[x].id);
               $('#thumbnail-pois li#thumb_'+RAW[i].hidePOIs[x].id+'').removeClass('active');
               $('#tc-'+RAW[i].hidePOIs[x].id+'').hide();
-            } 
+            }
           } // all hidden marker
-        } else { 
+        } else {
           RAW[i].setIcon(fh_marker_blue);
         }
         $('#thumbnail-pois li#thumb_'+id+'').removeClass('active');
@@ -120,8 +120,8 @@
         if(Drupal.futurehistoryEntdecken[mapId].map.getZoom() > 18) {
           Drupal.futurehistoryEntdecken.delMapArrow(id);
         }
-      } 
-    } 
+      }
+    }
   }
 
   // Function: setMapArrow
@@ -142,10 +142,10 @@
     var distance = 50;
     var heading = marker.direction;
     var half_openangle = marker.angle/2;
-        
+
     var point_a = google.maps.geometry.spherical.computeOffset(standpunkt, distance, heading - half_openangle);
     var point_b = google.maps.geometry.spherical.computeOffset(standpunkt, distance, heading + half_openangle);
-        
+
     /*
     line_a[i] = new google.maps.Polyline({
       path: [standpunkt, point_a],
@@ -155,7 +155,7 @@
        }],
        map: Drupal.futurehistoryEntdecken[mapId].map
     });
-        
+
    line_b[i] = new google.maps.Polyline({
       path: [standpunkt, point_b],
       icons: [{
@@ -165,7 +165,7 @@
       map: Drupal.futurehistoryEntdecken[mapId].map
     });
     */
-  
+
     pie[i] = new google.maps.Polygon({
       paths: [standpunkt, point_a, point_b],
       strokeColor: '#9E1F81',
@@ -183,19 +183,19 @@
      });
 
     return false; // if called from <a>-Tag
-  } 
+  }
 
   //Function: DateSlider
   //used for initialization abnd reset
   Drupal.futurehistoryEntdecken.DateSlider = function (mapId){
     // the Date Range : date=all <-- all dates, date=--1990 <-- all bevfore 1990, date=1990-- <-- all after 1990, date=1800--1990 <-- all between 1800 and 1990
-    // date slider stuff (linde@webgis.de, 2016/05) 
+    // date slider stuff (linde@webgis.de, 2016/05)
     // styles --> futurehistory_entdecken.css
     $("#time_slider").slider({
       range: true,
       min: 850,
       max: 2016,
-      values: InitYearRange, 
+      values: InitYearRange,
       slide: function( event, ui ) {
         $("#time_range").val("Jahr " + ui.values[0] + " - Jahr " + ui.values[1]);
           RequestDate = String(ui.values[0]) + '--' + String(ui.values[1]);
@@ -223,13 +223,13 @@
     $.ajax({
       url: poi_url ,
       method: 'get',
-      data: {bbox : bbox, date : RequestDate, field_kategorie_name : kategorie.toString() }, 
-      dataType: 'json',   
+      data: {bbox : bbox, date : RequestDate, field_kategorie_name : kategorie.toString() },
+      dataType: 'json',
       success: function(data) {
         marker_content = data;
         // call the marker and thumbnail functions
-        Drupal.futurehistoryEntdecken.setMapMarkers(marker_content, mapId); 
-        Drupal.futurehistoryEntdecken.setMapThumbnails(marker_content, mapId, mapCenter);    
+        Drupal.futurehistoryEntdecken.setMapMarkers(marker_content, mapId);
+        Drupal.futurehistoryEntdecken.setMapThumbnails(marker_content, mapId, mapCenter);
       }
     });
   }
@@ -264,7 +264,7 @@
       //build the mouseover click and mouseout functions
 
       var onclick = 'onclick="Drupal.futurehistoryEntdecken.markerStateChange(' + marker_content[i]['Nid'] + ', \'click\', \''+ mapId +'\', \'THUMB\')"';
-      var info_url = '/node/' + marker_content[i]['Nid']; 
+      var info_url = '/node/' + marker_content[i]['Nid'];
       var poi_element = '<li id="thumb_' + marker_content[i]['Nid'] + '" '+ onclick + '><div class="ansicht_title"> '+ marker_content[i]['title'] + ' | '+ marker_content[i]['Jahr'] + ' </div> <img src="'+ marker_content[i]['bild-haupt-thumb'] + '"></li><div id="tc-' + marker_content[i]['Nid'] + '"  class="thumbnail-control"><div class=left><a href="'+info_url+'"> <i class="material-icons">fullscreen</i> Bild<br>Details</a></div><div class="right"> <a href=""><i class="material-icons">collections</i> in meine Sammlung</a></div> ';
       $('#thumbnail-pois').append(poi_element);
 
@@ -273,18 +273,18 @@
       for ( var n = 0; n < last_active_NIDs.length; n++) {
         // activate the selected thumbs if control not already open
         if ( $('#tc-'+last_active_NIDs[n]+'').is(":hidden") ) {
-          $('#thumbnail-pois li#thumb_'+last_active_NIDs[n]+'').addClass('active');       
+          $('#thumbnail-pois li#thumb_'+last_active_NIDs[n]+'').addClass('active');
           // all activated with open controls
           $('#tc-'+last_active_NIDs[n]+'').show();
         }
-      } 
+      }
     }
   };
 
   // Function: setMapMarkers
   // design and create the Markers
   Drupal.futurehistoryEntdecken.setMapMarkers = function(marker_content, mapId) {
-    
+
     var LAST = RAW;
 
     $.each(marker_content, function() {
@@ -308,16 +308,16 @@
       marker.hideIds = [];
       marker.hidePOIs = [];
 
-      // Highlight the marker and thumbnail 
+      // Highlight the marker and thumbnail
       google.maps.event.addListener(marker, 'click', function() {
         Drupal.futurehistoryEntdecken.markerStateChange(marker.id, 'click', mapId, 'MAP');
-      }); 
+      });
       RAW.push(marker);
     });
 
     // Reduce POIs by chaining neardistance POIS together
     var double_swell = 5;
-    
+
     // filter hidden marker, build list of hidden children
     //console.log('in RAW before hidden-filter ', RAW.length);
     for ( var r = 0; r < RAW.length; r++) {
@@ -336,7 +336,7 @@
             RAW.splice(x, 1);
             hidden = true;
             break;
-          } 
+          }
         }
       } // inner loop
     } // outer loop
@@ -417,7 +417,7 @@
   // Function: markerStateChange
   // hover and out the marker and thumbnails
   Drupal.futurehistoryEntdecken.markerStateChange = function(markerId, action, mapId, src) {
-    markerId = markerId.toString(); 
+    markerId = markerId.toString();
     // marker within double_swell value (meters ?) will be treated as same position...
     var double_swell = 5;
 
@@ -461,7 +461,7 @@
           Drupal.futurehistoryEntdecken.delMapArrow(RAW[i].hidePOIs[x].id);
           $('#thumbnail-pois li#thumb_'+RAW[i].hidePOIs[x].id+'').removeClass('active');
           $('#tc-'+RAW[i].hidePOIs[x].id+'').hide();
-        } else { 
+        } else {
           // hidden marker inactive
           if (markerId === RAW[i].hidePOIs[x].id || markerId === RAW[i].id) {
             //console.log('Activate hidden ', RAW[i].hidePOIs[x].id, ' zoom: ', zoomLevel);
@@ -472,7 +472,7 @@
             $('#tc-'+RAW[i].hidePOIs[x].id+'').slideDown("slow");
             RAW[i].hidePOIs[x].activated = true;
             if (markerId != RAW[i].id) {
-              // dont count click on parent... 
+              // dont count click on parent...
               RAW[i].hidden_active_counter++;
             }
           }
@@ -487,7 +487,7 @@
         } else {
           RAW[i].setIcon(fh_marker_violet);
         }
-      } 
+      }
     } // all marker in RAW
     // after redraw Thumbs mit open or closed Control we can scroll first active in position
     if ($('#thumbnail-pois li.active').filter(":first")) {
@@ -501,7 +501,7 @@
     if (place == '' ){
     } else {
       LAST_ZOOM = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
-      var fh_cookie = {};                 
+      var fh_cookie = {};
       if (place.geometry.viewport) {
         mapCenter = place.geometry.location;
         fh_cookie = {viewport:1, bounds:place.geometry.viewport, point:place.geometry.location } ;
@@ -510,47 +510,47 @@
         Drupal.futurehistoryEntdecken[mapId].map.setZoom(LAST_ZOOM);
         console.log('set last ZOOM ', LAST_ZOOM);
       } else {
-        mapCenter = place.geometry.location;        
-        fh_cookie = {viewport:0, bounds:0, point:place.geometry.location} ;        
+        mapCenter = place.geometry.location;
+        fh_cookie = {viewport:0, bounds:0, point:place.geometry.location} ;
         Drupal.futurehistoryEntdecken[mapId].map.setCenter(place.geometry.location);
-        Drupal.futurehistoryEntdecken[mapId].center_marker.setPosition(mapCenter)        
+        Drupal.futurehistoryEntdecken[mapId].center_marker.setPosition(mapCenter)
         Drupal.futurehistoryEntdecken[mapId].map.setZoom(LAST_ZOOM);
         console.log('set last ZOOM ', LAST_ZOOM);
       }
       $.cookie('fh_geolocation_cookie', JSON.stringify(fh_cookie), {path: '/'});
     }
-  }; 
+  };
 
-  Drupal.futurehistoryEntdecken.selectFirstOnEnter = function(input){      
+  Drupal.futurehistoryEntdecken.selectFirstOnEnter = function(input){
     var _addEventListener = (input.addEventListener) ? input.addEventListener : input.attachEvent;
-    function addEventListenerWrapper(type, listener) { 
-      if (type == "keydown") { 
+    function addEventListenerWrapper(type, listener) {
+      if (type == "keydown") {
         var orig_listener = listener;
         listener = function (event) {
           var suggestion_selected = $(".pac-item-selected").length > 0;
-          if ((event.which == 13 ) && !suggestion_selected) { 
+          if ((event.which == 13 ) && !suggestion_selected) {
             var simulated_downarrow = $.Event("keydown", {
-              keyCode:40, 
+              keyCode:40,
               which:40
-            }); 
-            orig_listener.apply(input, [simulated_downarrow]); 
+            });
+            orig_listener.apply(input, [simulated_downarrow]);
           }
           orig_listener.apply(input, [event]);
         };
       }
       _addEventListener.apply(input, [type, listener]);
     }
-    if (input.addEventListener) { 
-      input.addEventListener = addEventListenerWrapper; 
-    } else if (input.attachEvent) { 
-      input.attachEvent = addEventListenerWrapper; 
+    if (input.addEventListener) {
+      input.addEventListener = addEventListenerWrapper;
+    } else if (input.attachEvent) {
+      input.attachEvent = addEventListenerWrapper;
     }
   };
   //End placesMapAction Function
 
 
 
- 
+
 /**
  * @name MarkerClusterer for Google Maps v3
  * @version version 1.0
@@ -838,7 +838,7 @@ Drupal.futurehistoryEntdecken.MarkerClusterer.prototype.setupStyles_ = function(
       //width: size
       url: this.FHclusterIcon,
       height: 38,
-      width: 38 
+      width: 38
     });
   }
 };
@@ -1385,7 +1385,7 @@ Drupal.futurehistoryEntdecken.MarkerClusterer.prototype.createClusters_ = functi
     return;
   }
 
-  
+
   FHclusterIDs = [];
   // Get our current map view bounds.
   // Create a new bounds object so we don't affect the map.
@@ -1882,7 +1882,13 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
       var mapId = '';
       var placesId = '';
 
-      //calculate the mapbox height  
+      // Daniel Frings: Portal first & last date :)
+      var portal_date_first = Drupal.settings.futurehistoryEntdecken.first_date;
+      var portal_date_last = Drupal.settings.futurehistoryEntdecken.last_date;
+
+      alert(portal_date_first + ' - ' + portal_date_last);
+
+      //calculate the mapbox height
       var mapbox_height = $("html").height() - $("#navbar").height();
       $('.entdecken-container, #entdecken-map, #entdecken-map-nav').css('height',mapbox_height)
 
@@ -1890,14 +1896,14 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
       var thumbnailbox_height = $("html").height() - $("#navbar").height() - 70;
       $('#entdecken-map-nav #thumbnail-pois').css('height',thumbnailbox_height);
 
-      
-      //google places autocomplete each function 
+
+      //google places autocomplete each function
       $('.places-autocomplete', context).each(function() {
         var $this = $(this);
         placesId = this.id;
         var input = Drupal.futurehistoryEntdecken.selectFirstOnEnter(document.getElementById(placesId));
 
-        Drupal.futurehistoryEntdecken[placesId] = {};     
+        Drupal.futurehistoryEntdecken[placesId] = {};
         Drupal.futurehistoryEntdecken[placesId].autocomplete = new google.maps.places.Autocomplete(
           (document.getElementById(placesId)),
           {types: ['geocode']}
@@ -1909,7 +1915,7 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           Drupal.futurehistoryEntdecken.placesMapAction(fh_place, mapId);
         });
       }); // End EACH Funktion
-  
+
 
 
       $('.futurehistory-entdecken-map', context).each(function() {
@@ -1925,7 +1931,7 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
         //first cookie check - where did we come from?
         // if cookie ok we override the default map values and initials
         var fh_cookiedata = JSON.parse($.cookie("fh_geolocation_cookie"));
-        
+
         if (fh_cookiedata != null) {
           mapCenter  = new google.maps.LatLng(fh_cookiedata.point);
           mapZoom = 17;
@@ -1942,8 +1948,8 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           streetViewControl:false,
           rotateControl:false,
         });
-       
-     
+
+
         // if the cookie contains a viewport override the map zoom with the viewport
         if (fh_cookiedata != null) {
           if (fh_cookiedata.viewport == '1') {
@@ -1951,8 +1957,8 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
             Drupal.futurehistoryEntdecken[mapId].map.fitBounds(map_viewport);
           }
         }
-  
-        // set the "center" - marker to calculate the distance 
+
+        // set the "center" - marker to calculate the distance
         Drupal.futurehistoryEntdecken[mapId].center_marker = new google.maps.Marker({
           position: mapCenter,
           map: Drupal.futurehistoryEntdecken[mapId].map,
@@ -1962,26 +1968,26 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           zIndex: google.maps.Marker.MAX_ZINDEX
         });
 
- 
-        // switch the map type on established zoom level 
-        google.maps.event.addListener(Drupal.futurehistoryEntdecken[mapId].map, 'zoom_changed', function() { 
+
+        // switch the map type on established zoom level
+        google.maps.event.addListener(Drupal.futurehistoryEntdecken[mapId].map, 'zoom_changed', function() {
           var zoomLevel = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
           if(zoomLevel <=18) {
-            Drupal.futurehistoryEntdecken[mapId].map.setMapTypeId(google.maps.MapTypeId.ROADMAP);          
+            Drupal.futurehistoryEntdecken[mapId].map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
           }
           else {
             Drupal.futurehistoryEntdecken[mapId].map.setMapTypeId(google.maps.MapTypeId.HYBRID);
             Drupal.futurehistoryEntdecken[mapId].map.setTilt(0);
           }
         });
-        
+
         // start google maps IDLE function and ask for the boundingbox .getBounds
         // todo: maybe the idle function is not the best choice? the pois load realy slow
         google.maps.event.addListener(Drupal.futurehistoryEntdecken[mapId].map, 'idle', function() {
           bounds = Drupal.futurehistoryEntdecken[mapId].map.getBounds();
           Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
-	}); 
-     
+	});
+
         // Toggle the filter and sort boxes with jquery magic
         $("#thumbnail-navigation-filter-button").click(function(){
           $("#thumbnail-filter-box").slideToggle("slow");
@@ -1993,18 +1999,18 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
         });
         $(".sort-close").click(function(){
           $("#thumbnail-sort-box").slideUp("fast");
-        });        
+        });
         $(".filter-close").click(function(){
           $("#thumbnail-filter-box").slideUp("fast");
         });
-        
+
         // Filter checkbox-events
         $("a[class=reset-filter-link]").click(function() {
-          kategorie = ['Erinnern', 'Stadtbild', 'Tourismus'];  
+          kategorie = ['Erinnern', 'Stadtbild', 'Tourismus'];
           $("#erinnern").prop("checked", false );
           $("#stadtbild").prop("checked", false );
           $("#tourismus").prop("checked", false );
-          $("#time_slider").slider('values',InitYearRange); // reset 
+          $("#time_slider").slider('values',InitYearRange); // reset
           $("#time_range").val( "Jahr " + InitYearRange[0] + " - Jahr " + InitYearRange[1] );
           RequestDate = String(InitYearRange[0]) + '--' + String(InitYearRange[1]);
           Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
