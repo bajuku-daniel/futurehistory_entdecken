@@ -34,37 +34,37 @@
 
   // Style the gmap markers blue and violet
   var fh_marker_cluster = new google.maps.MarkerImage(
-    '/sites/default/files/gmap-files/fh-poi-blue38.png',
+    '/sites/all/modules/futurehistory_entdecken/map-images/fh-poi-blue38.png',
     new google.maps.Size(38, 38),
     new google.maps.Point(0, 0), //origin
     new google.maps.Point(19, 19) //anchor point
   );
   var fh_marker_blue_cross = new google.maps.MarkerImage(
-    '/sites/default/files/gmap-files/fh-poi-blue-cross.png',
+    '/sites/all/modules/futurehistory_entdecken/map-images/fh-poi-blue-cross.png',
     new google.maps.Size(25, 25),
     new google.maps.Point(0, 0), //origin
     new google.maps.Point(12, 12) //anchor point
   );
   var fh_marker_blue = new google.maps.MarkerImage(
-    '/sites/default/files/gmap-files/fh-poi-blue.png',
+    '/sites/all/modules/futurehistory_entdecken/map-images/fh-poi-blue.png',
     new google.maps.Size(25, 25),
     new google.maps.Point(0, 0), //origin
     new google.maps.Point(12, 12) //anchor point
   );
   var fh_marker_trans = new google.maps.MarkerImage(
-    '/sites/default/files/gmap-files/fh-poi-trans25.png',
+    '/sites/all/modules/futurehistory_entdecken/map-images/fh-poi-trans25.png',
     new google.maps.Size(25, 25),
     new google.maps.Point(0, 0), //origin
     new google.maps.Point(12, 12) //anchor point
   );
   var fh_marker_violet = new google.maps.MarkerImage(
-    '/sites/default/files/gmap-files/fh-poi-violet.png',
+    '/sites/all/modules/futurehistory_entdecken/map-images/fh-poi-violet.png',
     new google.maps.Size(25, 25),
     new google.maps.Point(0, 0), //origin
     new google.maps.Point(12, 12) //anchor point
   );
   var fh_marker_location = new google.maps.MarkerImage(
-    '/sites/default/files/gmap-files/location.png',
+    '/sites/all/modules/futurehistory_entdecken/map-images/location.png',
     new google.maps.Size(15, 32),
     new google.maps.Point(0, 0), //origin
     new google.maps.Point(7, 32) //anchor point
@@ -371,7 +371,7 @@
 
     // remember stage
     // console.log('check former stage ');
-    
+
 
     for ( var s = 0; s < RAW.length; s++) {
       for ( var r = 0; r < LAST.length; r++) {
@@ -428,18 +428,18 @@
       if (RAW[i].id == markerId) {
         if (! RAW[i].activated) {
           activate_parent_idx = i;
-        }  
-      }  
+        }
+      }
       // click auf hidden? muss ebenfalls den gesamten marker umnstellen....
       for ( var x = 0; x < RAW[i].hidePOIs.length; x++) {
         if (RAW[i].hidePOIs[x].id == markerId) {
           if (! RAW[i].hidePOIs[x].activated) {
             activate_parent_idx = i;
-          }  
-        }  
+          }
+        }
       }
     }
-    Drupal.futurehistoryEntdecken.setActiveMarker(activate_parent_idx,mapId); 
+    Drupal.futurehistoryEntdecken.setActiveMarker(activate_parent_idx,mapId);
   }
 
   // Function: setActiveMarker
@@ -460,7 +460,7 @@
             $('#thumbnail-pois li#thumb_'+RAW[i].hidePOIs[x].id+'').addClass('active');
             $('#tc-'+RAW[i].hidePOIs[x].id+'').slideDown("slow");
           }
-        } 
+        }
       }
     }
     for ( var i = 0; i < RAW.length; i++) {
@@ -480,7 +480,7 @@
           $('#thumbnail-pois li#thumb_'+RAW[i].hidePOIs[x].id+'').removeClass('active');
           $('#tc-'+RAW[i].hidePOIs[x].id+'').hide();
           RAW[i].hidePOIs[x].activated = false;
-        } 
+        }
       }
     }
 
@@ -696,7 +696,7 @@ Drupal.futurehistoryEntdecken.MarkerClusterer = function(map, opt_markers, opt_o
    * linde:
    */
   // this.FHclusterIcon = '/sites/default/files/gmap-files/fh-poi-blue.png'
-  this.FHclusterIcon = '/sites/default/files/gmap-files/fh-poi-blue38.png'
+  this.FHclusterIcon = '/sites/all/modules/futurehistory_entdecken/map-images/fh-poi-blue38.png'
 
   /**
    * @type {string}
