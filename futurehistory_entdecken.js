@@ -17,8 +17,6 @@
   var LAST_ACTIVE_PARENT = -1;
   var LAST_ZOOM = 17;
   var FHclusterIDs = [];
-  var last_active_nid = 0;
-  var last_active_NIDs = [];
   var bounds;
   var RequestDate = 'all';
   var poi_url = '/de/fh_view/fh_bbox_pois';
@@ -51,6 +49,7 @@
     new google.maps.Point(0, 0), //origin
     new google.maps.Point(12, 12) //anchor point
   );
+  // initial empty marker with click event --> icon to map via RAW (after clusterfilter....)
   var fh_marker_trans = new google.maps.MarkerImage(
     '/sites/default/files/gmap-files/fh-poi-trans25.png',
     new google.maps.Size(25, 25),
@@ -102,11 +101,12 @@
         //console.log('func deactM ', RAW[i].id);
         RAW[i].activated = false;
         if (RAW[i].hideother) {
+          //console.log('set fh_marker_blue_cross ', RAW[i].id);
           RAW[i].setIcon(fh_marker_blue_cross);
           // iterate through hidden marker list
           for ( var x = 0; x < RAW[i].hidePOIs.length; x++) {
             if (RAW[i].hidePOIs[x].activated) {
-              console.log('Deactivate hidden ', RAW[i].hidePOIs[x].id);
+              //console.log('Deactivate hidden ', RAW[i].hidePOIs[x].id);
               RAW[i].hidePOIs[x].activated = false;
               Drupal.futurehistoryEntdecken.delMapArrow(RAW[i].hidePOIs[x].id);
               $('#thumbnail-pois li#thumb_'+RAW[i].hidePOIs[x].id+'').removeClass('active');
@@ -114,6 +114,7 @@
             }
           } // all hidden marker
         } else {
+          //console.log('set fh_marker_blue ', RAW[i].id);
           RAW[i].setIcon(fh_marker_blue);
         }
         $('#thumbnail-pois li#thumb_'+id+'').removeClass('active');
@@ -227,7 +228,7 @@
       data: {bbox : bbox, date : RequestDate, field_kategorie_name : kategorie.toString() },
       dataType: 'json',
       success: function(data) {
-        marker_content = data;
+        var marker_content = data;
         // call the marker and thumbnail functions
         Drupal.futurehistoryEntdecken.setMapMarkers(marker_content, mapId);
         Drupal.futurehistoryEntdecken.setMapThumbnails(marker_content, mapId, mapCenter);
@@ -271,26 +272,41 @@
 
       // thumbs persistence engine :-)
       // remember active thumbs after ajax call / new marker set
-      for ( var n = 0; n < last_active_NIDs.length; n++) {
+      for ( var n = 0; n < RAW.length; n++) {
         // activate the selected thumbs if control not already open
-        if ( $('#tc-'+last_active_NIDs[n]+'').is(":hidden") ) {
-          $('#thumbnail-pois li#thumb_'+last_active_NIDs[n]+'').addClass('active');
-          // all activated with open controls
-          $('#tc-'+last_active_NIDs[n]+'').show();
+        if (RAW[n].activated) {
+          if ( $('#tc-'+RAW[n].id+'').is(":hidden") ) {
+            $('#thumbnail-pois li#thumb_'+RAW[n].id+'').addClass('active');
+            // all activated with open controls
+            $('#tc-'+RAW[n].id+'').show();
+          }
+          // after redraw Thumbs mit open or closed Control we can scroll first active in position
+          if ($('#thumbnail-pois li.active').filter(":first")) {
+            $('#thumbnail-pois').scrollTo($('#thumbnail-pois li.active').filter(":first"), 10, {offset:3});
+          }
         }
       }
     }
+    // scroll to last not working, append dummy space
+    $('#thumbnail-pois').append('<div id="dummy" style="height:100px;"></div>');
   };
 
   // Function: setMapMarkers
   // design and create the Markers
   Drupal.futurehistoryEntdecken.setMapMarkers = function(marker_content, mapId) {
 
-    var LAST = RAW;
-    RAW = [];
+    // persistenz
+    var LAST = [];
+    for ( var r = 0; r < RAW.length; r++) {
+      LAST.push(RAW[r]);
+    }
+    while(RAW[0]) {
+      RAW.pop().setMap(null);
+    }
 
     $.each(marker_content, function() {
       var markerPosition = new google.maps.LatLng(this.lat, this.lon);
+      // marker to map? Alle - auch Cluster (!)
       var marker = new google.maps.Marker({
         position: markerPosition,
         map: Drupal.futurehistoryEntdecken[mapId].map,
@@ -302,7 +318,6 @@
       marker.direction = this.direction;
       marker.angle = this.angle;
       marker.dist = this.dist;
-      marker.activated = false;
       marker.hideother = false;
       marker.hidden = false;
       marker.hidden_active_counter = 0;
@@ -321,9 +336,8 @@
     var double_swell = 5;
 
     // filter hidden marker, build list of hidden children
-    console.log('in RAW before hidden-filter ', RAW.length);
+    //console.log('in RAW before hidden-filter ', RAW.length);
     for ( var r = 0; r < RAW.length; r++) {
-      RAW[r].setIcon(fh_marker_blue);
       RAW[r].hidden_active_counter = 0;
       for ( var x = 0; x < RAW.length; x++) {
         if (RAW[r].id != RAW[x].id && RAW[x].hidden != true && RAW[x].hideother == false) {
@@ -334,18 +348,23 @@
             RAW[r].hideother = true;
             RAW[r].hideIds.push(RAW[x].id);
             RAW[r].setIcon(fh_marker_blue_cross);
-            console.log('add hidden x -> r ', RAW[x].id, ' to ', RAW[r].id);
+            //console.log('add hidden x -> r ', RAW[x].id, ' to ', RAW[r].id);
             RAW.splice(x, 1);
             hidden = true;
             break;
           }
         }
-      } // inner loop
+      } // inner loop list hidden POIs
+      if ( RAW[r].hideother ) {
+        RAW[r].setIcon(fh_marker_blue_cross);
+      } else {
+        RAW[r].setIcon(fh_marker_blue);
+      }
     } // outer loop
-    console.log('in RAW after hidden-filter ', RAW.length);
+    //console.log('in RAW after hidden-filter ', RAW.length);
 
     if (typeof markerCluster != 'undefined') {
-      console.log('clearMarkers ');
+      //console.log('clearMarkers ');
       FHclusterIDs = [];
       Drupal.futurehistoryEntdecken.MarkerClusterer.prototype.clearMarkers();
     }
@@ -360,57 +379,48 @@
     for ( var m = 0; m < RAW.length; m++) {
       for ( var c = 0; c < FHclusterIDs.length; c++) {
         if (FHclusterIDs[c] == RAW[m].id) {
-          console.log('in Cluster ', RAW[m].id);
+          //console.log('in Cluster ', RAW[m].id);
+          // remove from map (?)
+          for ( var x = 0; x < Drupal.futurehistoryEntdecken[mapId].markers.length; x++) { 
+            if (Drupal.futurehistoryEntdecken[mapId].markers[x].id == RAW[m].id) {
+              //console.log('remove marker --> already in cluster ');
+              Drupal.futurehistoryEntdecken[mapId].markers[x].setMap(null);
+            }
+          }
           RAW.splice(m, 1);
           break;
         }
       }
     }
-    // console.log('in RAW after Cluster filter ', RAW.length);
-    // console.log('SUM in RAW + in Cluster ', parseInt(RAW.length) + parseInt(FHclusterIDs.length));
+    //console.log('in RAW after Cluster filter ', RAW.length);
+    //console.log('SUM: RAW + Cluster ', parseInt(RAW.length) + parseInt(FHclusterIDs.length));
 
     // remember stage
-    // console.log('check former stage ');
-    
-
     for ( var s = 0; s < RAW.length; s++) {
       for ( var r = 0; r < LAST.length; r++) {
         if (RAW[s].id == LAST[r].id) {
-          RAW[s].activated = LAST[r].activated;
-          for ( var t = 0; t < RAW[s].hidePOIs.length; t++) {
-            for ( var x = 0; x < LAST[r].hidePOIs.length; x++) {
-              if (RAW[s].hidePOIs[t].id == LAST[r].hidePOIs[x].id) {
-                RAW[s].hidePOIs[t].activated = LAST[r].hidePOIs[x].activated;
-                if (RAW[s].hidePOIs[t].activated) {
-                  RAW[s].setIcon(fh_marker_violet);
-                  console.log('reactivate parent ', RAW[s].id);
-                }
-              }
-            }
-          }
-          if (RAW[s].activated) {
-            RAW[s].setIcon(fh_marker_violet);
-            console.log('reactivate  ', LAST[r].id, ' to ', RAW[s].id);
-          }
+          RAW[s] = LAST[r];
+          //console.log('transform former stage ', RAW[s].id, RAW[s].activated, LAST[r].activated );
         }
       }
     }
 
-    Drupal.futurehistoryEntdecken[mapId].markers = [];
-
-    for (var i=0; Drupal.futurehistoryEntdecken[mapId].markers.length; i++){
-      // remove views
-      //Drupal.futurehistoryEntdecken.delMapArrow(Drupal.futurehistoryEntdecken[mapId].markers[i].id);
-      if (!$.isEmptyObject(Drupal.futurehistoryEntdecken[mapId].marker[i])) {
-        Drupal.futurehistoryEntdecken[mapId].marker[i].setMap(null);
-      }
-    }
-
-    //create the new Markers and push to the map
+    // build new markers
     Drupal.futurehistoryEntdecken[mapId].markers = [];
     for ( var m = 0; m < RAW.length; m++) {
-      //push the markers out
+      //console.log(' PUSH markers .. ', RAW[m].id);
       Drupal.futurehistoryEntdecken[mapId].markers.push(RAW[m]);
+    }
+
+    // some hassel with double drawn markers....
+    for ( var m = 0; m < Drupal.futurehistoryEntdecken[mapId].markers.length; m++) {
+      Drupal.futurehistoryEntdecken[mapId].markers[m].setMap(null);
+    }
+    for ( var m = 0; m < Drupal.futurehistoryEntdecken[mapId].markers.length; m++) {
+      //console.log('refresh ', Drupal.futurehistoryEntdecken[mapId].markers[m]);
+      Drupal.futurehistoryEntdecken[mapId].markers[m].setMap(Drupal.futurehistoryEntdecken[mapId].map);
+      Drupal.futurehistoryEntdecken[mapId].markers[m].setIcon(Drupal.futurehistoryEntdecken[mapId].markers[m].icon);
+      Drupal.futurehistoryEntdecken[mapId].markers[m].setZIndex(100000);
     }
   }
 
@@ -421,7 +431,7 @@
     // marker within double_swell value (meters ?) will be treated as same position...
     var double_swell = 5;
 
-    console.log('call markerStateChange ', markerId);
+    //console.log('call markerStateChange ', markerId);
 
     var activate_parent_idx = -1;
     for ( var i = 0; i < RAW.length; i++) {
@@ -450,6 +460,7 @@
         if (i == activate_parent_idx) {
           $('#thumbnail-pois li#thumb_'+RAW[i].id+'').addClass('active');
           $('#tc-'+RAW[i].id+'').slideDown("slow");
+          //console.log('activate ', RAW[i].id)
           RAW[i].activated = true;
           RAW[i].setIcon(fh_marker_violet);
           if(zoomLevel > 18) {
@@ -470,6 +481,7 @@
         $('#tc-'+RAW[i].id+'').hide();
         Drupal.futurehistoryEntdecken.delMapArrow(RAW[i].id);
         RAW[i].activated = false;
+        //console.log('deactivate ', RAW[i].id)
         if (RAW[i].hideother) {
           RAW[i].setIcon(fh_marker_blue_cross);
         } else {
@@ -503,14 +515,14 @@
         Drupal.futurehistoryEntdecken[mapId].map.fitBounds(place.geometry.viewport);
         Drupal.futurehistoryEntdecken[mapId].center_marker.setPosition(mapCenter)
         Drupal.futurehistoryEntdecken[mapId].map.setZoom(LAST_ZOOM);
-        console.log('set last ZOOM ', LAST_ZOOM);
+        //console.log('set last ZOOM ', LAST_ZOOM);
       } else {
         mapCenter = place.geometry.location;
         fh_cookie = {viewport:0, bounds:0, point:place.geometry.location} ;
         Drupal.futurehistoryEntdecken[mapId].map.setCenter(place.geometry.location);
         Drupal.futurehistoryEntdecken[mapId].center_marker.setPosition(mapCenter)
         Drupal.futurehistoryEntdecken[mapId].map.setZoom(LAST_ZOOM);
-        console.log('set last ZOOM ', LAST_ZOOM);
+        //console.log('set last ZOOM ', LAST_ZOOM);
       }
       $.cookie('fh_geolocation_cookie', JSON.stringify(fh_cookie), {path: '/'});
     }
@@ -679,7 +691,7 @@ Drupal.futurehistoryEntdecken.MarkerClusterer = function(map, opt_markers, opt_o
   /**
    * @private
    */
-  this.minClusterSize_ = options['minimumClusterSize'] || 2;
+  this.minClusterSize_ = options['minimumClusterSize'] || 3;
 
 
   /**
@@ -1461,15 +1473,16 @@ Drupal.futurehistoryEntdecken.Cluster.prototype.addMarker = function(marker) {
 
   marker.isAdded = true;
   this.markers_.push(marker);
-  FHclusterIDs.push(marker.id);
 
   var len = this.markers_.length;
 
   // modified linde, not all single points in every zoomlevel were drawn
-  //if (len < this.minClusterSize_ && marker.getMap() != this.map_) {
-  // Min cluster size not reached so show the marker.
-  //marker.setIcon(fh_marker_blue);
-  //marker.setMap(this.map_);
+  if (len < this.minClusterSize_ && marker.getMap() != this.map_) {
+    // Min cluster size not reached so show the marker.
+    //marker.setIcon(fh_marker_blue);
+    //marker.setMap(this.map_);
+    marker.setMap(null);
+  }
 
   if (len == this.minClusterSize_) {
     // Hide the markers that were showing.
@@ -1482,7 +1495,7 @@ Drupal.futurehistoryEntdecken.Cluster.prototype.addMarker = function(marker) {
 
   if (len >= this.minClusterSize_) {
     //console.log('marker in cluster ',marker.id);
-    //FHclusterIDs.push(marker.id);
+    FHclusterIDs.push(marker.id);
     marker.setMap(null);
   }
 
@@ -1881,7 +1894,7 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
       var portal_date_last = Drupal.settings.futurehistoryEntdecken.last_date;
       InitYearRange = [ Drupal.settings.futurehistoryEntdecken.first_date, Drupal.settings.futurehistoryEntdecken.last_date ];
 
-      console.log('time bounds fotos: ', portal_date_first + ' - ' + portal_date_last);
+      //console.log('time bounds fotos: ', portal_date_first + ' - ' + portal_date_last);
 
       //calculate the mapbox height
       var mapbox_height = $("html").height() - $("#navbar").height();
