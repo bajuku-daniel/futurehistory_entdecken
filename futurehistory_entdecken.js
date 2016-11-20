@@ -161,10 +161,18 @@
     // the Date Range : date=all <-- all dates, date=--1990 <-- all bevfore 1990, date=1990-- <-- all after 1990, date=1800--1990 <-- all between 1800 and 1990
     // date slider stuff (linde@webgis.de, 2016/05)
     // styles --> futurehistory_entdecken.css
+    // Daniel Frings: Portal first & last date :)
+
+    var portal_date_first = Drupal.settings.futurehistoryEntdecken.first_date;
+    var portal_date_last = Drupal.settings.futurehistoryEntdecken.last_date;
+    InitYearRange = [ Drupal.settings.futurehistoryEntdecken.first_date, Drupal.settings.futurehistoryEntdecken.last_date ];
+
+    console.log('time bounds fotos: ', portal_date_first + ' - ' + portal_date_last);
+
     $("#time_slider").slider({
       range: true,
-      min: 850,
-      max: 2016,
+      min: parseInt(portal_date_first),
+      max: parseInt(portal_date_last),
       values: InitYearRange,
       slide: function( event, ui ) {
         $("#time_range").val("Jahr " + ui.values[0] + " - Jahr " + ui.values[1]);
