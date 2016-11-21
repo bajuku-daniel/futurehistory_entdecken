@@ -145,7 +145,7 @@
       fillOpacity: 0.45,
       map: Drupal.futurehistoryEntdecken[mapId].map
     });
-    
+
     // Wrapper around addDomListener that removes the listener after the first event
     google.maps.event.addDomListenerOnce(marker.pie, 'click', function() {
       Drupal.futurehistoryEntdecken.deactivateMarker(i, mapId);
@@ -250,13 +250,14 @@
 
       var onclick = 'onclick="Drupal.futurehistoryEntdecken.markerStateChange(' + marker_content[i]['Nid'] + ', \'click\', \''+ mapId +'\', \'THUMB\')"';
       var info_url = '/node/' + marker_content[i]['Nid'];
+      //var poi_element = '<li id="thumb_' + marker_content[i]['Nid'] + '" '+ onclick + '><div class="ansicht_title"> '+ marker_content[i]['title'] + ' | '+ marker_content[i]['Jahr'] + ' </div> <img src="'+ marker_content[i]['bild-haupt-thumb'] + '"></li><div id="tc-' + marker_content[i]['Nid'] + '"  class="thumbnail-control"><div class="left" id="BildDetailLink" class="BildDetailLinkClass"><a onclick="Drupal.futurehistoryEntdecken.setComebackCookie(' + info_url +',' + mapId + ')"> <i class="material-icons">fullscreen</i> Bild<br>Details</a></div><div class="right"> <a href=""><i class="material-icons">collections</i> in meine Sammlung</a></div> ';
       var poi_element = '<li id="thumb_' + marker_content[i]['Nid'] + '" '+ onclick + '><div class="ansicht_title"> '+ marker_content[i]['title'] + ' | '+ marker_content[i]['Jahr'] + ' </div> <img src="'+ marker_content[i]['bild-haupt-thumb'] + '"></li><div id="tc-' + marker_content[i]['Nid'] + '"  class="thumbnail-control"><div class="left" id="BildDetailLink"><a href="'+info_url+'"> <i class="material-icons">fullscreen</i> Bild<br>Details</a></div><div class="right"> <a href=""><i class="material-icons">collections</i> in meine Sammlung</a></div> ';
       $('#thumbnail-pois').append(poi_element);
 
       $('#BildDetailLink a').click(function() {
         console.log(" click Bild detail ");
       });
- 
+
       // thumbs persistence engine :-)
       // remember active thumbs after ajax call / new marker set
       for ( var n = 0; n < RAW.length; n++) {
@@ -381,7 +382,7 @@
         if ( RAW[r].activated ) {
           // violet cross is missing
           RAW[r].setIcon(fh_marker_violet);
-          // console.log('call setMapArrow with marker not id', activate_parent); 
+          // console.log('call setMapArrow with marker not id', activate_parent);
           Drupal.futurehistoryEntdecken.setMapArrow(RAW[r], mapId);
         } else {
           RAW[r].setIcon(fh_marker_blue_cross);
@@ -451,7 +452,7 @@
         // console.log('activate parent', RAW[activateIDX].id);
         RAW[activateIDX].activated = true;
         Drupal.futurehistoryEntdecken.setActiveMarker(RAW[activateIDX].id, mapId);
-        // signal set: activate all in list of hidden 
+        // signal set: activate all in list of hidden
         /*
         for ( var x = 0; x < RAW[activateIDX].hidePOIs.length; x++) {
           RAW[activateIDX].hidePOIs[x].activated = true;
@@ -465,7 +466,7 @@
         // console.log('deactivate parent', RAW[deactivateIDX].id);
         RAW[deactivateIDX].activated = false;
         Drupal.futurehistoryEntdecken.deactivateMarker(RAW[deactivateIDX].id, mapId);
-        // signal set: deactivate all in list of hidden 
+        // signal set: deactivate all in list of hidden
         /*
         for ( var x = 0; x < RAW[deactivateIDX].hidePOIs.length; x++) {
           RAW[deactivateIDX].hidePOIs[x].activated = false;
@@ -508,7 +509,7 @@
   // Function: setActiveMarker
   Drupal.futurehistoryEntdecken.setActiveMarker = function(activate_parent, mapId) {
 
-    // console.log('in setActiveMarker ', activate_parent); 
+    // console.log('in setActiveMarker ', activate_parent);
     for ( var i = 0; i < RAW.length; i++) {
       if (RAW[i].id == activate_parent) {
         $('#thumbnail-pois li#thumb_'+RAW[i].id+'').addClass('active');
@@ -547,22 +548,17 @@
   Drupal.futurehistoryEntdecken.placesMapAction = function(place, mapId) {
     if (place == '' ){
     } else {
-      LAST_ZOOM = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
       var fh_cookie = {};
       if (place.geometry.viewport) {
         mapCenter = place.geometry.location;
         fh_cookie = {viewport:1, bounds:place.geometry.viewport, point:place.geometry.location } ;
         Drupal.futurehistoryEntdecken[mapId].map.fitBounds(place.geometry.viewport);
         Drupal.futurehistoryEntdecken[mapId].center_marker.setPosition(mapCenter)
-        Drupal.futurehistoryEntdecken[mapId].map.setZoom(LAST_ZOOM);
-        // console.log('set last ZOOM ', LAST_ZOOM);
       } else {
         mapCenter = place.geometry.location;
         fh_cookie = {viewport:0, bounds:0, point:place.geometry.location} ;
         Drupal.futurehistoryEntdecken[mapId].map.setCenter(place.geometry.location);
         Drupal.futurehistoryEntdecken[mapId].center_marker.setPosition(mapCenter)
-        Drupal.futurehistoryEntdecken[mapId].map.setZoom(LAST_ZOOM);
-        // console.log('set last ZOOM ', LAST_ZOOM);
       }
       $.cookie('fh_geolocation_cookie', JSON.stringify(fh_cookie), {path: '/'});
     }
@@ -1194,7 +1190,7 @@ Drupal.futurehistoryEntdecken.MarkerClusterer.prototype.setReady_ = function(rea
     var that = this;
     this.zoom_changed_listener = google.maps.event.addListener(this.map_, 'zoom_changed', function() {
         var zoom = that.map_.getZoom();
-        // console.log(' MarkerClusterer.prototype.setReady_ ZOOM changed func... '); 
+        // console.log(' MarkerClusterer.prototype.setReady_ ZOOM changed func... ');
 
         if (that.prevZoom_ != zoom) {
           that.prevZoom_ = zoom;
@@ -1202,10 +1198,10 @@ Drupal.futurehistoryEntdecken.MarkerClusterer.prototype.setReady_ = function(rea
         }
     });
     this.idle_listener = google.maps.event.addListener(this.map_, 'idle', function() {
-        // console.log(' MarkerClusterer.prototype.setReady_ IDLE func... '); 
+        // console.log(' MarkerClusterer.prototype.setReady_ IDLE func... ');
         that.redraw();
     });
-    // console.log(' former here were drawn the single markers independent from beeing cluster-member... '); 
+    // console.log(' former here were drawn the single markers independent from beeing cluster-member... ');
     // lindes cluster separator
     this.createClusters_();
     if(this.markers_ && this.markers_.length){
@@ -2048,15 +2044,9 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
         //first cookie check - where did we come from?
         // if cookie ok we override the default map values and initials
         var fh_cookiedata = JSON.parse($.cookie("fh_geolocation_cookie"));
-        var fh_lastview_cookiedata = JSON.parse($.cookie("fh_lastview_cookie"));
 
-/*
-        // linde: siehe unten: erst auf Viewport checken...
-        if (fh_cookiedata != null) {
-          mapCenter  = new google.maps.LatLng(fh_cookiedata.point);
-          mapZoom = 17;
-        }
-*/
+        //Daniel Frings: fh_lastview cookie erstmal ausgeschaltet
+        //var fh_lastview_cookiedata = JSON.parse($.cookie("fh_lastview_cookie"));
 
         Drupal.futurehistoryEntdecken[mapId].map = new google.maps.Map(this, {
           center: mapCenter,
@@ -2070,26 +2060,31 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           rotateControl:false,
         });
 
-
         // if the cookie contains a viewport override the map zoom with the viewport
-        if (fh_lastview_cookiedata != null) {
-          console.log('fh_lastview_cookie ', fh_lastview_cookiedata);
-          if (fh_lastview_cookiedata.viewport == 1) {
-            var map_viewport = fh_lastview_cookiedata.bounds;
+        if (fh_cookiedata != null) {
+          console.log('fh_cookiedata ', fh_cookiedata);
+          if (parseInt(fh_cookiedata.viewport) == 1) {
+            var map_viewport = fh_cookiedata.bounds;
             Drupal.futurehistoryEntdecken[mapId].map.fitBounds(map_viewport);
+          } else {
+            mapCenter  = new google.maps.LatLng(fh_cookiedata.point);
+            mapZoom = 17;
           }
-        } else {
-          if (fh_cookiedata != null) {
-            console.log('fh_cookiedata ', fh_cookiedata);
-            if (fh_cookiedata.viewport == 1) {
-              var map_viewport = fh_cookiedata.bounds;
+        }
+        
+        //Daniel Frings: fh_lastview cookie erstmal ausgeschaltet
+        /*
+        else {
+          if (fh_lastview_cookiedata != null) {
+            console.log('fh_lastview_cookie ', fh_lastview_cookiedata);
+            if (fh_lastview_cookiedata.viewport == '1') {
+              var map_viewport = fh_lastview_cookiedata.bounds;
               Drupal.futurehistoryEntdecken[mapId].map.fitBounds(map_viewport);
-            } else {
-              mapCenter  = new google.maps.LatLng(fh_cookiedata.point);
-              mapZoom = 17;
             }
           }
         }
+        */
+
 
         // set the "center" - marker to calculate the distance
         Drupal.futurehistoryEntdecken[mapId].center_marker = new google.maps.Marker({
@@ -2145,26 +2140,26 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           $("#tourismus").prop("checked", false );
           $("#time_slider").slider('values',InitYearRange); // reset
           $("#time_range").val( "Jahr " + InitYearRange[0] + " - Jahr " + InitYearRange[1] );
-          
+
           RequestDate = String(InitYearRange[0]) + '--' + String(InitYearRange[1]);
           Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
         });
 
         $("#erinnern").change(function() {
-          $(this).prop("checked") ?  kategorie.push('Erinnern') : kategorie = $.grep(kategorie, function(value) { 
-            return value != 'Erinnern'; 
+          $(this).prop("checked") ?  kategorie.push('Erinnern') : kategorie = $.grep(kategorie, function(value) {
+            return value != 'Erinnern';
           });
           Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
 	});
         $("#stadtbild").change(function() {
-          $(this).prop("checked") ?  kategorie.push('Stadtbild') : kategorie = $.grep(kategorie, function(value) { 
-            return value != 'Stadtbild'; 
+          $(this).prop("checked") ?  kategorie.push('Stadtbild') : kategorie = $.grep(kategorie, function(value) {
+            return value != 'Stadtbild';
           });
           Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
 	});
         $("#tourismus").change(function() {
           $(this).prop("checked") ?  kategorie.push('Tourismus') : kategorie = $.grep(kategorie, function(value) {
-             return value != 'Tourismus'; 
+             return value != 'Tourismus';
           });
           Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
 	});
@@ -2176,17 +2171,22 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
       $("#erinnern").prop("checked", false );
       $("#stadtbild").prop("checked", false );
       $("#tourismus").prop("checked", false );
-      $("#BildDetailLink").click(function() {
-        console.log("Handler for .click() called.");
+
+    /*
+    Daniel Frings -> Lastview Cookies erstmal auskommentiert
+      $(window).unload(function() {
+        console.log("Handler for unload");
+        $.cookie('fh_geolocation_cookie', '', {path: '/'});
         var fh_cookie_view = {};
         var bounds = Drupal.futurehistoryEntdecken[mapId].map.getBounds();
         var center = Drupal.futurehistoryEntdecken[mapId].map.getCenter();
         fh_cookie_view = {viewport:1, bounds:bounds, point:center, note:'Back from Bild Detail'};
         $.cookie('fh_lastview_cookie', JSON.stringify(fh_cookie_view), {path: '/'});
       });
+      */
+
     // ending all the drupal behaviors,atach, settings stuff..
     }
   };
 })(jQuery);
-
 // firebug: window.Drupal.futurehistoryEntdecken["futurehistory-entdecken-first-map-page-1"].map.getZoom()
