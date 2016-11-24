@@ -314,9 +314,11 @@
 
     $.each(marker_content, function() {
       var markerPosition = new google.maps.LatLng(this.lat, this.lon);
-      var marker = new google.maps.Marker({
+      // marker to map? Alle - auch Cluster (!)
+       var marker = new google.maps.Marker({
         position: markerPosition,
         map: null,
+        //map: Drupal.futurehistoryEntdecken[mapId].map,
         title: this.title,
         id: this.Nid,
         icon: fh_marker_trans
@@ -330,10 +332,11 @@
       marker.hidden = false;
       marker.hiddenactive = false;
       marker.hidden_active_counter = 0;
-      marker.activated = false;
+      marker.activated = true;
       marker.hideIds = [];
       marker.hidePOIs = [];
 
+      // Highlight the marker and thumbnail
       // console.log('Add Listener Click-Event to marker id ', marker.id);
       google.maps.event.addListener(marker, 'click', function() {
         // console.log('click on id ', marker.id);
@@ -348,27 +351,43 @@
     // filter hidden marker, build list of hidden children
     // console.log('in RAW before hidden-filter ', RAW.length);
     for ( var r = 0; r < RAW.length; r++) {
+
       // initial
       RAW[r].activated = false;
       RAW[r].pie.setMap(null);
+
+      // persistenz step 2 - set signal
+      for ( var a = 0; a < LAST.length; a++) {
+        if ( LAST[a].id == RAW[r].id ) {
+          //if (LAST[a].activated) {
+            // console.log('persist state activated ', LAST[a].id, ' to ', LAST[a].activated);
+          //}
+          RAW[r].activated = LAST[a].activated;
+          break;
+        }
+      }
+
       RAW[r].hidden_active_counter = 0;
       for ( var x = 0; x < RAW.length; x++) {
-        if (RAW[r].id != RAW[x].id && (RAW[r].hidden != true &&  RAW[x].hidden != true)) {
+        if (RAW[r].id != RAW[x].id && RAW[x].hidden != true && RAW[x].hideother == false) {
           var dist = google.maps.geometry.spherical.computeDistanceBetween(RAW[r].position, RAW[x].position);
           if (dist < double_swell) {
             RAW[x].pie.setMap(null);
             RAW[x].hidden = true;
-            RAW[r].hideIds.push(RAW[x].id);
             RAW[r].hidePOIs.push(RAW[x]);
             RAW[r].hideother = true;
             RAW[r].hiddenactive = false;
+            RAW[r].hideIds.push(RAW[x].id);
             RAW[r].setIcon(fh_marker_blue_cross);
-            // console.log('add hidden x -> r ', RAW[x].id, ' to ', RAW[r].id);
+            console.log('add hidden x -> r ', RAW[x].id, ' to ', RAW[r].id);
+            RAW.splice(x, 1);
+            hidden = true;
+            break;
             if ( LAST_ACTIVE_NID > -1 ) {
               if  ( RAW[x].id == LAST_ACTIVE_NID ) {
                  RAW[r].hiddenactive = true;
                  RAW[x].activated = true;
-                 // console.log('parent icon active ', RAW[r].id);
+                 // console.log('parent icon avtive ', RAW[r].id);
                  RAW[r].setIcon(fh_marker_violet);
                  // console.log('show hidden poi viewpos ', RAW[x].id);
                  Drupal.futurehistoryEntdecken.setMapArrow(RAW[x], mapId);
@@ -377,78 +396,38 @@
           }
         }
       } // inner loop list hidden POIs
-      if (RAW[r].hidden) {
-        // already sorted in hidden list of sombody other
-        // splice later
-        continue;
-      } 
-    } // outer loop
-
-
-    for ( var r = 0; r < RAW.length; r++) {
-      if (RAW[r].hidden) {
-        // console.log('remove hidden from RAW ', RAW[r].id);
-        RAW.splice(r, 0);
-      }
-    }
-    // console.log('in RAW after hidden-filter ', RAW.length);
-
-    // persistenz step 2 - after zoom, pan --> transfer state
-    for ( var a = 0; a < LAST.length; a++) {
-      for ( var r = 0; r < RAW.length; r++) {
-        if ( RAW[r].id == LAST[a].id ) {
-          // console.log('persist state activated ', LAST[a].id, ' to ', LAST[a].activated);
-          RAW[r].activated = LAST[a].activated;
-          if (LAST[a].hideother) {
-            for ( var b = 0; b < LAST[a].hidePOIs.length; b++) {
-              for ( var x = 0; x < RAW[r].hidePOIs.length; x++) {
-                if  ( RAW[r].hidePOIs[x].id == LAST[a].hidePOIs[b].id ) {
-                  // console.log('transfer state of hidden list member ', LAST[a].hidePOIs[b].id, ' > ', LAST[a].hidePOIs[b].activated);
-                  RAW[r].hidePOIs[x].activated = LAST[a].hidePOIs[b].activated
-                  // break;
-                }
-              }
-            }
-          }
-          // break;
-        }
-      }
-    }
-    // persistenz step 3, back from BildDetail
-    if ( LAST_ACTIVE_NID > -1 ) {
-      for ( var r = 0; r < RAW.length; r++) {
-        if ( RAW[r].id == LAST_ACTIVE_NID ) {
+      // persistenz step 3
+      if ( LAST_ACTIVE_NID > -1 ) {
+        if  ( RAW[r].id == LAST_ACTIVE_NID ) {
           RAW[r].activated = true;
         }
-        for ( var x = 0; x < RAW[r].hidePOIs.length; x++) {
-          if ( RAW[r].hidePOIs[x].id == LAST_ACTIVE_NID ) {
-            RAW[r].hidePOIs[x].activated = true;
-          }
-        }
       }
-    }
 
-    // set Icons / pie
-    for ( var r = 0; r < RAW.length; r++) {
-      if ( RAW[r].activated || RAW[r].hiddenactive ) {
-        if ( RAW[r].hideother ) {
+      /* TODO not all pies of hidden list */
+      if ( RAW[r].hideother ) {
+        if ( RAW[r].activated ) {
+          // violet cross is missing
+          RAW[r].setIcon(fh_marker_violet);
+          // console.log('call setMapArrow with marker not id', activate_parent);
+          Drupal.futurehistoryEntdecken.setMapArrow(RAW[r], mapId);
+        } else {
+          RAW[r].setIcon(fh_marker_blue_cross);
+          Drupal.futurehistoryEntdecken.delMapArrow(RAW[r]);
+        }
+      } else {
+        if ( RAW[r].activated ) {
           // violet cross is missing
           RAW[r].setIcon(fh_marker_violet);
           Drupal.futurehistoryEntdecken.setMapArrow(RAW[r], mapId);
         } else {
-          RAW[r].setIcon(fh_marker_violet);
-          Drupal.futurehistoryEntdecken.setMapArrow(RAW[r], mapId);
-        }
-      } else {
-        // inactive
-        Drupal.futurehistoryEntdecken.delMapArrow(RAW[r]);
-        if ( RAW[r].hideother ) {
-          RAW[r].setIcon(fh_marker_blue_cross);
-        } else {
-          RAW[r].setIcon(fh_marker_blue);
+          if ( ! RAW[r].hiddenactive ) {
+            RAW[r].setIcon(fh_marker_blue);
+            Drupal.futurehistoryEntdecken.delMapArrow(RAW[r]);
+          }
         }
       }
-    }
+    } // outer loop
+    // console.log('in RAW after hidden-filter ', RAW.length);
 
     if (typeof markerCluster != "undefined") {
       // console.log('REMOVE last markerCluster ');
@@ -469,8 +448,6 @@
     if ( src == 'THUMB' ) {
       for ( var i = 0; i < RAW.length; i++) {
         if ( RAW[i].id == markerId) {
-          // console.log('call markerStateChange on ', markerId, ' data ', RAW[i]);
-          
           if ( RAW[i].id.activated == true) {
             RAW[i].activated = false;
             $('#thumbnail-pois li#thumb_'+RAW[i].id+'').removeClass('active');
@@ -501,7 +478,7 @@
         }
         for ( var x = 0; x < RAW[i].hidePOIs.length; x++) {
           if ( RAW[i].hidePOIs[x].id == markerId) {
-            if ( RAW[i].hidePOIs[x].activated == true) {
+            if ( RAW[i].hidePOIs[x].id.activated == true) {
               RAW[i].hidePOIs[x].activated = false;
               $('#thumbnail-pois li#thumb_'+RAW[i].hidePOIs[x].id+'').removeClass('active');
               $('#tc-'+RAW[i].hidePOIs[x].id+'').hide();
@@ -510,7 +487,6 @@
               RAW[i].hidePOIs[x].activated = true;
               $('#thumbnail-pois li#thumb_'+RAW[i].hidePOIs[x].id+'').addClass('active');
               $('#tc-'+RAW[i].hidePOIs[x].id+'').slideDown("slow");
-              // parent marker ... hidden not drawn
               RAW[i].setIcon(fh_marker_violet);
               Drupal.futurehistoryEntdecken.setMapArrow(RAW[i].hidePOIs[x], mapId);
             }
@@ -523,7 +499,6 @@
           }
         }
       }
-      // click on thumb, job finished here
       return;
     }
 
@@ -541,27 +516,49 @@
           deactivateIDX = i;
         }
       }
+      // search in list of hidden markers at every position
+      // click auf hidden? muss ebenfalls den gesamten marker umnstellen....
+      // hidden list POIs dont have marker with click listener....
+      /*
+      for ( var x = 0; x < RAW[i].hidePOIs.length; x++) {
+        if (RAW[i].hidePOIs[x].id == markerId) {
+          if (!RAW[i].activated) {
+            activateIDX = i;
+            console.log('signal activate all childs - one of the hidden childs is clicked', markerId);
+          } else {
+            console.log('click on active: signal deactivate all childs ', markerId);
+            deactivateIDX = i;
+          }
+        }
+      }
+      */
       if ( activateIDX > -1) {
         // activate parent
         // console.log('activate parent', RAW[activateIDX].id);
         RAW[activateIDX].activated = true;
         Drupal.futurehistoryEntdecken.setActiveMarker(RAW[activateIDX].id, mapId);
         // signal set: activate all in list of hidden
+        /*
         for ( var x = 0; x < RAW[activateIDX].hidePOIs.length; x++) {
           RAW[activateIDX].hidePOIs[x].activated = true;
-          // console.log('activate hidden child', markerId);
+          console.log('activate hidden child', markerId);
+          Drupal.futurehistoryEntdecken.setActiveMarker(RAW[activateIDX].hidePOIs[x].id, mapId);
         }
+        */
       }
       if ( deactivateIDX > -1) {
-        // deactivate parent
+        // activate parent
         // console.log('deactivate parent', RAW[deactivateIDX].id);
         RAW[deactivateIDX].activated = false;
         Drupal.futurehistoryEntdecken.deactivateMarker(RAW[deactivateIDX].id, mapId);
         // signal set: deactivate all in list of hidden
+        /*
         for ( var x = 0; x < RAW[deactivateIDX].hidePOIs.length; x++) {
           RAW[deactivateIDX].hidePOIs[x].activated = false;
-          console.log('deactivate hidden child', RAW[deactivateIDX].hidePOIs[x].id);
+          console.log('deactivate hidden child', markerId);
+          Drupal.futurehistoryEntdecken.deactivateMarker(RAW[deactivateIDX].hidePOIs[x].id, mapId);
         }
+        */
       }
     }
   }
@@ -642,14 +639,14 @@
       if (place.geometry.viewport) {
         mapCenter = place.geometry.location;
         fh_cookie = {viewport:1, bounds:place.geometry.viewport, point:place.geometry.location } ;
-        Drupal.futurehistoryEntdecken[mapId].map.fitBounds(place.geometry.viewport);
+        //Drupal.futurehistoryEntdecken[mapId].map.fitBounds(place.geometry.viewport);
       } else {
         mapCenter = place.geometry.location;
         fh_cookie = {viewport:0, bounds:0, point:place.geometry.location} ;
-        Drupal.futurehistoryEntdecken[mapId].map.setCenter(place.geometry.location);
-        Drupal.futurehistoryEntdecken[mapId].map.setZoom(DEFAULT_ZOOM);
+        //Drupal.futurehistoryEntdecken[mapId].map.setCenter(place.geometry.location);
       }
-      //Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
+      Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
+      Drupal.futurehistoryEntdecken[mapId].map.setZoom(DEFAULT_ZOOM);
       Drupal.futurehistoryEntdecken[mapId].center_marker.setPosition(mapCenter);
     
       $.cookie('fh_geolocation_cookie', JSON.stringify(fh_cookie), {path: '/'});
@@ -1294,30 +1291,17 @@ Drupal.futurehistoryEntdecken.MarkerClusterer.prototype.setReady_ = function(rea
         // console.log(' MarkerClusterer.prototype.setReady_ IDLE func... ');
         that.redraw();
     });
-
     // console.log(' former here were drawn the single markers independent from beeing cluster-member... ');
     // lindes cluster separator
-
     this.createClusters_();
     if(this.markers_ && this.markers_.length){
       for (var c = 0, cluster; cluster = this.clusters_[c]; c++) {
         // console.log('check all cluster length ', cluster.markers_.length);
         for ( var m = 0; m < cluster.markers_.length; m++) {
           if (cluster.markers_.length < this.minClusterSize_) {
-            if (cluster.markers_[m].hidden == false) {
-              // console.log('marker not in cluster ', cluster.markers_[m].id, ' data ', cluster.markers_[m]);
-	      cluster.markers_[m].nocluster = true;
-              cluster.markers_[m].setMap(this.map_);
-            } else {
-              // console.log('do not draw hidden pois', cluster.markers_[m].id);
-              for ( var x = 0; x < cluster.markers_[m].hidePOIs.length; x++) {
-                console.log('iterate hidden list ', cluster.markers_[m].hidePOIs[x]);
-                if ( cluster.markers_[m].hidePOIs[x].activated ) {     
-                  console.log('but draw viewpos of activated hidden pois', cluster.markers_[m].hidePOIs[x].id);
-                  Drupal.futurehistoryEntdecken.setMapArrow(cluster.markers_[m].hidePOIs[x], mapId);
-                }
-              }
-            }
+            // console.log('marker not in cluster ', cluster.markers_[m].id);
+	    cluster.markers_[m].nocluster = true;
+            cluster.markers_[m].setMap(this.map_);
           }
         }
       }
@@ -2205,9 +2189,9 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
             var mapCenter = new google.maps.LatLng(parseFloat(fh_lastview_cookiedata.lat),parseFloat(fh_lastview_cookiedata.lng));
             Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
             Drupal.futurehistoryEntdecken[mapId].map.setZoom(parseFloat(fh_lastview_cookiedata.zoom));
-            // console.log('fh_lastview_cookie LAST_ACTIVE_NID ', LAST_ACTIVE_NID);
-            // console.log('fh_lastview_cookie mapCenter ', mapCenter);
-            // console.log('fh_lastview_cookie zoom ', fh_lastview_cookiedata.zoom);
+            console.log('fh_lastview_cookie LAST_ACTIVE_NID ', LAST_ACTIVE_NID);
+            console.log('fh_lastview_cookie mapCenter ', mapCenter);
+            console.log('fh_lastview_cookie zoom ', fh_lastview_cookiedata.zoom);
           }
           // single use, remove
           $.cookie('fh_lastview_cookie', null, { path: '/' });
