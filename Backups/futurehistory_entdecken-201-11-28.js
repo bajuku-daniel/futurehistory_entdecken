@@ -3,7 +3,6 @@
 
   //fixed and initial values
 
-  var CALL_onpopstate = false;
   var RAW = [];
   var DEFAULT_ZOOM = 17;
   var LAST_ACTIVE_NID = -1;
@@ -1288,6 +1287,10 @@ Drupal.futurehistoryEntdecken.MarkerClusterer.prototype.setReady_ = function(rea
         var zoom = that.map_.getZoom();
         // console.log(' MarkerClusterer.prototype.setReady_ ZOOM changed func... ');
         if (that.prevZoom_ != zoom) {
+          var coords = that.map_.getCenter();
+          window.location = '#' + encodeURI(coords.lat() + '#' + coords.lng() + '#' + zoom);
+          console.log(' pushState zoom_changed ', window.location.hash);
+          history.pushState({page:1}, 'title', '');
           that.prevZoom_ = zoom;
           that.resetViewport();
         }
@@ -2140,8 +2143,6 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
 
 
       $('.futurehistory-entdecken-map', context).each(function() {
-
-
         // MAP STUFF
         // The MAP div is located in "futurehistory-entdecken-map.tpl.php" and feed with the $atribute options created in "futurehistory_entdecken_plugin_style_google_map.inc" and the associated VIEW in the Drupal Backend
         var $this = $(this);
@@ -2231,18 +2232,27 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           $.cookie('fh_lastview_cookie', null, { path: '/' });
         }
 
-        // https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onpopstate
+        
+/*
+https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onpopstate
+
+A popstate event is dispatched to the window every time the active history entry changes between two history entries for the same document. If the history entry being activated was created by a call to history.pushState() or was affected by a call to history.replaceState(), the popstate event's state property contains a copy of the history entry's state object.
+
+Note that just calling history.pushState() or history.replaceState() won't trigger a popstate event. The popstate event is only triggered by doing a browser action such as clicking on the back button (or calling history.back() in JavaScript). And the event is only triggered when the user navigates between two history entries for the same document.
+
+Browsers tend to handle the popstate event differently on page load. Chrome (prior to v34) and Safari (prior to 10.0) always emit a popstate event on page load, but Firefox doesn't.
+*/
         window.onpopstate = function(event) {
-          CALL_onpopstate = true;
-          // console.log(" !! onpopstate location: " + document.location + " state ==  " + JSON.stringify(event.state));
-          
-          var laststate = JSON.parse(JSON.stringify(event.state));
-          if (laststate) {
-            // console.log(' HISTORY back...', laststate.view );
-            mapCenter = new google.maps.LatLng(parseFloat(laststate.view.split('#')[1]), parseFloat(laststate.view.split('#')[2]));
-            mapZoom = parseInt(laststate.view.split('#')[3]);
+          console.log(" !! onpopstate location: " + document.location + " state ==  " + JSON.stringify(event.state));
+          window.history.go(-2);
+          return false;
+          if (event.state) {
+            console.log(' HISTORY back...' );
+            mapCenter = new google.maps.LatLng(parseFloat(window.location.hash.split('#')[1]), parseFloat(window.location.hash.split('#')[2]));
+            mapZoom = parseInt(window.location.hash.split('#')[3]);
             Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
             Drupal.futurehistoryEntdecken[mapId].map.setZoom(mapZoom);
+            console.log(parseFloat(window.location.hash.split('#')[1]), ' ', parseFloat(window.location.hash.split('#')[2]), ' ', parseInt(window.location.hash.split('#')[3]));
           }
         };
 
@@ -2253,37 +2263,13 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
 	});
 
-        google.maps.event.addListener(Drupal.futurehistoryEntdecken[mapId].map, "rightclick", function(event) {
-          var coords = Drupal.futurehistoryEntdecken[mapId].map.getCenter();
-          var zoomLevel = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
-
-          var CC = Drupal.futurehistoryEntdecken[mapId].map.controls[google.maps.ControlPosition.TOP_CENTER];
-          if (CC.length) {
-            CC.forEach( function ( element, index ) {
-              console.log ('CC', index);
-              CC.clear(index);
-              //CC.removeAt(index);
-            } );
-            return;
-          }
-          var centerControlDiv = document.createElement('div');
-          var centerControl = new CenterControl(centerControlDiv, Drupal.futurehistoryEntdecken[mapId].map, 
-             window.location + encodeURI('#' + coords.lat() + '#' + coords.lng() + '#' + Drupal.futurehistoryEntdecken[mapId].map.getZoom()));
-          centerControlDiv.index = 1;
-          Drupal.futurehistoryEntdecken[mapId].map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
-        });
-
         google.maps.event.addListener(Drupal.futurehistoryEntdecken[mapId].map, 'dragend', function() {
            var coords = Drupal.futurehistoryEntdecken[mapId].map.getCenter();
            var zoomLevel = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
-           // history back again fires a dragend or zoom_changed event via onpopState, then we stay in place.... filter out
-           if (!CALL_onpopstate) {
-             var view = '#' + encodeURI(coords.lat() + '#' + coords.lng() + '#' + Drupal.futurehistoryEntdecken[mapId].map.getZoom());
-             history.pushState({view:view}, '', '');
-             console.log(' pushState ', view );
-           } else {
-             CALL_onpopstate = false;
-           }
+           window.location = '#' + encodeURI(coords.lat() + '#' + coords.lng() + '#' + Drupal.futurehistoryEntdecken[mapId].map.getZoom());
+           console.log(' pushState dragend history len ', window.history.length);
+           console.log(' history state ', window.history.state);
+           history.pushState({uage:1}, 'title', '');
         });
 
         // switch the map type on established zoom level
@@ -2297,14 +2283,11 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
             Drupal.futurehistoryEntdecken[mapId].map.setMapTypeId(google.maps.MapTypeId.HYBRID);
             Drupal.futurehistoryEntdecken[mapId].map.setTilt(0);
           }
-          // history back again fires a dragend or zoom_changed event via onpopState, then we stay in place.... filter out
-          if (!CALL_onpopstate) {
-            var view = '#' + encodeURI(coords.lat() + '#' + coords.lng() + '#' + Drupal.futurehistoryEntdecken[mapId].map.getZoom());
-            history.pushState({view:view}, '', '');
-            console.log(' pushState ', view );
-          } else {
-            CALL_onpopstate = false;
-          }
+/*
+          window.location = '#' + encodeURI(coords.lat() + '#' + coords.lng() + '#' + zoomLevel);
+          console.log(' pushState zoom_changed ', window.location.hash);
+          history.pushState({page:1}, 'title', '');
+*/
         });
 
         // Toggle the filter and sort boxes with jquery magic
@@ -2362,36 +2345,8 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
       $("#erinnern").prop("checked", false );
       $("#stadtbild").prop("checked", false );
       $("#tourismus").prop("checked", false );
-
-
-      function CenterControl(controlDiv, map, link) {
-
-        // Set CSS for the control border.
-        var controlUI = document.createElement('div');
-        controlUI.style.backgroundColor = '#fff';
-        controlUI.style.border = '2px solid #fff';
-        controlUI.style.borderRadius = '3px';
-        controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
-        controlUI.style.cursor = 'pointer';
-        controlUI.style.marginBottom = '22px';
-        controlUI.style.textAlign = 'center';
-        controlUI.title = 'right click to hide the hash';
-        controlDiv.appendChild(controlUI);
-
-        // Set CSS for the control interior.
-        var controlText = document.createElement('div');
-        controlText.style.color = 'rgb(25,25,25)';
-        controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
-        controlText.style.fontSize = '12px';
-        controlText.style.lineHeight = '20px';
-        controlText.style.paddingLeft = '5px';
-        controlText.style.paddingRight = '5px';
-        controlText.innerHTML = link;
-        controlUI.appendChild(controlText);
-
-      }
-
     // ending all the drupal behaviors,atach, settings stuff..
     }
   };
 })(jQuery);
+// firebug: window.Drupal.futurehistoryEntdecken["futurehistory-entdecken-first-map-page-1"].map.getZoom()
