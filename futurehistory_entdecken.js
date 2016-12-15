@@ -651,7 +651,7 @@
       for ( var i = 0; i < RAW.length; i++) {
         for ( var x = 0; x < RAW[i].hidePOIs.length; x++) {
           if ( RAW[i].hidePOIs[x].id != markerId && RAW[i].id != markerId && RAW[i].hidePOIs[x].activated == true) {
-            console.log('---  deactivate hidden active marker', RAW[i].hidePOIs[x].id);
+            // console.log('---  deactivate hidden active marker', RAW[i].hidePOIs[x].id);
             Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].hidePOIs[x].id, mapId);
           }
         }
@@ -685,14 +685,12 @@
       if (RAW[i].id == markerID) {
         Drupal.futurehistoryEntdecken.delMapArrow(RAW[i]);
         Drupal.futurehistoryEntdecken.closeThumb(RAW[i]);
-        console.log(' M', RAW[i]);
       } else {
         // additionally check for hidden active marker
         for (var x = 0; x < RAW[i].hidePOIs.length; x++) {
           if (RAW[i].hidePOIs[x].id == markerID) {
             Drupal.futurehistoryEntdecken.delMapArrow(RAW[i].hidePOIs[x]);
             Drupal.futurehistoryEntdecken.closeThumb(RAW[i].hidePOIs[x]);
-            console.log(' M hidden', RAW[i].hidePOIs[x]);
           }
         }
       }
