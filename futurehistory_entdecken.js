@@ -685,12 +685,14 @@
       if (RAW[i].id == markerID) {
         Drupal.futurehistoryEntdecken.delMapArrow(RAW[i]);
         Drupal.futurehistoryEntdecken.closeThumb(RAW[i]);
+        console.log(' M', RAW[i]);
       } else {
         // additionally check for hidden active marker
         for (var x = 0; x < RAW[i].hidePOIs.length; x++) {
           if (RAW[i].hidePOIs[x].id == markerID) {
             Drupal.futurehistoryEntdecken.delMapArrow(RAW[i].hidePOIs[x]);
             Drupal.futurehistoryEntdecken.closeThumb(RAW[i].hidePOIs[x]);
+            console.log(' M hidden', RAW[i].hidePOIs[x]);
           }
         }
       }
@@ -705,13 +707,12 @@
       var ActIcon = undefined;
       if (RAW[i].id == markerID) {
         if ( RAW[i].activated == false ) {
+          ActIcon = fh_marker_blue;
           if (RAW[i].hideother) {
             ActIcon = fh_marker_blue_cross;
-          } else {
-            ActIcon = fh_marker_blue;
           }
           for (var x = 0; x < RAW[i].hidePOIs.length; x++) {
-            if ( RAW[i].hidePOIs[x].activated ) {
+            if ( RAW[i].hidePOIs[x].activated == true ) {
               ActIcon = fh_marker_violet;
             }
           }
@@ -719,11 +720,21 @@
           ActIcon = fh_marker_violet;
         }
       } 
-      // additionally check for hidden active marker
-      for (var x = 0; x < RAW[i].hidePOIs.length; x++) {
-        if (RAW[i].hidePOIs[x].id == markerID) {
-          if ( RAW[i].hidePOIs[x].activated ) {
-            ActIcon = fh_marker_violet;
+      if ( ActIcon === undefined) {
+        // additionally check for hidden active marker
+        var active_in_hidden_list = false;
+        for (var x = 0; x < RAW[i].hidePOIs.length; x++) {
+          if ( RAW[i].hidePOIs[x].activated == true ) {
+            active_in_hidden_list = true;
+          }
+        }
+        for (var x = 0; x < RAW[i].hidePOIs.length; x++) {
+          if (RAW[i].hidePOIs[x].id == markerID) {
+            if ( active_in_hidden_list == true ||  RAW[i].activated ) {
+               ActIcon = fh_marker_violet;
+            } else {
+               ActIcon = fh_marker_blue_cross;
+            }
           }
         }
       }
