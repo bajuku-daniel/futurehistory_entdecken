@@ -216,9 +216,10 @@ class futurehistory_entdecken_plugin_style_google_map extends views_plugin_style
     }
 
     $this->view->field[$futurehistory_field]->options['exclude'] = TRUE;
-    $this->render_fields($this->view->result);
-
+  //  $this->render_fields($this->view->result);
     $markers = array();
+
+
     foreach ($this->view->result as $row_index => $row) {
       if (!$row->{'field_' . $futurehistory_field}) {
         continue;
@@ -226,40 +227,39 @@ class futurehistory_entdecken_plugin_style_google_map extends views_plugin_style
 
       $marker_icon = '';
       if ($this->options['marker_icon_field']) {
-        $marker_icon = $this->get_field($row_index, $this->options['marker_icon_field']);
+        $marker_icon = $this->view->render_field($this->options['marker_icon_field'],$row_index );
       }
 
       $marker_url = '';
       if ($this->options['marker_url_field']) {
-        $marker_url = $this->get_field($row_index, $this->options['marker_url_field']);
+        $marker_url = $this->view->render_field($this->options['marker_url_field'], $row_index);
       }
 
       $marker_title = '';
       if ($this->options['marker_title_field']) {
-        $marker_title = $this->get_field($row_index, $this->options['marker_title_field']);
-        $marker_title = strip_tags($marker_title);
-        $marker_title = decode_entities($marker_title);
+        $marker_title = $row->node_title;
       }
 
       // get all portal dates
       //ATTENTION : needs field "jahr" in the MAP as raw view
-
       $portal_dates[] = $row->field_field_jahr[0]['raw']['value'];
 
+
       //get the Koordinates from the futurehistory field
-      $this->view->row_index = $row_index;
-      $marker_content = $this->row_plugin->render($row);
+      //$this->view->row_index = $row_index;
+      //$marker_content = $this->row_plugin->render($row);
       foreach ($row->{'field_' . $futurehistory_field} as $field_value) {
         $markers[] = array(
           'lat' => (float)$field_value['raw']['lat'],
           'lng' => (float)$field_value['raw']['lng'],
           'icon' => $marker_icon,
           'url' => $marker_url,
-          'content' => $marker_content,
+          //'content' => $marker_content,
           'title' => $marker_title,
         );
       }
     }
+
     unset($this->view->row_index);
 
     // sort all dates and get first/last
@@ -308,6 +308,7 @@ class futurehistory_entdecken_plugin_style_google_map extends views_plugin_style
     drupal_add_js(drupal_get_path('module', 'futurehistory_entdecken') . '/js-plugins/jquery.scrollTo.min.js');
     $bbox_raw = (isset($_GET['bbox']) ? $_GET['bbox'] : 'noBbox');
 
+
     return theme($this->theme_functions(), array(
       'view' => $this->view,
       'options' => $this->options,
@@ -332,5 +333,6 @@ class futurehistory_entdecken_plugin_style_google_map extends views_plugin_style
       ),
       'markers' =>  $markers,
     ));
+
   }
 }
