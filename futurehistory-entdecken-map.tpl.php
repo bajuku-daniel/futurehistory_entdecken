@@ -17,7 +17,7 @@
     </div>
 
     <div id="thumbnail-filter-box">
-      
+
       <div id="fh-reset-filter">
         <a class="reset-filter-link" id="reset-filter-link"><?php print t('X Filter zurücksetzen'); ?></a>
       </div>
@@ -25,16 +25,16 @@
       <div id="sammlungen_selector">
         <form>
           <input type="radio" id="fh_show_only_collections" name="show_collections" /> <label for="fh_show_only_collections"> <?php print t('Nur Sammlungen anzeigen'); ?> </label><br>
-          <input type="radio" checked="checked" id="fh_show_all_collections" name="show_collections" /> <label for="fh_show_all_collections"> <?php print t('Alles anzeigen'); ?></label>                    
+          <input type="radio" checked="checked" id="fh_show_all_collections" name="show_collections" /> <label for="fh_show_all_collections"> <?php print t('Alles anzeigen'); ?></label>
         </form>
       </div>
-        
+
       <div id="time_slider_box">
         <div id="time_slider"></div>
         <div id="time_display">
           <label for="time_range">Zeitraum:</label>
           <input type="text" id="time_range">
-        </div> 
+        </div>
       </div>
 
       <div id="kategory_selector">
@@ -62,7 +62,7 @@
       <div id="sort_selector">
         <form>
           <div class="sort-box"><input type="radio" checked="checked" id="fh_sort_dist" name="fh_sort" /> <label for="fh_sort_dist"> <?php print t('Entfernung'); ?> </label></div><br>
-          <div class="sort-box"><input type="radio" id="fh_sort_year" name="fh_sort" /> <label for="fh_sort_year"> <?php print t('Zeit'); ?></label></div>                    
+          <div class="sort-box"><input type="radio" id="fh_sort_year" name="fh_sort" /> <label for="fh_sort_year"> <?php print t('Zeit'); ?></label></div>
         </form>
       </div>
       <div class="sort-close"><a href="#"><?php print t('SCHLIEßEN'); ?></a></div>
@@ -72,4 +72,3 @@
     </div>
   </div><!-- end entdecken-map-nav -->
 </div><!-- end row-entdecken -->
-
