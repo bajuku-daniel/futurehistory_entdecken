@@ -838,9 +838,10 @@
       Drupal.futurehistoryEntdecken[mapId].center_marker.setPosition(mapCenter);
     
       $.cookie('fh_geolocation_cookie', JSON.stringify(fh_cookie), {path: '/'});
-      // console.log(' setCookie fh_geolocation_cookie Z ', Drupal.futurehistoryEntdecken[mapId].map.getZoom());
+      // console.log(' setCookie fh_geolocation_cookie ', JSON.stringify(fh_cookie));
     }
   };
+  //End placesMapAction Function
 
   Drupal.futurehistoryEntdecken.selectFirstOnEnter = function(input){
     var _addEventListener = (input.addEventListener) ? input.addEventListener : input.attachEvent;
@@ -867,7 +868,6 @@
       input.attachEvent = addEventListenerWrapper;
     }
   };
-  //End placesMapAction Function
 
 
 
@@ -1088,7 +1088,7 @@ Drupal.futurehistoryEntdecken.MarkerClusterer = function(map, opt_markers, opt_o
 
   // double idle listener: getmarkers --> Filter hidden -> createCluster
   google.maps.event.addListener(this.map_, 'idle', function() {
-    console.log('----------------------- that.redraw() idle func');
+    // console.log('----------------------- that.redraw() idle func');
     that.redraw();
   });
   */
@@ -2321,6 +2321,7 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
         Drupal.futurehistoryEntdecken[placesId].autocomplete.addListener('place_changed', function() {
           fh_place = Drupal.futurehistoryEntdecken[placesId].autocomplete.getPlace();
           //call the map actions function
+          // console.log('place changed ... delete last_viewcookie...');
           Drupal.futurehistoryEntdecken.placesMapAction(fh_place, mapId);
         });
       }); // End EACH Funktion
@@ -2344,7 +2345,8 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
 
         // first cookie check - where did we come from?
         // if cookie ok we override the default map values and initials
-        var fh_cookiedata = JSON.parse($.cookie("fh_geolocation_cookie"));
+        var fh_geolocation_cookie_data = JSON.parse($.cookie("fh_geolocation_cookie"));
+        
         var fh_lastview_cookiedata = JSON.parse($.cookie('fh_lastview_cookie'));
 
         Drupal.futurehistoryEntdecken[mapId].map = new google.maps.Map(this, {
@@ -2368,25 +2370,40 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           Drupal.futurehistoryEntdecken[mapId].map.setZoom(mapZoom);
           // console.log('lat : ', parseFloat(window.location.hash.split('#')[1]), 'lng : ', parseFloat(window.location.hash.split('#')[2]), ' Z  ', parseInt(window.location.hash.split('#')[3]));
         } else {
-          if (fh_lastview_cookiedata == null) {
-            // we are NOT back from BildDetail, no cookie fh_lastview_cookie
-            // if the cookie fh_cookiedata contains a viewport override the map zoom with the viewport
-            if (fh_cookiedata != null) {
-              // console.log('fh_cookiedata ', fh_cookiedata);
-              if (parseInt(fh_cookiedata.viewport) == 1) {
-                var map_viewport = fh_cookiedata.bounds;
-                Drupal.futurehistoryEntdecken[mapId].map.fitBounds(map_viewport);
-                // Overwrite: 2016-11-23: Zoomstufe bei i
-                // Strasse + Hausnummer + Stadt 
-                // Strasse + Stadt 
-                // Gebäude + Stadt 
-                // einheitlich 17
-                Drupal.futurehistoryEntdecken[mapId].map.setZoom(DEFAULT_ZOOM);
-              } else {
-                mapCenter  = new google.maps.LatLng(fh_cookiedata.point);
-                mapZoom = DEFAULT_ZOOM;
-              }
+          if (fh_geolocation_cookie_data != null) {
+            // if the cookie fh_geolocation_cookie_data contains a viewport override the map zoom with the viewport
+            // console.log('No URL instructions, use fh_geolocation_cookie_data ', fh_geolocation_cookie_data);
+            if (parseInt(fh_geolocation_cookie_data.viewport) == 1) {
+              var map_viewport = fh_geolocation_cookie_data.bounds;
+              Drupal.futurehistoryEntdecken[mapId].map.fitBounds(map_viewport);
+              // Overwrite: 2016-11-23: Zoomstufe bei i
+              // Strasse + Hausnummer + Stadt 
+              // Strasse + Stadt 
+              // Gebäude + Stadt 
+              // einheitlich 17
+              Drupal.futurehistoryEntdecken[mapId].map.setZoom(DEFAULT_ZOOM);
+            } else {
+              mapCenter  = new google.maps.LatLng(fh_geolocation_cookie_data.point);
+              mapZoom = DEFAULT_ZOOM;
             }
+            // console.log(' delete fh_geolocation_cookie ');
+            $.cookie('fh_geolocation_cookie', null, { path: '/' });
+          }
+          else if (fh_lastview_cookiedata != null) {
+            // Back from BildDetail
+            // console.log('Back from BildDetail fh_lastview_cookiedata ', fh_lastview_cookiedata);
+            if (fh_lastview_cookiedata.viewport == '1') {
+              LAST_ACTIVE_NID = fh_lastview_cookiedata.nid;
+              var mapCenter = new google.maps.LatLng(parseFloat(fh_lastview_cookiedata.lat),parseFloat(fh_lastview_cookiedata.lng));
+              Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
+              Drupal.futurehistoryEntdecken[mapId].map.setZoom(parseFloat(fh_lastview_cookiedata.zoom));
+              // console.log('fh_lastview_cookie LAST_ACTIVE_NID ', LAST_ACTIVE_NID);
+              // console.log('fh_lastview_cookie mapCenter ', mapCenter);
+              // console.log('fh_lastview_cookie zoom ', fh_lastview_cookiedata.zoom);
+            }
+            // single use, remove
+            // console.log(' delete fh_lastview_cookiedata ');
+            $.cookie('fh_lastview_cookie', null, { path: '/' });
           }
         }
 
@@ -2405,21 +2422,6 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           zIndex: google.maps.Marker.MAX_ZINDEX
         });
 
-        // Back from BildDetail?
-        if (fh_lastview_cookiedata != null) {
-          // console.log(' fh_lastview_cookiedata ');
-          if (fh_lastview_cookiedata.viewport == '1') {
-            LAST_ACTIVE_NID = fh_lastview_cookiedata.nid;
-            var mapCenter = new google.maps.LatLng(parseFloat(fh_lastview_cookiedata.lat),parseFloat(fh_lastview_cookiedata.lng));
-            Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
-            Drupal.futurehistoryEntdecken[mapId].map.setZoom(parseFloat(fh_lastview_cookiedata.zoom));
-            // console.log('fh_lastview_cookie LAST_ACTIVE_NID ', LAST_ACTIVE_NID);
-            // console.log('fh_lastview_cookie mapCenter ', mapCenter);
-            // console.log('fh_lastview_cookie zoom ', fh_lastview_cookiedata.zoom);
-          }
-          // single use, remove
-          $.cookie('fh_lastview_cookie', null, { path: '/' });
-        }
 
         // https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onpopstate
         window.onpopstate = function(event) {
@@ -2450,7 +2452,7 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           var CC = Drupal.futurehistoryEntdecken[mapId].map.controls[google.maps.ControlPosition.TOP_CENTER];
           if (CC.length) {
             CC.forEach( function ( element, index ) {
-              console.log ('CC', index);
+              // console.log ('CC', index);
               CC.clear(index);
               //CC.removeAt(index);
             } );
