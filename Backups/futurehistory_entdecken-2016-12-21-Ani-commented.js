@@ -4,6 +4,7 @@
   //fixed and initial values
 
   var CALL_onpopstate = false;
+  var ANIMATION_RUNNING_NID = -1;
   var RAW = [];
   var DEFAULT_ZOOM = 17;
   var LAST_ACTIVE_NID = -1;
@@ -513,9 +514,13 @@
         var Icon_processed = false;
         // console.log('loop i ', i, 'RAW id ', RAW[i].id, ' search --> ', markerId);
         if ( RAW[i].id === markerId) {
-          // THUMB-click: if marker in Cluster fit map to ClusterBounds
+          // THUMB-click: if marker in Cluster set signal: Marker NID in ANIMATION_RUNNING_NID 
+          // dont close active THUMB, zoom in one step and center on marker
+          // here: ANIMATION_RUNNING_NID == -1 --> no cluster explode processing
+          //if ( RAW[i].activated == true && ANIMATION_RUNNING_NID == -1) {
           if ( RAW[i].activated == true ) {
             RAW[i].activated = false;
+            // console.log(' AAA', RAW[i].activated, ' -> ', RAW[i].id);
             // console.log('removeClass active from ', RAW[i].id, ' data ', RAW[i]);
             $('#thumbnail-pois li#thumb_'+RAW[i].id+'').removeClass('active');
             $('#tc-'+RAW[i].id+'').hide();
@@ -527,15 +532,26 @@
             Drupal.futurehistoryEntdecken.delMapArrow(RAW[i]);
           } else {
             RAW[i].activated = true;
+            // console.log(' AAA', RAW[i].activated, ' -> ', RAW[i].id);
             $('#thumbnail-pois li#thumb_'+markerId+'').addClass('active');
-            $('#tc-'+RAW[i].id+'').slideDown("slow");
+            // if (ANIMATION_RUNNING_NID == -1) {
+              $('#tc-'+RAW[i].id+'').slideDown("slow");
+            //}
             RAW[i].setIcon(fh_marker_violet);
             Drupal.futurehistoryEntdecken.setMapArrow(RAW[i], mapId);
             // incluster processing of marker: zoom in
             if (RAW[i].incluster) {
               // console.log(' zoom to cluster extend', RAW[i].clusterBounds )
               Drupal.futurehistoryEntdecken[mapId].map.fitBounds(RAW[i].clusterBounds);
+              // ANIMATION_RUNNING_NID = RAW[i].id;
+              //var actZoom = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
+              //var actPos = RAW[i].getPosition();
+              //Drupal.futurehistoryEntdecken[mapId].map.setZoom(Drupal.futurehistoryEntdecken[mapId].map.getZoom() + 1);
+              //Drupal.futurehistoryEntdecken[mapId].map.setCenter(RAW[i].getPosition());
               return false;
+            // } else {
+              // not in Cluster
+              // ANIMATION_RUNNING_NID = -1;
             }
           }
           Icon_processed = true;
@@ -553,30 +569,43 @@
           // console.log('  hidden loop i ', i, 'RAW id ', RAW[i].id, ' x ', x, ' RAW id x ', RAW[i].hidePOIs[x].id, ' search --> ', markerId);
           if ( RAW[i].hidePOIs[x].id == markerId) {
             if ( RAW[i].hidePOIs[x].activated == true) {
-              // console.log('hidden list processing: simple click on active thumb ', markerId)
+            // if ( RAW[i].hidePOIs[x].activated == true && ANIMATION_RUNNING_NID == -1) {
+              // console.log('hidden list processing: simple click on active thumb ', markerId, ' ANIMATION_RUNNING_NID ', ANIMATION_RUNNING_NID);
               RAW[i].hidePOIs[x].activated = false;
+              // console.log(' AHA', RAW[i].hidePOIs[x].activated, ' -> ', RAW[i].hidePOIs[x].id);
               $('#thumbnail-pois li#thumb_'+markerId+'').removeClass('active');
               $('#tc-'+markerId+'').hide();
               // already set with parent marker .... 
               // other hidden marker still active? RAW[i].setIcon(fh_marker_blue_cross);
               Drupal.futurehistoryEntdecken.delMapArrow(RAW[i].hidePOIs[x]);
             } else {
-              // still not activated 
+              // still not activated or cluster explode processing step awaited
+              // console.log('hidden list processing: markerstate ', RAW[i].hidePOIs[x].activated, ' parent ', RAW[i].id, ' ANIMATION_RUNNING_NID ', ANIMATION_RUNNING_NID);
               RAW[i].hidePOIs[x].activated = true;
+              // console.log(' AHA', RAW[i].hidePOIs[x].activated, ' -> ', RAW[i].hidePOIs[x].id);
               $('#thumbnail-pois li#thumb_'+RAW[i].hidePOIs[x].id+'').addClass('active');
-              $('#tc-'+RAW[i].hidePOIs[x].id+'').slideDown("slow");
+              //if (ANIMATION_RUNNING_NID == -1) {
+                $('#tc-'+RAW[i].hidePOIs[x].id+'').slideDown("slow");
+              // }
               // parent marker ... hidden not drawn
               RAW[i].setIcon(fh_marker_violet);
               Drupal.futurehistoryEntdecken.setMapArrow(RAW[i].hidePOIs[x], mapId);
             }
-            // incluster processing of hidden marker: fit map to clusterBounds
+            // incluster processing of hidden marker: zoom in
             // signal was set in parent marker
             if (RAW[i].incluster) {
               // console.log('hidden list processing: PARENTinCLUSTER ', RAW[i].id, ' me --> ', markerId);
-              // console.log(' zoom to cluster extend', RAW[i].clusterBounds )
-              Drupal.futurehistoryEntdecken[mapId].map.fitBounds(RAW[i].clusterBounds);
+              //ANIMATION_RUNNING_NID = RAW[i].id;
+              var actZoom = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
+              var actPos = RAW[i].getPosition();
+              Drupal.futurehistoryEntdecken[mapId].map.setZoom(Drupal.futurehistoryEntdecken[mapId].map.getZoom() + 1);
+              Drupal.futurehistoryEntdecken[mapId].map.setCenter(RAW[i].getPosition());
               return false;
             }
+            //} else {
+              // not in Cluster
+              //ANIMATION_RUNNING_NID = -1;
+            // }
             Icon_processed = true;
           } else { 
             // deactivate all other in hidden list of this parent
