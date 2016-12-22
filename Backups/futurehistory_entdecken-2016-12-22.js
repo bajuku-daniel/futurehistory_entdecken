@@ -292,18 +292,9 @@
     }
     // scroll to last not working, append dummy space
     $('#thumbnail-pois').append('<div id="dummy" style="height:100px;"></div>');
-
-    // BUG --> so hat das nicht funktioniert: if ($('#thumbnail-pois li.active').filter(":first")) {
-    // test for existing selector in jquery:
-    if ($('#thumbnail-pois li.active').filter(":first").length) {
-      // after redraw Thumbs mit open or closed Control we can scroll first active in position
-      // console.log('scroll thumbs to active ');
-      $('#thumbnail-pois').scrollTo($('#thumbnail-pois li.active').filter(":first"), 10, {offset:3});
-    } else {
-      // after redraw Thumbs with non-active scroll to top
-      // e.g changing place
-      // console.log('scroll thumbs to top ');
-      $('#thumbnail-pois').scrollTo($('#thumbnail-pois li').filter(":first"), 10, {offset:3});
+    // after redraw Thumbs mit open or closed Control we can scroll first active in position
+    if ($('#thumbnail-pois li.active').filter(":first")) {
+       $('#thumbnail-pois').scrollTo($('#thumbnail-pois li.active').filter(":first"), 10, {offset:3});
     }
     // call thumbs persistence engine 
     Drupal.futurehistoryEntdecken.BackFromBildDetail(mapId);
@@ -391,6 +382,7 @@
       marker.hidden = false;
       marker.incluster = true;
       marker.clusterBounds = undefined;
+      marker.hiddenactive = false;
       marker.hidden_active_counter = 0;
       marker.activated = false;
       marker.hideIds = [];
@@ -423,10 +415,12 @@
             RAW[r].hideIds.push(RAW[x].id);
             RAW[r].hidePOIs.push(RAW[x]);
             RAW[r].hideother = true;
+            RAW[r].hiddenactive = false;
             RAW[r].setIcon(fh_marker_blue_cross);
             // console.log('add hidden x -> r ', RAW[x].id, ' to ', RAW[r].id);
             if ( LAST_ACTIVE_NID > -1 ) {
               if  ( RAW[x].id == LAST_ACTIVE_NID ) {
+                 RAW[r].hiddenactive = true;
                  RAW[x].activated = true;
                  // console.log('last active was hidden');
                  RAW[r].setIcon(fh_marker_violet);
@@ -518,23 +512,9 @@
       for ( var i = 0; i < RAW.length; i++) {
         var Icon_processed = false;
         // console.log('loop i ', i, 'RAW id ', RAW[i].id, ' search --> ', markerId);
-        if ( RAW[i].id == markerId) {
-          // console.log('THUMB click  ', RAW[i].id, ' data ', RAW[i]);
+        if ( RAW[i].id === markerId) {
           // THUMB-click: if marker in Cluster fit map to ClusterBounds
-
-          // test special case: multiple Thumbs activated
-          // happens after map selection of POI with hidden POIs
-          // --> click on one of multiple activated thumbs: 
-          // --> thumb remains open, deactivate all other 
-          var hiddenactive = false;  
-          for ( var x = 0; x < RAW[i].hidePOIs.length; x++) {
-            if ( RAW[i].hidePOIs[x].activated == true) {
-              hiddenactive = true;  
-              break;
-            }
-          }
-          // console.log(' special cas hiddenactive ? ', hiddenactive);
-          if ( RAW[i].activated == true && !hiddenactive ) {
+          if ( RAW[i].activated == true ) {
             RAW[i].activated = false;
             // console.log('removeClass active from ', RAW[i].id, ' data ', RAW[i]);
             $('#thumbnail-pois li#thumb_'+RAW[i].id+'').removeClass('active');
@@ -559,7 +539,6 @@
             }
           }
           Icon_processed = true;
-
         } // markerId == RAW in loop 
         else {
           // deactivate all other
@@ -607,9 +586,8 @@
               $('#thumbnail-pois li#thumb_'+RAW[i].hidePOIs[x].id+'').removeClass('active');
               $('#tc-'+RAW[i].hidePOIs[x].id+'').hide();
               Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].hidePOIs[x].id, mapId);
-              if (x == 0 && !hiddenactive) {
+              if (x == 0) {
                 // unselect  parent
-                // if not specail case: click on inital multiple open
                 Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].id, mapId);
               }
               Drupal.futurehistoryEntdecken.delMapArrow(RAW[i].hidePOIs[x]);
