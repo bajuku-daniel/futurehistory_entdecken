@@ -152,7 +152,7 @@
     var point_a = google.maps.geometry.spherical.computeOffset(standpunkt, distance, heading - half_openangle);
     var point_b = google.maps.geometry.spherical.computeOffset(standpunkt, distance, heading + half_openangle);
 
-    // console.log('setMapArrow lat: ', marker.getPosition().lat(), ' lng: ', marker.getPosition().lng());
+    // console.log('setMapArrow ', marker.position);
     marker.pie = new google.maps.Polygon({
       paths: [standpunkt, point_a, point_b],
       strokeColor: '#9E1F81',
@@ -357,8 +357,6 @@
      var maplat = mapcenter.lat();
      var maplng = mapcenter.lng();
      var fh_cookie_view = {viewport:1, lat:maplat, lng:maplng, zoom:mapzoom, nid:nid};
-     // console.log(' delete fh_geolocation_cookie ');
-     $.cookie('fh_geolocation_cookie', null, { path: '/' });
      // console.log(" set cookie ", nid);
      $.cookie('fh_lastview_cookie', JSON.stringify(fh_cookie_view), {path: '/'});
   }
@@ -429,8 +427,6 @@
           if (dist < double_swell) {
             RAW[x].pie.setMap(null);
             RAW[x].hidden = true;
-            // same origin for viewpos pies
-            RAW[x].position = RAW[r].position;
             RAW[r].hideIds.push(RAW[x].id);
             RAW[r].hidePOIs.push(RAW[x]);
             RAW[r].hideother = true;
@@ -832,7 +828,7 @@
     //if (place == '' ){
     if ( place.geometry == undefined){
     } else {
-      console.log('place ', place);
+      // console.log('place ', place);
       var fh_cookie = {};
       if (place.geometry.viewport) {
         mapCenter = place.geometry.location;
@@ -2393,9 +2389,9 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           YearRange[1] = parseInt(window.location.hash.split('#')[5].split('--')[1]);
           RequestDate = String(YearRange[0]) + '--' + String(YearRange[1]);
           sort = window.location.hash.split('#')[6];
-          // console.log('RequestDate from hash ', YearRange);
-          // console.log('sort from hash ', sort);
-          // console.log('kategorie from hash ', kategorie);
+          console.log('RequestDate from hash ', YearRange);
+          console.log('sort from hash ', sort);
+          console.log('kategorie from hash ', kategorie);
           Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
           Drupal.futurehistoryEntdecken[mapId].map.setZoom(mapZoom);
         } else {
@@ -2426,13 +2422,6 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
               var mapCenter = new google.maps.LatLng(parseFloat(fh_lastview_cookiedata.lat),parseFloat(fh_lastview_cookiedata.lng));
               Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
               Drupal.futurehistoryEntdecken[mapId].map.setZoom(parseFloat(fh_lastview_cookiedata.zoom));
-              if(fh_lastview_cookiedata.zoom <=18) {
-                Drupal.futurehistoryEntdecken[mapId].map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
-              }
-              else {
-                Drupal.futurehistoryEntdecken[mapId].map.setMapTypeId(google.maps.MapTypeId.HYBRID);
-                Drupal.futurehistoryEntdecken[mapId].map.setTilt(0);
-              }
               // console.log('fh_lastview_cookie LAST_ACTIVE_NID ', LAST_ACTIVE_NID);
               // console.log('fh_lastview_cookie mapCenter ', mapCenter);
               // console.log('fh_lastview_cookie zoom ', fh_lastview_cookiedata.zoom);
