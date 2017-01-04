@@ -21,6 +21,7 @@ class futurehistory_entdecken_poi_bbox extends views_plugin_style {
     $options['marker_flagged_link_field'] = array('default' => '');
     $options['marker_kategorie_field'] = array('default' => '');
     $options['marker_overlay_year_field'] = array('default' => '');
+    $options['marker_is_in_tour'] = array('default' => '');
 
     return $options;
   }
@@ -124,12 +125,18 @@ class futurehistory_entdecken_poi_bbox extends views_plugin_style {
       '#options' => $field_options,
       '#default_value' => $this->options['marker_kategorie_field'],
     );
- $form['marker_overlay_year_field'] = array(
-      '#title' => t('Marker overlay picture year field'),
+    $form['marker_overlay_year_field'] = array(
+         '#title' => t('Marker overlay picture year field'),
+         '#type' => 'select',
+         '#options' => $field_options,
+         '#default_value' => $this->options['marker_overlay_year_field'],
+       );
+    $form['marker_is_in_tour'] = array(
+      '#title' => t('list of tour IDs'),
       '#type' => 'select',
       '#options' => $field_options,
-      '#default_value' => $this->options['marker_overlay_year_field'],
-    );
+      '#default_value' => $this->options['marker_is_in_tour'],
+      );
   }
 
   /**
@@ -216,6 +223,14 @@ class futurehistory_entdecken_poi_bbox extends views_plugin_style {
       if ($this->options['marker_overlay_year_field']) {
         $marker_overlay_year = $this->view->render_field($this->options['marker_overlay_year_field'], $row_index);
       }
+      $marker_is_in_tour = '';
+      if ($this->options['marker_is_in_tour']) {
+        $marker_is_in_tour_unformated = $this->view->render_field($this->options['marker_is_in_tour'], $row_index);
+        $marker_is_in_tour = preg_replace('/\s+/', '', $marker_is_in_tour_unformated);
+        //$marker_is_in_tour = json_encode($marker_is_in_tour_unformated);
+
+
+      }
 
 
       //get the Koordinates from the futurehistory field
@@ -241,6 +256,7 @@ class futurehistory_entdecken_poi_bbox extends views_plugin_style {
           'flagged-link' => $marker_flagged_link,
           'kategorie' => $marker_kategorie,
           'overlay-year' => $marker_overlay_year,
+          'tour_id' => $marker_is_in_tour,
         );
       }
     }
