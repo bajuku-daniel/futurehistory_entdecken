@@ -4,12 +4,12 @@
   //fixed and initial values
 
   var CALL_onpopstate = false;
+  var ANIMATION_RUNNING_NID = -1;
   var RAW = [];
   var DEFAULT_ZOOM = 17;
   var LAST_ACTIVE_NID = -1;
   var markerCluster;
   var InitYearRange = [ 1000, 2016 ];
-  var YearRange = [];
   //we need the initial center if someone starts from a bookmark without a cookie - lets see germany
   var initial_center_lat = 51.0847813;
   var initial_center_lon = 5.959095;
@@ -22,7 +22,7 @@
   var RequestDate = 'all';
   var poi_url = '/de/fh_view/fh_bbox_pois';
   var marker_content = [];
-  var sort = 'dist';
+  var sort = ['dist','year'];
   var fh_place;
   // view arrows, arry prepared for more than one view, up to now only inx = 0 used
   //var line_a = [];
@@ -152,7 +152,7 @@
     var point_a = google.maps.geometry.spherical.computeOffset(standpunkt, distance, heading - half_openangle);
     var point_b = google.maps.geometry.spherical.computeOffset(standpunkt, distance, heading + half_openangle);
 
-    // console.log('setMapArrow lat: ', marker.getPosition().lat(), ' lng: ', marker.getPosition().lng());
+    // console.log('setMapArrow ', marker.position);
     marker.pie = new google.maps.Polygon({
       paths: [standpunkt, point_a, point_b],
       strokeColor: '#9E1F81',
@@ -175,13 +175,22 @@
 
   //Function: DateSlider
   //used for initialization abnd reset
-  Drupal.futurehistoryEntdecken.DateSlider = function (mapId, InitYearRange){
+  Drupal.futurehistoryEntdecken.DateSlider = function (mapId){
     // the Date Range : date=all <-- all dates, date=--1990 <-- all bevfore 1990, date=1990-- <-- all after 1990, date=1800--1990 <-- all between 1800 and 1990
     // date slider stuff (linde@webgis.de, 2016/05)
+    // styles --> futurehistory_entdecken.css
+    // Daniel Frings: Portal first & last date :)
+
+    var portal_date_first = Drupal.settings.futurehistoryEntdecken.first_date;
+    var portal_date_last = Drupal.settings.futurehistoryEntdecken.last_date;
+    InitYearRange = [ Drupal.settings.futurehistoryEntdecken.first_date, Drupal.settings.futurehistoryEntdecken.last_date ];
+
+    // console.log('time bounds fotos: ', portal_date_first + ' - ' + portal_date_last);
+
     $("#time_slider").slider({
       range: true,
-      min: parseInt(Drupal.settings.futurehistoryEntdecken.first_date),
-      max: parseInt(Drupal.settings.futurehistoryEntdecken.last_date),
+      min: parseInt(portal_date_first),
+      max: parseInt(portal_date_last),
       values: InitYearRange,
       slide: function( event, ui ) {
         $("#time_range").val("Jahr " + ui.values[0] + " - Jahr " + ui.values[1]);
@@ -233,40 +242,25 @@
   // list the Poi Thumbnails and fill the LI elements wit IDs
   Drupal.futurehistoryEntdecken.setMapThumbnails = function(marker_content, mapId, mapCenter) {
     $('#thumbnail-pois').empty();
-
-    // thumb-sort: distance from center versus age
-    if (sort == 'dist') {
-      // sort after distance from center/ or later from clicked point....
-      var dist;
-      for ( var i = 0; i< marker_content.length; i++) {
-        dist = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(marker_content[i].lat, marker_content[i].lon), mapCenter);
-        // new property "distance_to_center":
-        marker_content[i]["distance_to_center"] = dist;
-      }
-
-      marker_content.sort(function (a, b) {
-        if (a.distance_to_center > b.distance_to_center) {
-          return 1;
-        }
-        if (a.distance_to_center < b.distance_to_center) {
-          return -1;
-        }
-        // a must be equal to b
-        return 0;
-      });
-    } else {
-      // global var sort = year (sort by age)
-      marker_content.sort(function (a, b) {
-        if (a.Jahr > b.Jahr) {
-          return 1;
-        }
-        if (a.Jahr < b.Jahr) {
-          return -1;
-        }
-        // a must be equal to b
-        return 0;
-      });
+    // Prototyp thumb-sort: initial sort after distance from center
+    var dist;
+    for ( var i = 0; i< marker_content.length; i++) {
+      dist = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(marker_content[i].lat, marker_content[i].lon), mapCenter);
+      // new property "distance_to_center":
+      marker_content[i]["distance_to_center"] = dist;
     }
+
+    marker_content.sort(function (a, b) {
+      if (a.distance_to_center > b.distance_to_center) {
+        return 1;
+      }
+      if (a.distance_to_center < b.distance_to_center) {
+        return -1;
+      }
+      // a must be equal to b
+      return 0;
+    });
+    // end of Prototyp thumb-sort: initial sort after distance from center/ or later from clicked point....
 
     for (var i = 0; i < marker_content.length; i++) {
       // check if its in your collections
@@ -299,18 +293,9 @@
     }
     // scroll to last not working, append dummy space
     $('#thumbnail-pois').append('<div id="dummy" style="height:100px;"></div>');
-
-    // BUG --> so hat das nicht funktioniert: if ($('#thumbnail-pois li.active').filter(":first")) {
-    // test for existing selector in jquery:
-    if ($('#thumbnail-pois li.active').filter(":first").length) {
-      // after redraw Thumbs mit open or closed Control we can scroll first active in position
-      // console.log('scroll thumbs to active ');
-      $('#thumbnail-pois').scrollTo($('#thumbnail-pois li.active').filter(":first"), 10, {offset:3});
-    } else {
-      // after redraw Thumbs with non-active scroll to top
-      // e.g changing place
-      // console.log('scroll thumbs to top ');
-      $('#thumbnail-pois').scrollTo($('#thumbnail-pois li').filter(":first"), 10, {offset:3});
+    // after redraw Thumbs mit open or closed Control we can scroll first active in position
+    if ($('#thumbnail-pois li.active').filter(":first")) {
+       $('#thumbnail-pois').scrollTo($('#thumbnail-pois li.active').filter(":first"), 10, {offset:3});
     }
     // call thumbs persistence engine 
     Drupal.futurehistoryEntdecken.BackFromBildDetail(mapId);
@@ -357,8 +342,6 @@
      var maplat = mapcenter.lat();
      var maplng = mapcenter.lng();
      var fh_cookie_view = {viewport:1, lat:maplat, lng:maplng, zoom:mapzoom, nid:nid};
-     // console.log(' delete fh_geolocation_cookie ');
-     $.cookie('fh_geolocation_cookie', null, { path: '/' });
      // console.log(" set cookie ", nid);
      $.cookie('fh_lastview_cookie', JSON.stringify(fh_cookie_view), {path: '/'});
   }
@@ -400,6 +383,7 @@
       marker.hidden = false;
       marker.incluster = true;
       marker.clusterBounds = undefined;
+      marker.hiddenactive = false;
       marker.hidden_active_counter = 0;
       marker.activated = false;
       marker.hideIds = [];
@@ -429,15 +413,15 @@
           if (dist < double_swell) {
             RAW[x].pie.setMap(null);
             RAW[x].hidden = true;
-            // same origin for viewpos pies
-            RAW[x].position = RAW[r].position;
             RAW[r].hideIds.push(RAW[x].id);
             RAW[r].hidePOIs.push(RAW[x]);
             RAW[r].hideother = true;
+            RAW[r].hiddenactive = false;
             RAW[r].setIcon(fh_marker_blue_cross);
             // console.log('add hidden x -> r ', RAW[x].id, ' to ', RAW[r].id);
             if ( LAST_ACTIVE_NID > -1 ) {
               if  ( RAW[x].id == LAST_ACTIVE_NID ) {
+                 RAW[r].hiddenactive = true;
                  RAW[x].activated = true;
                  // console.log('last active was hidden');
                  RAW[r].setIcon(fh_marker_violet);
@@ -529,24 +513,14 @@
       for ( var i = 0; i < RAW.length; i++) {
         var Icon_processed = false;
         // console.log('loop i ', i, 'RAW id ', RAW[i].id, ' search --> ', markerId);
-        if ( RAW[i].id == markerId) {
-          // console.log('THUMB click  ', RAW[i].id, ' data ', RAW[i]);
-          // THUMB-click: if marker in Cluster fit map to ClusterBounds
-
-          // test special case: multiple Thumbs activated
-          // happens after map selection of POI with hidden POIs
-          // --> click on one of multiple activated thumbs: 
-          // --> thumb remains open, deactivate all other 
-          var hiddenactive = false;  
-          for ( var x = 0; x < RAW[i].hidePOIs.length; x++) {
-            if ( RAW[i].hidePOIs[x].activated == true) {
-              hiddenactive = true;  
-              break;
-            }
-          }
-          // console.log(' special cas hiddenactive ? ', hiddenactive);
-          if ( RAW[i].activated == true && !hiddenactive ) {
+        if ( RAW[i].id === markerId) {
+          // THUMB-click: if marker in Cluster set signal: Marker NID in ANIMATION_RUNNING_NID 
+          // dont close active THUMB, zoom in one step and center on marker
+          // here: ANIMATION_RUNNING_NID == -1 --> no cluster explode processing
+          //if ( RAW[i].activated == true && ANIMATION_RUNNING_NID == -1) {
+          if ( RAW[i].activated == true ) {
             RAW[i].activated = false;
+            // console.log(' AAA', RAW[i].activated, ' -> ', RAW[i].id);
             // console.log('removeClass active from ', RAW[i].id, ' data ', RAW[i]);
             $('#thumbnail-pois li#thumb_'+RAW[i].id+'').removeClass('active');
             $('#tc-'+RAW[i].id+'').hide();
@@ -558,19 +532,29 @@
             Drupal.futurehistoryEntdecken.delMapArrow(RAW[i]);
           } else {
             RAW[i].activated = true;
+            // console.log(' AAA', RAW[i].activated, ' -> ', RAW[i].id);
             $('#thumbnail-pois li#thumb_'+markerId+'').addClass('active');
-            $('#tc-'+RAW[i].id+'').slideDown("slow");
+            // if (ANIMATION_RUNNING_NID == -1) {
+              $('#tc-'+RAW[i].id+'').slideDown("slow");
+            //}
             RAW[i].setIcon(fh_marker_violet);
             Drupal.futurehistoryEntdecken.setMapArrow(RAW[i], mapId);
             // incluster processing of marker: zoom in
             if (RAW[i].incluster) {
               // console.log(' zoom to cluster extend', RAW[i].clusterBounds )
               Drupal.futurehistoryEntdecken[mapId].map.fitBounds(RAW[i].clusterBounds);
+              // ANIMATION_RUNNING_NID = RAW[i].id;
+              //var actZoom = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
+              //var actPos = RAW[i].getPosition();
+              //Drupal.futurehistoryEntdecken[mapId].map.setZoom(Drupal.futurehistoryEntdecken[mapId].map.getZoom() + 1);
+              //Drupal.futurehistoryEntdecken[mapId].map.setCenter(RAW[i].getPosition());
               return false;
+            // } else {
+              // not in Cluster
+              // ANIMATION_RUNNING_NID = -1;
             }
           }
           Icon_processed = true;
-
         } // markerId == RAW in loop 
         else {
           // deactivate all other
@@ -585,30 +569,43 @@
           // console.log('  hidden loop i ', i, 'RAW id ', RAW[i].id, ' x ', x, ' RAW id x ', RAW[i].hidePOIs[x].id, ' search --> ', markerId);
           if ( RAW[i].hidePOIs[x].id == markerId) {
             if ( RAW[i].hidePOIs[x].activated == true) {
-              // console.log('hidden list processing: simple click on active thumb ', markerId)
+            // if ( RAW[i].hidePOIs[x].activated == true && ANIMATION_RUNNING_NID == -1) {
+              // console.log('hidden list processing: simple click on active thumb ', markerId, ' ANIMATION_RUNNING_NID ', ANIMATION_RUNNING_NID);
               RAW[i].hidePOIs[x].activated = false;
+              // console.log(' AHA', RAW[i].hidePOIs[x].activated, ' -> ', RAW[i].hidePOIs[x].id);
               $('#thumbnail-pois li#thumb_'+markerId+'').removeClass('active');
               $('#tc-'+markerId+'').hide();
               // already set with parent marker .... 
               // other hidden marker still active? RAW[i].setIcon(fh_marker_blue_cross);
               Drupal.futurehistoryEntdecken.delMapArrow(RAW[i].hidePOIs[x]);
             } else {
-              // still not activated 
+              // still not activated or cluster explode processing step awaited
+              // console.log('hidden list processing: markerstate ', RAW[i].hidePOIs[x].activated, ' parent ', RAW[i].id, ' ANIMATION_RUNNING_NID ', ANIMATION_RUNNING_NID);
               RAW[i].hidePOIs[x].activated = true;
+              // console.log(' AHA', RAW[i].hidePOIs[x].activated, ' -> ', RAW[i].hidePOIs[x].id);
               $('#thumbnail-pois li#thumb_'+RAW[i].hidePOIs[x].id+'').addClass('active');
-              $('#tc-'+RAW[i].hidePOIs[x].id+'').slideDown("slow");
+              //if (ANIMATION_RUNNING_NID == -1) {
+                $('#tc-'+RAW[i].hidePOIs[x].id+'').slideDown("slow");
+              // }
               // parent marker ... hidden not drawn
               RAW[i].setIcon(fh_marker_violet);
               Drupal.futurehistoryEntdecken.setMapArrow(RAW[i].hidePOIs[x], mapId);
             }
-            // incluster processing of hidden marker: fit map to clusterBounds
+            // incluster processing of hidden marker: zoom in
             // signal was set in parent marker
             if (RAW[i].incluster) {
               // console.log('hidden list processing: PARENTinCLUSTER ', RAW[i].id, ' me --> ', markerId);
-              // console.log(' zoom to cluster extend', RAW[i].clusterBounds )
-              Drupal.futurehistoryEntdecken[mapId].map.fitBounds(RAW[i].clusterBounds);
+              //ANIMATION_RUNNING_NID = RAW[i].id;
+              var actZoom = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
+              var actPos = RAW[i].getPosition();
+              Drupal.futurehistoryEntdecken[mapId].map.setZoom(Drupal.futurehistoryEntdecken[mapId].map.getZoom() + 1);
+              Drupal.futurehistoryEntdecken[mapId].map.setCenter(RAW[i].getPosition());
               return false;
             }
+            //} else {
+              // not in Cluster
+              //ANIMATION_RUNNING_NID = -1;
+            // }
             Icon_processed = true;
           } else { 
             // deactivate all other in hidden list of this parent
@@ -618,9 +615,8 @@
               $('#thumbnail-pois li#thumb_'+RAW[i].hidePOIs[x].id+'').removeClass('active');
               $('#tc-'+RAW[i].hidePOIs[x].id+'').hide();
               Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].hidePOIs[x].id, mapId);
-              if (x == 0 && !hiddenactive) {
+              if (x == 0) {
                 // unselect  parent
-                // if not specail case: click on inital multiple open
                 Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].id, mapId);
               }
               Drupal.futurehistoryEntdecken.delMapArrow(RAW[i].hidePOIs[x]);
@@ -832,7 +828,7 @@
     //if (place == '' ){
     if ( place.geometry == undefined){
     } else {
-      console.log('place ', place);
+      // console.log('place ', place);
       var fh_cookie = {};
       if (place.geometry.viewport) {
         mapCenter = place.geometry.location;
@@ -2309,8 +2305,8 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
       var placesId = '';
 
       // Daniel Frings: Portal first & last date :)
-      // var portal_date_first = Drupal.settings.futurehistoryEntdecken.first_date;
-      // var portal_date_last = Drupal.settings.futurehistoryEntdecken.last_date;
+      var portal_date_first = Drupal.settings.futurehistoryEntdecken.first_date;
+      var portal_date_last = Drupal.settings.futurehistoryEntdecken.last_date;
       InitYearRange = [ Drupal.settings.futurehistoryEntdecken.first_date, Drupal.settings.futurehistoryEntdecken.last_date ];
 
       // console.log('time bounds fotos: ', portal_date_first + ' - ' + portal_date_last);
@@ -2381,23 +2377,12 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
         });
 
         if (window.location.hash.length > 1) {
-          // set view parameters from URL hash
           // console.log(' set location from URL ', window.location.hash);
           mapCenter = new google.maps.LatLng(parseFloat(window.location.hash.split('#')[1]), parseFloat(window.location.hash.split('#')[2]));
           mapZoom = parseInt(window.location.hash.split('#')[3]);
-          kategorie = window.location.hash.split('#')[4].split(',');
-          // if (kategorie.lenght == 0) {
-          //   kategorie = ['Erinnern', 'Stadtbild', 'Tourismus'];
-          // }
-          YearRange[0] = parseInt(window.location.hash.split('#')[5].split('--')[0]);
-          YearRange[1] = parseInt(window.location.hash.split('#')[5].split('--')[1]);
-          RequestDate = String(YearRange[0]) + '--' + String(YearRange[1]);
-          sort = window.location.hash.split('#')[6];
-          // console.log('RequestDate from hash ', YearRange);
-          // console.log('sort from hash ', sort);
-          // console.log('kategorie from hash ', kategorie);
           Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
           Drupal.futurehistoryEntdecken[mapId].map.setZoom(mapZoom);
+          // console.log('lat : ', parseFloat(window.location.hash.split('#')[1]), 'lng : ', parseFloat(window.location.hash.split('#')[2]), ' Z  ', parseInt(window.location.hash.split('#')[3]));
         } else {
           if (fh_geolocation_cookie_data != null) {
             // if the cookie fh_geolocation_cookie_data contains a viewport override the map zoom with the viewport
@@ -2426,13 +2411,6 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
               var mapCenter = new google.maps.LatLng(parseFloat(fh_lastview_cookiedata.lat),parseFloat(fh_lastview_cookiedata.lng));
               Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
               Drupal.futurehistoryEntdecken[mapId].map.setZoom(parseFloat(fh_lastview_cookiedata.zoom));
-              if(fh_lastview_cookiedata.zoom <=18) {
-                Drupal.futurehistoryEntdecken[mapId].map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
-              }
-              else {
-                Drupal.futurehistoryEntdecken[mapId].map.setMapTypeId(google.maps.MapTypeId.HYBRID);
-                Drupal.futurehistoryEntdecken[mapId].map.setTilt(0);
-              }
               // console.log('fh_lastview_cookie LAST_ACTIVE_NID ', LAST_ACTIVE_NID);
               // console.log('fh_lastview_cookie mapCenter ', mapCenter);
               // console.log('fh_lastview_cookie zoom ', fh_lastview_cookiedata.zoom);
@@ -2481,7 +2459,6 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
             Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
 	});
 
-        // right click set hash to reconstruct view from URL
         google.maps.event.addListener(Drupal.futurehistoryEntdecken[mapId].map, "rightclick", function(event) {
           var coords = Drupal.futurehistoryEntdecken[mapId].map.getCenter();
           var zoomLevel = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
@@ -2489,27 +2466,17 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           var CC = Drupal.futurehistoryEntdecken[mapId].map.controls[google.maps.ControlPosition.TOP_CENTER];
           if (CC.length) {
             CC.forEach( function ( element, index ) {
+              // console.log ('CC', index);
               CC.clear(index);
+              //CC.removeAt(index);
             } );
             return;
           }
-          var katStr =  ''
-          if (kategorie.length) {
-            katStr = kategorie.toString();
-          } else {
-            // no categorie checkbox = no restriction, use all
-            katStr = 'Erinnern,Stadtbild,Tourismus';
-          }
-          var reqDate = String($("#time_slider").slider("values", 0) + "--" + $("#time_slider").slider("values", 1));
+
           var baseUrl = window.location.origin+window.location.pathname;
           var centerControlDiv = document.createElement('div');
           var centerControl = new CenterControl(centerControlDiv, Drupal.futurehistoryEntdecken[mapId].map, 
-              baseUrl + encodeURI('#' + coords.lat() + 
-                                  '#' + coords.lng() + 
-                                  '#' + Drupal.futurehistoryEntdecken[mapId].map.getZoom() +
-                                  '#' + katStr +
-                                  '#' + reqDate +
-                                  '#' + sort));
+              baseUrl + encodeURI('#' + coords.lat() + '#' + coords.lng() + '#' + Drupal.futurehistoryEntdecken[mapId].map.getZoom()));
           centerControlDiv.index = 1;
           Drupal.futurehistoryEntdecken[mapId].map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
         });
@@ -2597,57 +2564,13 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
 	});
 
-        // sort checkboxes 
-        $("#fh_sort_dist").change(function() {
-          $(this).prop("checked") ?  sort = 'dist' : sort = 'year';
-          console.log('sort criteria change to ', sort);
-          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
-          $('#thumbnail-pois').scrollTo($('#thumbnail-pois li').filter(":first"), 10, {offset:3});
-	});
-        $("#fh_sort_year").change(function() {
-          $(this).prop("checked") ?  sort = 'year' : sort = 'dist';
-          console.log('sort criteria change to ', sort);
-          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
-          $('#thumbnail-pois').scrollTo($('#thumbnail-pois li').filter(":first"), 10, {offset:3});
-	});
-
-        // Daniel Frings: initial Portal first & last date :)
-        //var portal_date_first = Drupal.settings.futurehistoryEntdecken.first_date;
-        //var portal_date_last = Drupal.settings.futurehistoryEntdecken.last_date;
-        InitYearRange = [ Drupal.settings.futurehistoryEntdecken.first_date, Drupal.settings.futurehistoryEntdecken.last_date ];
-        if (YearRange.length) {
-          // YearRange from URL hash
-          Drupal.futurehistoryEntdecken.DateSlider(mapId, YearRange);
-       } else {
-          Drupal.futurehistoryEntdecken.DateSlider(mapId, InitYearRange);
-        }
+        Drupal.futurehistoryEntdecken.DateSlider(mapId);
 
       });  //End EACH Funktion
-
-      // reflect THUMB sort criteria from URL hash if present
-      if (sort == 'year') { 
-        $("#fh_sort_year").prop('checked', true);
-      }
-      if (sort == 'dist') { 
-        $("#fh_sort_dist").prop('checked', true);
-      }
-
-      // reflect kategorie from URL hash if present
-      if (kategorie.indexOf("Erinnern") > -1) { 
-        $("#erinnern").prop('checked', true);
-      } else {
-        $("#erinnern").prop("checked", false );
-      }
-      if (kategorie.indexOf("Stadtbild") > -1) {
-        $("#stadtbild").prop('checked', true);
-      } else {
-        $("#stadtbild").prop("checked", false );
-      }
-      if (kategorie.indexOf("Tourismus") > -1) {
-        $("#tourismus").prop('checked', true);
-      } else {
-        $("#tourismus").prop("checked", false );
-      }
+      // initial unchecked....
+      $("#erinnern").prop("checked", false );
+      $("#stadtbild").prop("checked", false );
+      $("#tourismus").prop("checked", false );
 
 
       function CenterControl(controlDiv, map, link) {
