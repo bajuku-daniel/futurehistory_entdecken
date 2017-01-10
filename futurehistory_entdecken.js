@@ -2374,7 +2374,7 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
         // first cookie check - where did we come from?
         // if cookie ok we override the default map values and initials
         var fh_geolocation_cookie_data = JSON.parse($.cookie("fh_geolocation_cookie"));
-        console.log(' fh_geolocation_cookie_data ', fh_geolocation_cookie_data);
+        // console.log(' fh_geolocation_cookie_data ', fh_geolocation_cookie_data);
         
         var fh_lastview_cookiedata = JSON.parse($.cookie('fh_lastview_cookie'));
 
@@ -2433,7 +2433,7 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
               //mapCenter = new google.maps.LatLng(parseFloat(fh_geolocation_cookie_data.point.lat),parseFloat(fh_geolocation_cookie_data.point.lng));
               Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
               Drupal.futurehistoryEntdecken.markMapCenter(mapId, mapCenter);
-              console.log(' use point ', mapCenter);
+              // console.log(' use point ', mapCenter);
             } else {
               if (parseInt(fh_geolocation_cookie_data.viewport) == 1) {
                 var map_viewport = fh_geolocation_cookie_data.bounds;
