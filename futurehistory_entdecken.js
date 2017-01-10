@@ -859,7 +859,7 @@
         Drupal.futurehistoryEntdecken[mapId].map.setZoom(DEFAULT_ZOOM);
       }
       Drupal.futurehistoryEntdecken.markMapCenter(mapId, mapCenter);
-      // console.log(' setCookie fh_geolocation_cookie ', JSON.stringify(fh_cookie));
+      //console.log(' setCookie fh_geolocation_cookie ', JSON.stringify(fh_cookie));
       $.cookie('fh_geolocation_cookie', JSON.stringify(fh_cookie), {path: '/'});
     }
   };
@@ -2374,6 +2374,7 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
         // first cookie check - where did we come from?
         // if cookie ok we override the default map values and initials
         var fh_geolocation_cookie_data = JSON.parse($.cookie("fh_geolocation_cookie"));
+        console.log(' fh_geolocation_cookie_data ', fh_geolocation_cookie_data);
         
         var fh_lastview_cookiedata = JSON.parse($.cookie('fh_lastview_cookie'));
 
@@ -2424,12 +2425,19 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
             if (parseInt(fh_geolocation_cookie_data.viewport) == 1) {
               var map_viewport = fh_geolocation_cookie_data.bounds;
               Drupal.futurehistoryEntdecken[mapId].map.fitBounds(map_viewport);
-              // Overwrite: 2016-11-23: Zoomstufe bei i
+              // Overwrite: 2016-11-23: Zoomstufe bei 
               // Strasse + Hausnummer + Stadt 
               // Strasse + Stadt 
               // Gebäude + Stadt 
               // einheitlich 17
               Drupal.futurehistoryEntdecken[mapId].map.setZoom(DEFAULT_ZOOM);
+              if (parseFloat(fh_geolocation_cookie_data.point.lat) && parseFloat(fh_geolocation_cookie_data.point.lng)) {
+                mapCenter = new google.maps.LatLng(parseFloat(fh_geolocation_cookie_data.point.lat),parseFloat(fh_geolocation_cookie_data.point.lng));
+                Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
+                Drupal.futurehistoryEntdecken.markMapCenter(mapId, mapCenter);
+                // console.log(' use point ', mapCenter);
+              }
+
               mapCenter = Drupal.futurehistoryEntdecken[mapId].map.getCenter();
               //mapCenter =  new google.maps.LatLng(Drupal.futurehistoryEntdecken[mapId].map.getCenter().lat(),Drupal.futurehistoryEntdecken[mapId].map.getCenter().lng());
             } else {
