@@ -551,12 +551,13 @@
   Drupal.futurehistoryEntdecken.markerStateChange = function(markerId, action, mapId, src) {
     markerId = markerId.toString();
 
+    var ThumbInClusterProcessing = false;
     if ( src == 'THUMB' ) {
       // console.log('call markerStateChange on ', markerId, ' RAW ', RAW);
       for ( var i = 0; i < RAW.length; i++) {
 
         // test incluster --> mark activated and leave here because zoom_event reload and reprocess all
-        if ( RAW[i].id == markerId && RAW[i].incluster) {
+        if ( RAW[i].id == markerId && RAW[i].incluster && RAW[i].activated == false) {
           // console.log(' zoom to cluster extend and exit markerStateChange', RAW[i].clusterBounds )
           Drupal.futurehistoryEntdecken[mapId].map.fitBounds(RAW[i].clusterBounds);
           RAW[i].activated = true;
@@ -565,48 +566,51 @@
         // test incluster of hidden --> leave here because zoom_event reload and reprocess all
         for ( var x = 0; x < RAW[i].hidePOIs.length; x++) {
           if ( RAW[i].hidePOIs[x].id == markerId) {
-             if (RAW[i].incluster) {
-               // console.log(' HIDDEN: zoom to cluster extend and exit markerStateChange', RAW[i].clusterBounds )
+             if (RAW[i].incluster && RAW[i].hidePOIs[x].activated == false) {
+               //console.log(' HIDDEN: zoom to cluster extend and exit markerStateChange', RAW[i].hidePOIs[x] )
                Drupal.futurehistoryEntdecken[mapId].map.fitBounds(RAW[i].clusterBounds);
                RAW[i].hidePOIs[x].activated = true;
                return false;
              }
           }
         }
-        // eof incluster test, if we passed here, clicked thumb not in cluster
+        // eof incluster test, if we passed here, (no inactive) thumb in cluster clicked
+        // ...just close already open thumbs if they again in cluster (user zoomed out with still activated thumb)
 
-        var Icon_processed = false;
-        // console.log('loop i ', i, 'RAW id ', RAW[i].id, ' search --> ', markerId);
-        if ( RAW[i].id == markerId) {
-          // test special case: multiple Thumbs activated
-          // happens after map selection of POI with hidden POIs
-          // --> click on one of multiple activated thumbs: 
-          // --> thumb remains open, deactivate all other 
-          var hiddenactive = false;  
-          for ( var x = 0; x < RAW[i].hidePOIs.length; x++) {
+        // first iterate hidden POIs of RAW[i] 
+        for ( var x = 0; x < RAW[i].hidePOIs.length; x++) {
+          if ( RAW[i].hidePOIs[x].id == markerId) {
             if ( RAW[i].hidePOIs[x].activated == true) {
-              hiddenactive = true;  
-              break;
-            }
-          }
-          // console.log(' special case hiddenactive ? ', hiddenactive);
-          if ( RAW[i].activated == true && !hiddenactive ) {
-            RAW[i].activated = false;
-            // console.log('removeClass active from ', RAW[i].id, ' data ', RAW[i]);
-            $('#thumbnail-pois li#thumb_'+RAW[i].id+'').removeClass('active');
-            $('#tc-'+RAW[i].id+'').hide();
-            if ( RAW[i].hideother ) {
-              RAW[i].setIcon(fh_marker_blue_cross);
+              Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].hidePOIs[x].id, mapId);
             } else {
-              RAW[i].setIcon(fh_marker_blue);
+              RAW[i].hidePOIs[x].activated = true;
+              $('#thumbnail-pois li#thumb_'+RAW[i].hidePOIs[x].id+'').addClass('active');
+              $('#tc-'+RAW[i].hidePOIs[x].id+'').slideDown("slow");
+              RAW[i].setIcon(fh_marker_violet);
+              Drupal.futurehistoryEntdecken.setMapArrow(RAW[i].hidePOIs[x], mapId);
             }
-            Drupal.futurehistoryEntdecken.delMapArrow(RAW[i]);
+          } else {
+            // deactivate all other open thumbs in every hiddenlist
+            if ( RAW[i].hidePOIs[x].activated == true) {
+              Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].hidePOIs[x].id, mapId);
+            } 
+          }
+        }
+        if ( RAW[i].id == markerId) {
+          if ( RAW[i].activated == true ) {
+            Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].id, mapId);
           } else {
             RAW[i].activated = true;
             $('#thumbnail-pois li#thumb_'+markerId+'').addClass('active');
             $('#tc-'+RAW[i].id+'').slideDown("slow");
             RAW[i].setIcon(fh_marker_violet);
             Drupal.futurehistoryEntdecken.setMapArrow(RAW[i], mapId);
+            // deactivate all activated in this hiddenlist of parent
+            for ( var y = 0; y < RAW[i].hidePOIs.length; y++) {
+              if ( RAW[i].hidePOIs[y].activated == true) {
+                Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].hidePOIs[y].id, mapId);
+              }
+            }
           }
           Icon_processed = true;
         } // markerId == RAW in loop 
@@ -615,54 +619,6 @@
           if (RAW[i].activated) {
             // should reset Marker-Icon, deactivate Thumb, deactivate hidden list
             Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].id, mapId);
-          }
-        }
-        // PART II: handling of hidden list
-        // iterate hidden POIs of RAW[i] 
-        for ( var x = 0; x < RAW[i].hidePOIs.length; x++) {
-          // console.log('  hidden loop i ', i, 'RAW id ', RAW[i].id, ' x ', x, ' RAW id x ', RAW[i].hidePOIs[x].id, ' search --> ', markerId);
-          if ( RAW[i].hidePOIs[x].id == markerId) {
-            if ( RAW[i].hidePOIs[x].activated == true) {
-              // console.log('hidden list processing: simple click on active thumb ', markerId)
-              RAW[i].hidePOIs[x].activated = false;
-              $('#thumbnail-pois li#thumb_'+markerId+'').removeClass('active');
-              $('#tc-'+markerId+'').hide();
-              // already set with parent marker .... 
-              // other hidden marker still active? RAW[i].setIcon(fh_marker_blue_cross);
-              Drupal.futurehistoryEntdecken.delMapArrow(RAW[i].hidePOIs[x]);
-            } else {
-              // still not activated 
-              RAW[i].hidePOIs[x].activated = true;
-              $('#thumbnail-pois li#thumb_'+RAW[i].hidePOIs[x].id+'').addClass('active');
-              $('#tc-'+RAW[i].hidePOIs[x].id+'').slideDown("slow");
-              // parent marker ... hidden not drawn
-              RAW[i].setIcon(fh_marker_violet);
-              Drupal.futurehistoryEntdecken.setMapArrow(RAW[i].hidePOIs[x], mapId);
-            }
-            // incluster processing of hidden marker: fit map to clusterBounds
-            // signal was set in parent marker
-            if (RAW[i].incluster) {
-              // console.log('hidden list processing: PARENTinCLUSTER ', RAW[i].id, ' me --> ', markerId);
-              // console.log(' zoom to cluster extend', RAW[i].clusterBounds )
-              Drupal.futurehistoryEntdecken[mapId].map.fitBounds(RAW[i].clusterBounds);
-              // return false;
-            }
-            Icon_processed = true;
-          } else { 
-            // deactivate all other in hidden list of this parent
-            if (RAW[i].hidePOIs[x].activated) {
-              RAW[i].hidePOIs[x].activated = false;
-              // console.log(' AHA', RAW[i].hidePOIs[x].activated, ' -> ', RAW[i].hidePOIs[x].id);
-              $('#thumbnail-pois li#thumb_'+RAW[i].hidePOIs[x].id+'').removeClass('active');
-              $('#tc-'+RAW[i].hidePOIs[x].id+'').hide();
-              Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].hidePOIs[x].id, mapId);
-              if (x == 0 && !hiddenactive) {
-                // unselect  parent
-                // if not specail case: click on inital multiple open
-                Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].id, mapId);
-              }
-              Drupal.futurehistoryEntdecken.delMapArrow(RAW[i].hidePOIs[x]);
-            }
           }
         }
       } // eof loop all Marker
