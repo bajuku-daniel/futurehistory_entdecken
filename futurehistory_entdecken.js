@@ -296,7 +296,7 @@
       var onclick_thumb  = 'onclick="Drupal.futurehistoryEntdecken.markerStateChange(' + nid + ', \'click\', \''+ mapId +'\', \'THUMB\')"';
       var onclick_detail = 'onclick="Drupal.futurehistoryEntdecken.setLastViewCookie(' + nid + ',  \''+ mapId +'\')"';
       var info_url = '/node/' + nid;
-      var poi_element = '<li id="thumb_' + nid + '" '+ onclick_thumb + '><div class="ansicht_title"> '+ marker_content[i]['title'] + ' | '+ marker_content[i]['Jahr'] + ' </div> <img src="'+ marker_content[i]['bild-haupt-thumb'] + '"></li><div id="tc-' + nid + '"  class="thumbnail-control"><div class="left" '+ onclick_detail + '><a href="'+info_url+'"> <i class="material-icons">fullscreen</i> Bild<br>Details</a></div><div class="right"> <a href=""><i class="material-icons">collections</i> in meine Sammlung</a></div> ';
+      var poi_element = '<li id="thumb_' + nid + '" '+ onclick_thumb + '><div class="ansicht_title"> '+ marker_content[i]['title'] + ' | '+ marker_content[i]['Jahr'] + ' </div> <img src="'+ marker_content[i]['bild-haupt-thumb'] + '"></li><div id="tc-' + nid + '"  class="thumbnail-control"><div class="left" '+ onclick_detail + '><a href="'+info_url+'"> <i class="material-icons">fullscreen</i> Bild<br>Details</a></div><div class="right"> <i class="material-icons">collections</i> in meine Sammlung</div> ';
       $('#thumbnail-pois').append(poi_element);
     }
 
