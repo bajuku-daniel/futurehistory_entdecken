@@ -2428,18 +2428,14 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
             // einheitlich 17
             mapZoom = DEFAULT_ZOOM;
             Drupal.futurehistoryEntdecken[mapId].map.setZoom(DEFAULT_ZOOM);
-            if (parseFloat(fh_geolocation_cookie_data.point.lat) && parseFloat(fh_geolocation_cookie_data.point.lng)) {
+            if (parseInt(fh_geolocation_cookie_data.viewport) == 1) {
+              var map_viewport = fh_geolocation_cookie_data.bounds;
+              Drupal.futurehistoryEntdecken[mapId].map.fitBounds(map_viewport);
+            } else if (parseFloat(fh_geolocation_cookie_data.point.lat) && parseFloat(fh_geolocation_cookie_data.point.lng)) {
               mapCenter  = new google.maps.LatLng(fh_geolocation_cookie_data.point);
-              //mapCenter = new google.maps.LatLng(parseFloat(fh_geolocation_cookie_data.point.lat),parseFloat(fh_geolocation_cookie_data.point.lng));
               Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
-              Drupal.futurehistoryEntdecken.markMapCenter(mapId, mapCenter);
-              // console.log(' use point ', mapCenter);
-            } else {
-              if (parseInt(fh_geolocation_cookie_data.viewport) == 1) {
-                var map_viewport = fh_geolocation_cookie_data.bounds;
-                Drupal.futurehistoryEntdecken[mapId].map.fitBounds(map_viewport);
-              }
             }
+            Drupal.futurehistoryEntdecken.markMapCenter(mapId, new google.maps.LatLng(fh_geolocation_cookie_data.point));
             mapCenter = Drupal.futurehistoryEntdecken[mapId].map.getCenter();
           // console.log(' delete fh_geolocation_cookie ');
           $.cookie('fh_geolocation_cookie', null, { path: '/' });
