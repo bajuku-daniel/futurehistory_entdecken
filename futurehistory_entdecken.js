@@ -2418,36 +2418,32 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           // console.log('kategorie from hash ', kategorie);
           Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
           Drupal.futurehistoryEntdecken[mapId].map.setZoom(mapZoom);
-        } else {
-          if (fh_geolocation_cookie_data != null) {
+        } else if (fh_geolocation_cookie_data != null) {
             // if the cookie fh_geolocation_cookie_data contains a viewport override the map zoom with the viewport
             // console.log('No URL instructions, use fh_geolocation_cookie_data ', fh_geolocation_cookie_data);
-            if (parseInt(fh_geolocation_cookie_data.viewport) == 1) {
-              var map_viewport = fh_geolocation_cookie_data.bounds;
-              Drupal.futurehistoryEntdecken[mapId].map.fitBounds(map_viewport);
-              // Overwrite: 2016-11-23: Zoomstufe bei 
-              // Strasse + Hausnummer + Stadt 
-              // Strasse + Stadt 
-              // Gebäude + Stadt 
-              // einheitlich 17
-              Drupal.futurehistoryEntdecken[mapId].map.setZoom(DEFAULT_ZOOM);
-              if (parseFloat(fh_geolocation_cookie_data.point.lat) && parseFloat(fh_geolocation_cookie_data.point.lng)) {
-                mapCenter = new google.maps.LatLng(parseFloat(fh_geolocation_cookie_data.point.lat),parseFloat(fh_geolocation_cookie_data.point.lng));
-                Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
-                Drupal.futurehistoryEntdecken.markMapCenter(mapId, mapCenter);
-                // console.log(' use point ', mapCenter);
-              }
-
-              mapCenter = Drupal.futurehistoryEntdecken[mapId].map.getCenter();
-              //mapCenter =  new google.maps.LatLng(Drupal.futurehistoryEntdecken[mapId].map.getCenter().lat(),Drupal.futurehistoryEntdecken[mapId].map.getCenter().lng());
-            } else {
+            // Overwrite: 2016-11-23: Zoomstufe bei 
+            // Strasse + Hausnummer + Stadt 
+            // Strasse + Stadt 
+            // Gebäude + Stadt 
+            // einheitlich 17
+            mapZoom = DEFAULT_ZOOM;
+            Drupal.futurehistoryEntdecken[mapId].map.setZoom(DEFAULT_ZOOM);
+            if (parseFloat(fh_geolocation_cookie_data.point.lat) && parseFloat(fh_geolocation_cookie_data.point.lng)) {
               mapCenter  = new google.maps.LatLng(fh_geolocation_cookie_data.point);
-              mapZoom = DEFAULT_ZOOM;
+              //mapCenter = new google.maps.LatLng(parseFloat(fh_geolocation_cookie_data.point.lat),parseFloat(fh_geolocation_cookie_data.point.lng));
+              Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
+              Drupal.futurehistoryEntdecken.markMapCenter(mapId, mapCenter);
+              console.log(' use point ', mapCenter);
+            } else {
+              if (parseInt(fh_geolocation_cookie_data.viewport) == 1) {
+                var map_viewport = fh_geolocation_cookie_data.bounds;
+                Drupal.futurehistoryEntdecken[mapId].map.fitBounds(map_viewport);
+              }
             }
-            // console.log(' delete fh_geolocation_cookie ');
-            $.cookie('fh_geolocation_cookie', null, { path: '/' });
-          }
-          else if (fh_lastview_cookiedata != null) {
+            mapCenter = Drupal.futurehistoryEntdecken[mapId].map.getCenter();
+          // console.log(' delete fh_geolocation_cookie ');
+          $.cookie('fh_geolocation_cookie', null, { path: '/' });
+        } else if (fh_lastview_cookiedata != null) {
             // Back from BildDetail
             // console.log('Back from BildDetail fh_lastview_cookiedata ', fh_lastview_cookiedata);
             if (fh_lastview_cookiedata.viewport == '1') {
@@ -2476,7 +2472,6 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
             // use cookie only once, remove
             // console.log(' delete fh_lastview_cookiedata ');
             $.cookie('fh_lastview_cookie', null, { path: '/' });
-          }
         }
 
         // https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onpopstate
