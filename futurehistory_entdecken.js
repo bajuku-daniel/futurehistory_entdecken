@@ -556,7 +556,7 @@
       // console.log('call markerStateChange on ', markerId, ' RAW ', RAW);
       for ( var i = 0; i < RAW.length; i++) {
 
-        // test incluster --> mark activated and leave here because zoom_event reload and reprocess all
+        // first test incluster --> mark activated and leave here because zoom_event reload and reprocess all
         if ( RAW[i].id == markerId && RAW[i].incluster && RAW[i].activated == false) {
           // console.log(' zoom to cluster extend and exit markerStateChange', RAW[i].clusterBounds )
           Drupal.futurehistoryEntdecken[mapId].map.fitBounds(RAW[i].clusterBounds);
@@ -579,7 +579,12 @@
 
         // first iterate hidden POIs of RAW[i] 
         for ( var x = 0; x < RAW[i].hidePOIs.length; x++) {
-          if ( RAW[i].hidePOIs[x].id == markerId) {
+          if ( RAW[i].hidePOIs[x].id != markerId) {
+            // deactivate all other open thumbs in every hiddenlist
+            if ( RAW[i].hidePOIs[x].activated == true) {
+              Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].hidePOIs[x].id, mapId);
+            } 
+          } else {
             if ( RAW[i].hidePOIs[x].activated == true) {
               Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].hidePOIs[x].id, mapId);
             } else {
@@ -589,12 +594,12 @@
               RAW[i].setIcon(fh_marker_violet);
               Drupal.futurehistoryEntdecken.setMapArrow(RAW[i].hidePOIs[x], mapId);
             }
-          } else {
-            // deactivate all other open thumbs in every hiddenlist
-            if ( RAW[i].hidePOIs[x].activated == true) {
-              Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].hidePOIs[x].id, mapId);
-            } 
           }
+        }
+
+        if ( RAW[i].id != markerId && RAW[i].activated == true) {
+          // deactivate all other
+          Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].id, mapId);
         }
         if ( RAW[i].id == markerId) {
           if ( RAW[i].activated == true ) {
@@ -614,13 +619,6 @@
           }
           Icon_processed = true;
         } // markerId == RAW in loop 
-        else {
-          // deactivate all other
-          if (RAW[i].activated) {
-            // should reset Marker-Icon, deactivate Thumb, deactivate hidden list
-            Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].id, mapId);
-          }
-        }
       } // eof loop all Marker
       // console.log('leave THUMBclick with ANIMATION_RUNNING_NID: ', ANIMATION_RUNNING_NID);
       // click on thumb, job finished here
