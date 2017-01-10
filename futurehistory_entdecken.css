@@ -221,6 +221,7 @@ div.ui-slider-range.ui-widget-header {
   display: block;
   float: left;
   width: 50%;
+  margin-top:10px;
 }
 
 
