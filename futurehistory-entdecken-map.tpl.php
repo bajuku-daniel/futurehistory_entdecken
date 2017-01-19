@@ -40,18 +40,72 @@
       <div id="kategory_selector">
         <form>
           <fieldset>
-            <label>
-              <input type="checkbox" id="erinnern" name="kategorie" value="erinnern" checked="checked">
-              <?php print t('Erinnern') ?>
-            </label><br>
+            <table id="kategory_selector_table">
+            <tr><td>
             <label>
               <input type="checkbox" id="stadtbild" name="kategorie" value="stadtbild" checked="checked">
               <?php print t('Stadtbild') ?>
             </label><br>
+            </td><td>
             <label>
               <input type="checkbox" id="tourismus" name="kategorie" value="tourismus" checked="checked">
-              <?php print t('Tourismus') ?>
+              <?php print t('Erinnern') ?>
             </label><br>
+            </td><td>
+            <label>
+              <input type="checkbox" id="erinnern" name="kategorie" value="erinnern" checked="checked">
+              <?php print t('Erinnern') ?>
+            </label><br>
+            </td></tr>
+            <tr><td>
+            <label>
+              <input type="checkbox" id="burg_schloss" name="kategorie" value="burg_schloss" checked="checked">
+              <?php print t('Burg/Schloss') ?>
+            </label><br>
+            </td><td>
+            <label>
+              <input type="checkbox" id="rathaus" name="kategorie" value="rathaus" checked="checked">
+              <?php print t('Rathaus') ?>
+            </label><br>
+            </td><td>
+            <label>
+              <input type="checkbox" id="stadttor_mauer" name="kategorie" value="stadttor_mauer" checked="checked">
+              <?php print t('Stadttor/-mauer') ?>
+            </label><br>
+            </td></tr>
+            <tr><td>
+            <label>
+              <input type="checkbox" id="kirche_kloster" name="kategorie" value="kirche_kloster" checked="checked">
+              <?php print t('Kirche/Kloster') ?>
+            </label><br>
+            </td><td>
+            <label>
+              <input type="checkbox" id="synagoge" name="kategorie" value="synagoge" checked="checked">
+              <?php print t('Synagoge') ?>
+            </label><br>
+            </td><td>
+            <label>
+              <input type="checkbox" id="schule_bildung" name="kategorie" value="schule_bildung" checked="checked">
+              <?php print t('Schule/Bildung') ?>
+            </label><br>
+            </td></tr>
+            <tr><td>
+            <label>
+              <input type="checkbox" id="strasse_verkehr" name="kategorie" value="strasse_verkehr" checked="checked">
+              <?php print t('Straße/Verkehr') ?>
+            </label><br>
+            </td><td>
+            <label>
+              <input type="checkbox" id="platz_park" name="kategorie" value="platz_park" checked="checked">
+              <?php print t('Platz/Park') ?>
+            </label><br>
+            </td><td>
+            <label>
+              <input type="checkbox" id="bruecke_fluss" name="kategorie" value="bruecke_fluss" checked="checked">
+              <?php print t('Brücke/Fluß') ?>
+            </label><br>
+            </td></tr>
+            </table>
           </fieldset>
         </form>
       </div>

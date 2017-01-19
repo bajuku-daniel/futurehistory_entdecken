@@ -224,6 +224,13 @@ div.ui-slider-range.ui-widget-header {
   margin-top:10px;
 }
 
+/* -------------------------------------------------------------------- 
+ * style the filterbox content
+ * --------------------------------------------------------------------
+*/
+#kategory_selector_table td {
+  padding-left:8px;
+}
 
 /* -------------------------------------------------------------------- 
  * Responsive Settings 

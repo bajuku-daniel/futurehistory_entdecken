@@ -2588,10 +2588,32 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
 
         // Filter checkbox-events
         $("a[class=reset-filter-link]").click(function() {
-          kategorie = ['Erinnern', 'Stadtbild', 'Tourismus'];
+          kategorie = [
+            'Stadtbild',
+            'Tourismus',
+            'Erinnern', 
+            'Burg/Schloss',
+	    'Rathaus',
+	    'Stadttor/-mauer',
+	    'Kirche/Kloster',
+	    'Synagoge',
+	    'Schule/Bildung',
+	    'Straße/Verkehr',
+	    'Platz/Park',
+	    'Brücke/Fluß'
+          ];
           $("#erinnern").prop("checked", false );
           $("#stadtbild").prop("checked", false );
           $("#tourismus").prop("checked", false );
+          $("#burg_schloss").prop("checked", false );
+          $("#rathaus").prop("checked", false );
+          $("#stadttor_mauer").prop("checked", false );
+          $("#kirche_kloster").prop("checked", false );
+          $("#synagoge").prop("checked", false );
+          $("#schule_bildung").prop("checked", false );
+          $("#strasse_verkehr").prop("checked", false );
+          $("#platz_park").prop("checked", false );
+          $("#bruecke_fluss").prop("checked", false );
           $("#time_slider").slider('values',InitYearRange); // reset
           $("#time_range").val( "Jahr " + InitYearRange[0] + " - Jahr " + InitYearRange[1] );
 
@@ -2614,6 +2636,67 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
         $("#tourismus").change(function() {
           $(this).prop("checked") ?  kategorie.push('Tourismus') : kategorie = $.grep(kategorie, function(value) {
              return value != 'Tourismus';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+        $("#burg_schloss").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Burg/Schloss') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Burg/Schloss';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+        $("#rathaus").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Rathaus') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Rathaus';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+
+        $("#stadttor_mauer").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Stadttor/-mauer') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Stadttor/-mauer';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+
+        $("#kirche_kloster").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Kirche/Kloster') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Kirche/Kloster';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+
+        $("#synagoge").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Synagoge') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Synagoge';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+
+        $("#schule_bildung").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Schule/Bildung') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Schule/Bildung';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+
+        $("#strasse_verkehr").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Straße/Verkehr') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Straße/Verkehr';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+
+        $("#platz_park").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Platz/Park') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Platz/Park';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+
+        $("#bruecke_fluss").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Brücke/Fluß') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Brücke/Fluß';
           });
           Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
 	});
