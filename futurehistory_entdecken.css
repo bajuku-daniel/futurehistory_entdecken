@@ -228,8 +228,10 @@ div.ui-slider-range.ui-widget-header {
  * style the filterbox content
  * --------------------------------------------------------------------
 */
-#kategory_selector_table td {
+#kategory_selector_table td label {
   padding-left:8px;
+  font-size:11pt;
+  font-weight: normal;
 }
 
 /* -------------------------------------------------------------------- 

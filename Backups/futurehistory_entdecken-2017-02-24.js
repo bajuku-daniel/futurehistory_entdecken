@@ -5,7 +5,6 @@
 
   var CALL_onpopstate = false;
   var RAW = [];
-  var CAT = {};
   var DEFAULT_ZOOM = 17;
   var LAST_ACTIVE_NID = -1;
   var markerCluster;
@@ -21,7 +20,7 @@
   var bounds;
   var RequestDate = 'all';
   var poi_url = '/de/fh_view/fh_bbox_pois';
-  var cat_url = '/de/fh_view/fh_view_taxonomy.json';
+  var cat_url = '/de/fh_view/fh_view_taxonomy.json?vid=6';
   var marker_content = [];
   var sort = 'dist';
   var fh_place;
@@ -225,9 +224,8 @@
     var bbox = bbox_left + ',' + bbox_bottom + ',' + bbox_right + ',' + bbox_top;
     var RequestArgs = {};
 
-    // console.log('getmarker for kategory: ', kategorie.toString(), ' len ', kategorie.toString().length);
     if (kategorie.length) {
-      RequestArgs = {bbox : bbox, date : RequestDate, kategorie_id : kategorie.toString() }
+      RequestArgs = {bbox : bbox, date : RequestDate, field_kategorie_name : kategorie.toString() }
     } else {
       RequestArgs = {bbox : bbox, date : RequestDate }
     }
@@ -240,7 +238,7 @@
       success: function(data) {
         var marker_content = data;
         // call the marker and thumbnail functions
-        // console.log('ajax success... call setMapMarkers');
+        console.log('ajax success... call setMapMarkers');
         Drupal.futurehistoryEntdecken.setMapMarkers(marker_content, mapId);
         Drupal.futurehistoryEntdecken.setMapThumbnails(marker_content, mapId, mapCenter);
       }
@@ -2374,44 +2372,28 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
         Drupal.futurehistoryEntdecken[mapId] = {};
 
         // ajax request to get categories
+        /*
         $.ajax({
           url: cat_url,
-          // mapping must be complete before continuing, keep callback slim
-          async: false, 
           method: 'get',
-          data: {vid:'6'},
+          data: RequestArgs,
           dataType: 'json',
           success: function(data) {
-            var kategory_selector_content = '<form><fieldset><table id="kategory_selector_table">'
-            var cnt = 1;
-            for ( var i=0; i < data.length; i++) {
-              // build categorie mapping for usage in permalinks
-              var key = data[i]['Begriff-ID'];
-              var kn  = data[i].name;
-              // build GUI for categorie filter
-              CAT[key] = kn;
-              if (i % 3 === 0) {
-                 kategory_selector_content += '<tr>'
-              }
-              kategory_selector_content += '<td><label><input type="checkbox" id="cat_' + key + '" name="cat_' + key + '" value="' + key + '" checked="checked">&nbsp;' + kn + '</label></td>';
-              if ((i+1) % 3 === 0) {
-                 kategory_selector_content += '</tr>'
-              }
-            }
-            kategory_selector_content += '</table></fieldset></form>';
-
-            // estabilsh Cat selction GUI in DIV
-            $('#kategory_selector').html(kategory_selector_content);
-            for ( key in CAT ) {
-              toggleCategory(key);
+            var cat = data;
+            // console.log('CAT: ', cat);
+            for ( var i = 0; i < cat.length; i++) {
+              console.log(' bid: ', cat[i].Begriff-ID);
+              console.log(' vid: ', cat[i].Vokabular-ID);
+              console.log(' name: ', cat[i].name);
             }
           }
         });
+        */
 
         // first cookie check - where did we come from?
         // if cookie ok we override the default map values and initials
         var fh_geolocation_cookie_data = JSON.parse($.cookie("fh_geolocation_cookie"));
-        // console.log(' fh_geolocation_cookie_data ', fh_geolocation_cookie_data);
+        console.log(' fh_geolocation_cookie_data ', fh_geolocation_cookie_data);
         
         var fh_lastview_cookiedata = JSON.parse($.cookie('fh_lastview_cookie'));
 
@@ -2446,14 +2428,13 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           mapCenter = new google.maps.LatLng(parseFloat(window.location.hash.split('#')[1]), parseFloat(window.location.hash.split('#')[2]));
           mapZoom = parseInt(window.location.hash.split('#')[3]);
           kategorie = window.location.hash.split('#')[4].split(',');
-          // console.log('get kategorie from hash ID ', kategorie);
-
           YearRange[0] = parseInt(window.location.hash.split('#')[5].split('--')[0]);
           YearRange[1] = parseInt(window.location.hash.split('#')[5].split('--')[1]);
           RequestDate = String(YearRange[0]) + '--' + String(YearRange[1]);
           sort = window.location.hash.split('#')[6];
           // console.log('RequestDate from hash ', YearRange);
           // console.log('sort from hash ', sort);
+          // console.log('kategorie from hash ', kategorie);
           Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
           Drupal.futurehistoryEntdecken[mapId].map.setZoom(mapZoom);
         } else if (fh_geolocation_cookie_data != null) {
@@ -2475,7 +2456,7 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
             }
             Drupal.futurehistoryEntdecken.markMapCenter(mapId, new google.maps.LatLng(fh_geolocation_cookie_data.point));
             mapCenter = Drupal.futurehistoryEntdecken[mapId].map.getCenter();
-            // console.log(' delete fh_geolocation_cookie ');
+          // console.log(' delete fh_geolocation_cookie ');
           $.cookie('fh_geolocation_cookie', null, { path: '/' });
         } else if (fh_lastview_cookiedata != null) {
             // Back from BildDetail
@@ -2549,19 +2530,23 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
             } );
             return;
           }
+          var katStr =  ''
+          if (kategorie.length) {
+            katStr = kategorie.toString();
+          } else {
+            // no categorie checkbox = no restriction, use all
+            katStr = 'Erinnern,Stadtbild,Tourismus';
+          }
           var reqDate = String($("#time_slider").slider("values", 0) + "--" + $("#time_slider").slider("values", 1));
           var baseUrl = window.location.origin+window.location.pathname;
           var centerControlDiv = document.createElement('div');
-          var permaUrl  =  baseUrl + encodeURI('#' + coords.lat() +
-                                  '#' + coords.lng() +
+          var centerControl = new CenterControl(centerControlDiv, Drupal.futurehistoryEntdecken[mapId].map, 
+              baseUrl + encodeURI('#' + coords.lat() + 
+                                  '#' + coords.lng() + 
                                   '#' + Drupal.futurehistoryEntdecken[mapId].map.getZoom() +
-                                  '#' + kategorie.toString() +
+                                  '#' + katStr +
                                   '#' + reqDate +
-                                  '#' + sort);
-
-          var permalink = '<a href="' + permaUrl + '">' + permaUrl + '</a>';
-          centerControlDiv.index = 1;
-          var centerControl = new CenterControl(centerControlDiv, Drupal.futurehistoryEntdecken[mapId].map, permalink);
+                                  '#' + sort));
           centerControlDiv.index = 1;
           Drupal.futurehistoryEntdecken[mapId].map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
         });
@@ -2622,18 +2607,123 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
 
 
         // Filter checkbox-events
+
+[{"Begriff-ID":"907","Vokabular-ID":"6","name":"Br\u00fccke/Fluss"},{"Begriff-ID":"899","Vokabular-ID":"6","name":"Burg/Schloss"},{"Begriff-ID":"13","Vokabular-ID":"6","name":"Erinnern"},{"Begriff-ID":"902","Vokabular-ID":"6","name":"Kirche/Kloster"},{"Begriff-ID":"906","Vokabular-ID":"6","name":"Platz/Park"},{"Begriff-ID":"900","Vokabular-ID":"6","name":"Rathaus"},{"Begriff-ID":"904","Vokabular-ID":"6","name":"Schule/Bildung"},{"Begriff-ID":"12","Vokabular-ID":"6","name":"Stadtbild"},{"Begriff-ID":"901","Vokabular-ID":"6","name":"Stadttor/-mauer"},{"Begriff-ID":"905","Vokabular-ID":"6","name":"Stra\u00dfe/Verkehr"},{"Begriff-ID":"903","Vokabular-ID":"6","name":"Synagoge"},{"Begriff-ID":"11","Vokabular-ID":"6","name":"Tourismus"}]
+
+
         $("a[class=reset-filter-link]").click(function() {
-          kategorie = ['all'];
-          for ( key in CAT ) {
-            // deactivate all checkboxes
-            $('#cat_'+key).prop("checked", false );
-          }
+          kategorie = [
+            'Stadtbild',
+            'Tourismus',
+            'Erinnern', 
+            'Burg/Schloss',
+	    'Rathaus',
+	    'Stadttor/-mauer',
+	    'Kirche/Kloster',
+	    'Synagoge',
+	    'Schule/Bildung',
+	    'Straße/Verkehr',
+	    'Platz/Park',
+	    'Brücke/Fluß'
+          ];
+          $("#erinnern").prop("checked", false );
+          $("#stadtbild").prop("checked", false );
+          $("#tourismus").prop("checked", false );
+          $("#burg_schloss").prop("checked", false );
+          $("#rathaus").prop("checked", false );
+          $("#stadttor_mauer").prop("checked", false );
+          $("#kirche_kloster").prop("checked", false );
+          $("#synagoge").prop("checked", false );
+          $("#schule_bildung").prop("checked", false );
+          $("#strasse_verkehr").prop("checked", false );
+          $("#platz_park").prop("checked", false );
+          $("#bruecke_fluss").prop("checked", false );
           $("#time_slider").slider('values',InitYearRange); // reset
           $("#time_range").val( "Jahr " + InitYearRange[0] + " - Jahr " + InitYearRange[1] );
+
           RequestDate = String(InitYearRange[0]) + '--' + String(InitYearRange[1]);
-          // console.log(' kategorie array: ', kategorie);
           Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
         });
+
+        $("#erinnern").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Erinnern') : kategorie = $.grep(kategorie, function(value) {
+            return value != 'Erinnern';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+        $("#stadtbild").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Stadtbild') : kategorie = $.grep(kategorie, function(value) {
+            return value != 'Stadtbild';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+        $("#tourismus").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Tourismus') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Tourismus';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+        $("#burg_schloss").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Burg/Schloss') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Burg/Schloss';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+        $("#rathaus").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Rathaus') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Rathaus';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+
+        $("#stadttor_mauer").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Stadttor/-mauer') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Stadttor/-mauer';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+
+        $("#kirche_kloster").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Kirche/Kloster') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Kirche/Kloster';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+
+        $("#synagoge").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Synagoge') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Synagoge';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+
+        $("#schule_bildung").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Schule/Bildung') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Schule/Bildung';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+
+        $("#strasse_verkehr").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Straße/Verkehr') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Straße/Verkehr';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+
+        $("#platz_park").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Platz/Park') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Platz/Park';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
+
+        $("#bruecke_fluss").change(function() {
+          $(this).prop("checked") ?  kategorie.push('Brücke/Fluß') : kategorie = $.grep(kategorie, function(value) {
+             return value != 'Brücke/Fluß';
+          });
+          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+	});
 
         // sort checkboxes 
         $("#fh_sort_dist").change(function() {
@@ -2671,36 +2761,22 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
       }
 
       // reflect kategorie from URL hash if present
-      for ( key in CAT ) {
-        if (kategorie.indexOf(key) > -1) { 
-          $('#cat_'+key).prop('checked', true);
-          //console.log('Activate checkbox ', CAT[key]);
-        } else {
-          $('#cat_'+key).prop('checked', false);
-        }
+      if (kategorie.indexOf("Erinnern") > -1) { 
+        $("#erinnern").prop('checked', true);
+      } else {
+        $("#erinnern").prop("checked", false );
+      }
+      if (kategorie.indexOf("Stadtbild") > -1) {
+        $("#stadtbild").prop('checked', true);
+      } else {
+        $("#stadtbild").prop("checked", false );
+      }
+      if (kategorie.indexOf("Tourismus") > -1) {
+        $("#tourismus").prop('checked', true);
+      } else {
+        $("#tourismus").prop("checked", false );
       }
 
-      function toggleCategory(IDcat) {
-        $('#cat_'+IDcat).change(function(IDcat) {
-          // console.log('cat checkbox ', $(this).val(),' checked ? ',  $(this).prop("checked"));
-          var actKat = $(this).val();
-          // rebuild kategorie arry depending on checkbox state
-          $(this).prop("checked") ?  kategorie.push($(this).val()) : kategorie = $.grep(kategorie, function(v) { return v != actKat; });
-          // console.log(' toggleCategory change event, new kategorie array: ', kategorie);
-          if (kategorie.length > 1) {
-            // there is a category filter and perhaps all:
-            // remove all if present
-            var k = kategorie.length
-            while (k--) {
-              if (kategorie[k] == 'all') {
-                kategorie.splice(k, 1);
-              }
-            }
-          }
-          // console.log(' using kategorie array for new Request: ', kategorie);
-          Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
-        });
-      }
 
       function CenterControl(controlDiv, map, link) {
 
@@ -2713,7 +2789,7 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
         controlUI.style.cursor = 'pointer';
         controlUI.style.marginBottom = '22px';
         controlUI.style.textAlign = 'center';
-        controlUI.title = 'right click to copy link, right click in map to hide link';
+        controlUI.title = 'right click to hide the hash';
         controlDiv.appendChild(controlUI);
 
         // Set CSS for the control interior.
