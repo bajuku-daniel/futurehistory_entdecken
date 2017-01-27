@@ -205,7 +205,12 @@ class futurehistory_entdecken_poi_bbox extends views_plugin_style {
       }
       $marker_img_overlay = '';
       if ($this->options['marker_img_overlay_field']) {
-        $marker_img_overlay = $this->view->render_field($this->options['marker_img_overlay_field'],$row_index);
+        if(isset($row->field_field_bild_overlay[0]['raw']['fid']) && isset($row->field_field_bild[0]['raw']['width']) &&isset($row->field_field_bild[0]['raw']['height'])){
+          $stylename = fh_mc_image_style_by_size((int) $row->field_field_bild[0]['raw']['width'],(int) $row->field_field_bild[0]['raw']['height']);
+          $marker_img_overlay = image_style_url($stylename,$row->field_field_bild_overlay[0]['raw']['uri']);
+        }else {
+          $marker_img_overlay = $this->view->render_field($this->options['marker_img_overlay_field'], $row_index);
+        }
       }
       $marker_flagged = '';
       if ($this->options['marker_flagged_field']) {
