@@ -11,3 +11,57 @@
 function futurehistory_entdecken_views_api() {
   return array('api' => 3);
 }
+
+
+/**
+ * HOOK_views_pre_render
+ *
+ * alter ovlerlay image style path to use dynamic manualcrop style
+ *
+ * @param $view
+ *
+ */
+function futurehistory_entdecken_views_pre_render(&$view) {
+  switch ($view->name) {
+    case 'fh_views_node':
+      $R=0;
+      if($view->current_display === 'page' || $view->current_display === 'services_1'){
+        if(isset($view->field['field_bild']->view->result[0]->field_field_bild[0]['raw']['width']) && isset($view->field['field_bild']->view->result[0]->field_field_bild[0]['raw']['height'])){
+          //  override the image_style field value
+          $orig_width = $view->field['field_bild']->view->result[0]->field_field_bild[0]['raw']['width'];
+          $orig_height = $view->field['field_bild']->view->result[0]->field_field_bild[0]['raw']['height'];
+          $stylename = fh_mc_image_style_by_size((int) $orig_width,(int) $orig_height);
+          $view->result[0]->field_field_bild_overlay[0]['rendered']['#image_style'] = $stylename;
+        }
+      }
+
+      break;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
