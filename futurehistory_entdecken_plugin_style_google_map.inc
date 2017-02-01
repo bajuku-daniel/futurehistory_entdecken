@@ -297,7 +297,8 @@ class futurehistory_entdecken_plugin_style_google_map extends views_plugin_style
 
 
     $protocol = empty($_SERVER['HTTPS']) ? 'http' : 'https';
-    drupal_add_js($protocol . '://maps.googleapis.com/maps/api/js?key=AIzaSyCHmLzcxDDh2_JJ2oB6ma8YwMFiohtZC2c&signed_in=false&libraries=places,geometry', array('type' => 'external'));
+//    drupal_add_js($protocol . '://maps.googleapis.com/maps/api/js?key=AIzaSyCHmLzcxDDh2_JJ2oB6ma8YwMFiohtZC2c&signed_in=false&libraries=places,geometry', array('type' => 'external'));
+    drupal_add_js($protocol . '://maps.googleapis.com/maps/api/js?key=AIzaSyDyEdQcuCkTdfq-S7i3TZDACoG2dXRoMC8&signed_in=false&libraries=places,geometry', array('type' => 'external'));
     if ($this->options['use_marker_clusterer']) {
       // drupal_add_js($protocol . '://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js', array('type' => 'external'));
       // linde 2016-10-06: changed to

@@ -241,8 +241,112 @@
         var marker_content = data;
         // call the marker and thumbnail functions
         // console.log('ajax success... call setMapMarkers');
-        Drupal.futurehistoryEntdecken.setMapMarkers(marker_content, mapId);
-        Drupal.futurehistoryEntdecken.setMapThumbnails(marker_content, mapId, mapCenter);
+        // Drupal.futurehistoryEntdecken.setMapMarkers(marker_content, mapId);
+        // Drupal.futurehistoryEntdecken.setMapThumbnails(marker_content, mapId, mapCenter);
+        console.log("CALL TOURS");
+        tours(data, mapId, mapCenter);
+      }
+    });
+  }
+
+  /**
+   * Testing tour Data
+   *
+   * @param data
+   */
+  function tours(data, mapId){
+    console.log("INIT TOURS DATA");
+    var item,attr,tourdata;
+    var tours_unique=[];
+    var tours_unique_ordered=[];
+    var pois_by_nid=[];
+    var tour_url = '/de/fh_view/list_tour_content';
+
+    for(item in data){
+      for(attr in data[item]){
+
+        pois_by_nid[data[item]['Nid']]=data[item];
+
+        if(attr === "tour_id" && data[item][attr] !== "NULL"){
+          tours_unique[data[item][attr]] = data[item];
+        }
+      }
+    }
+
+    for(tourdata in tours_unique){
+      tours_unique_ordered.push(tours_unique[tourdata]);
+    }
+
+    // console.log(tours_unique_ordered);
+    // Drupal.futurehistoryEntdecken.setMapMarkers(tours_unique_ordered, mapId);
+    // Drupal.futurehistoryEntdecken.setMapThumbnails(tours_unique_ordered, mapId, mapCenter);
+
+    // console.log("pois_by_nid");
+    // console.log(pois_by_nid);
+
+    // start the ajax request to get tour details
+    $.ajax({
+      url: tour_url,
+      method: 'get',
+      data: "tour_id="+tours_unique_ordered[1]["tour_id"],
+      dataType: 'json',
+      success: function(tourdata) {
+        console.log("TOUR DETAILS REQUEST");
+        // console.log(tourdata);
+        var original_tourdata = [];
+        for(item in tourdata){
+          if ('nid' in tourdata[item]) {
+            original_tourdata.push(pois_by_nid[tourdata[item]['nid']]);
+          }
+        }
+        // console.log(original_tourdata);
+        Drupal.futurehistoryEntdecken.setMapMarkers(original_tourdata, mapId);
+        Drupal.futurehistoryEntdecken.setMapThumbnails(original_tourdata, mapId, mapCenter);
+
+        console.log("MAP DEBUGG");
+        console.log(mapId);
+        console.log(Drupal.futurehistoryEntdecken[mapId].map);
+
+        var directionsService = new google.maps.DirectionsService;
+        var directionsDisplay = new google.maps.DirectionsRenderer;
+        directionsDisplay.setMap(Drupal.futurehistoryEntdecken[mapId].map);
+        directionsDisplay.setOptions( { suppressMarkers: true } );
+        calculateAndDisplayRoute(directionsService, directionsDisplay,original_tourdata);
+      }
+    });
+
+  }
+
+  function calculateAndDisplayRoute(directionsService, directionsDisplay,original_tourdata) {
+    var waypts = [];
+
+    for (var i = 0; i < original_tourdata.length; i++) {
+      if (i == 0) {
+        my_origin = original_tourdata[i]['lat'] + "," + original_tourdata[i]['lon'];
+      }
+      my_destination = original_tourdata[i]['lat'] + "," + original_tourdata[i]['lon'];
+      waypts.push({
+        location: new google.maps.LatLng(original_tourdata[i]['lat'], original_tourdata[i]['lon']),
+        stopover: true
+      });
+    }
+
+
+
+    var mys_origin = waypts.shift();
+    var mys_destination = waypts.pop();
+
+    directionsService.route({
+      origin: my_origin,
+      destination: my_destination,
+      waypoints: waypts,
+      optimizeWaypoints: true,
+      travelMode: google.maps.TravelMode.WALKING
+    }, function(response, status) {
+      if (status === google.maps.DirectionsStatus.OK) {
+        directionsDisplay.setDirections(response);
+      } else {
+        window.alert('Directions request failed due to ' + status);
       }
     });
   }
