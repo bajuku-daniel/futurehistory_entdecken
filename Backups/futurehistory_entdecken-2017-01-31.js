@@ -2361,7 +2361,6 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
 
 
 
-
       $('.futurehistory-entdecken-map', context).each(function() {
 
 
@@ -2369,10 +2368,6 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
         // The MAP div is located in "futurehistory-entdecken-map.tpl.php" 
         // and feed with the $atribute options created in "futurehistory_entdecken_plugin_style_google_map.inc" i
         // and the associated VIEW in the Drupal Backend
-
-        function param(name) {
-          return (location.search.split(name + '=')[1] || '').split('&')[0];
-        }
 
         var $this = $(this);
         mapId = this.id;
@@ -2445,33 +2440,20 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
         // initial clear center marker, redo from URL, cookies or places
         Drupal.futurehistoryEntdecken[mapId].center_marker = undefined;
 
-
-        if (window.location.search.length > 1) {
+        if (window.location.hash.length > 1) {
           // set view parameters from URL hash
           // console.log(' set location from URL ', window.location.hash);
-          var url_x = param('x');
-          var url_y = param('y');
-          var url_z = param('z');
-          var url_k = param('k');
-          var url_d = param('d');
-          var url_s = param('s');
-          mapCenter = new google.maps.LatLng(parseFloat(url_y), parseFloat(url_x));
-          if (url_k.substring(0, 1) == ',') { 
-            url_k = url_k.substring(1);
-          }
-          mapZoom = parseInt(url_z);
-          kategorie = url_k.split(',');
-          YearRange[0] = parseInt(url_d.split('--')[0]);
-          YearRange[1] = parseInt(url_d.split('--')[1]);
+          mapCenter = new google.maps.LatLng(parseFloat(window.location.hash.split('#')[1]), parseFloat(window.location.hash.split('#')[2]));
+          mapZoom = parseInt(window.location.hash.split('#')[3]);
+          kategorie = window.location.hash.split('#')[4].split(',');
+          // console.log('get kategorie from hash ID ', kategorie);
+
+          YearRange[0] = parseInt(window.location.hash.split('#')[5].split('--')[0]);
+          YearRange[1] = parseInt(window.location.hash.split('#')[5].split('--')[1]);
           RequestDate = String(YearRange[0]) + '--' + String(YearRange[1]);
-          sort = url_s;
-          // console.log('mapX ', url_x);
-          // console.log('mapY ', url_y);
-          // console.log('Zoom ', url_z);
-          // console.log('Kategorie ', url_k);
-          // console.log('Date', url_d);
-          // console.log('Sort ', url_s);
-          // console.log('YearRange ', YearRange);
+          sort = window.location.hash.split('#')[6];
+          // console.log('RequestDate from hash ', YearRange);
+          // console.log('sort from hash ', sort);
           Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
           Drupal.futurehistoryEntdecken[mapId].map.setZoom(mapZoom);
         } else if (fh_geolocation_cookie_data != null) {
@@ -2536,8 +2518,8 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
             // console.log(' HISTORY back...', laststate.view );
             $('#places-autocomplete-map').val('');
             $('#places-autocomplete-map').blur();
-            var LastMapCenter = new google.maps.LatLng(parseFloat(laststate.view.split('&')[1]), parseFloat(laststate.view.split('&')[2]));
-            mapZoom = parseInt(laststate.view.split('&')[3]);
+            var LastMapCenter = new google.maps.LatLng(parseFloat(laststate.view.split('#')[1]), parseFloat(laststate.view.split('#')[2]));
+            mapZoom = parseInt(laststate.view.split('#')[3]);
             Drupal.futurehistoryEntdecken[mapId].map.setCenter(LastMapCenter);
             Drupal.futurehistoryEntdecken[mapId].map.setZoom(mapZoom);
           }
@@ -2570,12 +2552,12 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           var reqDate = String($("#time_slider").slider("values", 0) + "--" + $("#time_slider").slider("values", 1));
           var baseUrl = window.location.origin+window.location.pathname;
           var centerControlDiv = document.createElement('div');
-          var permaUrl  =  baseUrl + encodeURI('?y=' + coords.lat() +
-                                  '&x=' + coords.lng() +
-                                  '&z=' + Drupal.futurehistoryEntdecken[mapId].map.getZoom() +
-                                  '&k=' + kategorie.toString() +
-                                  '&d=' + reqDate +
-                                  '&s=' + sort);
+          var permaUrl  =  baseUrl + encodeURI('#' + coords.lat() +
+                                  '#' + coords.lng() +
+                                  '#' + Drupal.futurehistoryEntdecken[mapId].map.getZoom() +
+                                  '#' + kategorie.toString() +
+                                  '#' + reqDate +
+                                  '#' + sort);
 
           var permalink = '<a href="' + permaUrl + '">' + permaUrl + '</a>';
           centerControlDiv.index = 1;
@@ -2592,7 +2574,7 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
            var zoomLevel = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
            // history back again fires a dragend or zoom_changed event via onpopState, then we stay in place.... filter out
            if (!CALL_onpopstate) {
-             var view = '&' + encodeURI(mapCenter.lat() + '&' + mapCenter.lng() + '&' + Drupal.futurehistoryEntdecken[mapId].map.getZoom());
+             var view = '#' + encodeURI(mapCenter.lat() + '#' + mapCenter.lng() + '#' + Drupal.futurehistoryEntdecken[mapId].map.getZoom());
              history.pushState({view:view}, '', '');
              // console.log(' pushState ', view );
            } else {
@@ -2614,7 +2596,7 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           }
           // history back again fires a dragend or zoom_changed event via onpopState, then we stay in place.... filter out
           if (!CALL_onpopstate) {
-            var view = '&' + encodeURI(coords.lat() + '&' + coords.lng() + '&' + Drupal.futurehistoryEntdecken[mapId].map.getZoom());
+            var view = '#' + encodeURI(coords.lat() + '#' + coords.lng() + '#' + Drupal.futurehistoryEntdecken[mapId].map.getZoom());
             history.pushState({view:view}, '', '');
             // console.log(' pushState ', view );
           } else {
