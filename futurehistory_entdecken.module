@@ -22,9 +22,10 @@ function futurehistory_entdecken_views_api() {
  *
  */
 function futurehistory_entdecken_views_pre_render(&$view) {
+  $R=0;
   switch ($view->name) {
     case 'fh_views_node':
-      $R=0;
+
       if($view->current_display === 'page' || $view->current_display === 'services_1'){
         if(isset($view->field['field_bild']->view->result[0]->field_field_bild[0]['raw']['width']) && isset($view->field['field_bild']->view->result[0]->field_field_bild[0]['raw']['height'])){
           //  override the image_style field value

@@ -233,10 +233,17 @@ class futurehistory_entdecken_poi_bbox extends views_plugin_style {
         $marker_is_in_tour_unformated = $this->view->render_field($this->options['marker_is_in_tour'], $row_index);
         $marker_is_in_tour = preg_replace('/\s+/', '', $marker_is_in_tour_unformated);
         //$marker_is_in_tour = json_encode($marker_is_in_tour_unformated);
-
-
       }
 
+      $marker_uid = '';
+      $marker_uname = '';
+
+      if (isset($marker_nid) &&!empty($marker_nid)) {
+        $node = node_load($marker_nid);
+        $user = user_load($node->uid);
+        $marker_uname = $user->name;
+        $marker_uid = $user->uid;
+      }
 
       //get the Koordinates from the futurehistory field
       $this->view->row_index = $row_index;
@@ -262,6 +269,8 @@ class futurehistory_entdecken_poi_bbox extends views_plugin_style {
           'kategorie' => $marker_kategorie,
           'overlay-year' => $marker_overlay_year,
           'tour_id' => $marker_is_in_tour,
+          'uid' => $marker_uid,
+          'uname' => $marker_uname,
         );
       }
     }

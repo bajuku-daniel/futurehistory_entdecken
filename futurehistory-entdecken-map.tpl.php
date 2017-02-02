@@ -37,7 +37,22 @@
         </div>
       </div>
 
-      <div id="kategory_selector"></div>
+      <div id="accordion" class="accordion">
+        <h3><?php print t('Touren'); ?> |
+          <span><?php print t('Keine Tour gewählt'); ?></span></h3>
+        <div id="tour_selector"></div>
+
+        <h3><?php print t('Kategorien'); ?> |
+          <span><?php print t('Keine kategorie gewählt'); ?></span></h3>
+        <div id="kategory_selector"></div>
+
+        <h3><?php print t('Autor'); ?> |
+          <span><?php print t('Kein Autor gewählt'); ?></span></h3>
+        <div id="author_selector"></div>
+      </div>
+
+
+
       <div class="filter-close"><a href="#"><?php print t('SCHLIEßEN'); ?></a></div>
     </div>
 
