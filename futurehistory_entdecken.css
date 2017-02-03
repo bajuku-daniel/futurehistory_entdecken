@@ -269,3 +269,18 @@ div.ui-slider-range.ui-widget-header {
 /*.gmnoprint {
   display: none;
 }*/
+
+/* --------------------------------------------------------------------
+ * FILTER Settings
+ * --------------------------------------------------------------------
+*/
+
+.tour_selector{
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.tour_selector:hover{
+  color: #A04E9C;
+}
+

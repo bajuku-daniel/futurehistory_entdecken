@@ -243,13 +243,16 @@
       dataType: 'json',
       success: function(data) {
         var marker_content = data;
-        // call the marker and thumbnail functions
-        // console.log('ajax success... call setMapMarkers');
-        Drupal.futurehistoryEntdecken.setMapMarkers(marker_content, mapId);
-        Drupal.futurehistoryEntdecken.setMapThumbnails(marker_content, mapId, mapCenter);
-        // console.log("CALL TOURS");
-        // console.log(data);
-        aggregateToursAuthorData(data, mapId, mapCenter);
+        if(!tourdisply_is_Active){
+          console.log("tourdisply_is_Active");
+          console.log("tourdisply_is_Active");
+          console.log(tourdisply_is_Active);
+          // call the marker and thumbnail functions
+          // console.log('ajax success... call setMapMarkers');
+          Drupal.futurehistoryEntdecken.setMapMarkers(marker_content, mapId);
+          Drupal.futurehistoryEntdecken.setMapThumbnails(marker_content, mapId, mapCenter);
+          aggregateToursAuthorData(data, mapId, mapCenter);
+        }
       }
     });
   }
@@ -316,6 +319,8 @@
       }
       directionsDisplay.setMap(null);
     }
+    tourdisply_is_Active = false;
+    jQuery('#tour_selector').parent().find('h3').first().find('span').last().html("Keine Tour gewählt");
   }
   /**
    *
@@ -346,6 +351,10 @@
         directionsDisplay.setOptions({suppressMarkers: true});
         // TEST update Map mit bestehender Markerauswahl - neue funktion zeichnet wegstrecken
         calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata);
+        tourdisply_is_Active = true;
+        console.log("-----------> tourdisply_is_Active");
+        console.log(tourdisply_is_Active);
+
         // timeout needed to set markers - sometimes they dont show up - possibly due directions && marker update interference
         var tout = setTimeout(
             function () {
@@ -372,10 +381,18 @@
     });
   }
 
+  /**
+   *
+   */
   var author = [];
   var pois_by_nid = [];
   var directionsDisplay = [];
+  var tourdisply_is_Active = false;
   var tour_url = '/de/fh_view/list_tour_content';
+
+  /**
+   *
+   */
 
   /**
    * setUpdateAuthor - set Author filter UI
@@ -423,50 +440,7 @@
     var $tours = $('#tour_selector');
     $tours.html('');
     var tour_url_detail = "/de/fh_view/list_tours";
-    /*      $.ajax({
-        url: tour_url_detail,
-        method: 'get',
-        dataType: 'json',
-        success: function (alltours) {
-          for (var i = 0; i < toursFilteredData.length; i++) {
-            var toursItem = toursFilteredData[i];
-            console.log("toursItem");
-            console.log(toursItem);
-            for (var b = 0; b < alltours.length; b++) {
-                  var currentTourItem = alltours[b];
-              if(toursItem.tour_id === currentTourItem.tour_id){
 
-              }
-            }
-          }
-        var distance = tourdetails[0].distance;
-          var tour_titel = tourdetails[0].title;
-          var zeitraum = tourdetails[0].tour_start_date + "/" + tourdetails[0].tour_end_date;
-          var autor = tourdetails[0].name;
-          var tour_id = tourdetails[0].tour_id;
-          var buildTourMarkup = function () {
-            var $tour = $('<div />', {'class': 'tour_id_' + tour_id + " tour_selector"});
-            var $tour_status = $('<div />', {'class': 'status'});
-            var $tour_info = $('<div />', {'class': 'info', "data-tourid": tour_id});
-            $tour_info.append("<span>" + tour_titel + " / " + zeitraum + "</span>");
-            $tour_info.append("<span>" + distance + " / " + autor + "</span>");
-            var $tour_details = $('<div />', {'class': 'details'});
-
-            $tour_info.click(function (e) {
-              console.log(tour_id);
-              showTourOnMap(tour_id)
-            });
-
-            $tour_status.appendTo($tour);
-            $tour_info.appendTo($tour);
-            $tour_details.appendTo($tour);
-            $tour.appendTo($tours);
-
-          }
-          buildTourMarkup();
-        }
-      });
- */
     for (var i = 0; i < toursFilteredData.length; i++) {
       var toursItem = toursFilteredData[i];
 
@@ -490,8 +464,8 @@
             var $tour_details = $('<div />', {'class': 'details'});
 
             $tour_info.click(function (e) {
-              console.log(tour_id);
-              showTourOnMap(tour_id)
+              showTourOnMap(tour_id);
+              jQuery('#tour_selector').parent().find('h3').first().find('span').last().html(tour_titel);
             });
 
             $tour_status.appendTo($tour);
@@ -508,7 +482,6 @@
   }
 
   function calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata) {
-
     var waypts = [];
     for (var i = 0; i < original_tourdata.length; i++) {
       if (i === 0) {
@@ -539,8 +512,6 @@
       }
     });
   }
-
-
 
   // Function: setMapThumbnails
   // list the marker Thumbnails and fill the LI elements wit IDs
