@@ -320,13 +320,14 @@
       directionsDisplay.setMap(null);
     }
     tourdisply_is_Active = false;
+    console.log('unset TITLE TOUR');
     jQuery('#tour_selector').parent().find('h3').first().find('span').last().html("Keine Tour gewählt");
   }
   /**
    *
    * @param tourID
    */
-  function showTourOnMap(tour_id) {
+  function showTourOnMap(tour_id,tourname="") {
     // todo: verhalten bei verschieben wenn strecke bestehen beleibt  / wegfallen soll
 
     // start the ajax request to get tour details
@@ -352,6 +353,7 @@
         // TEST update Map mit bestehender Markerauswahl - neue funktion zeichnet wegstrecken
         calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata);
         tourdisply_is_Active = true;
+        jQuery('#tour_selector').parent().find('h3').first().find('span').last().html(tourname);
         console.log("-----------> tourdisply_is_Active");
         console.log(tourdisply_is_Active);
 
@@ -464,8 +466,8 @@
             var $tour_details = $('<div />', {'class': 'details'});
 
             $tour_info.click(function (e) {
-              showTourOnMap(tour_id);
-              jQuery('#tour_selector').parent().find('h3').first().find('span').last().html(tour_titel);
+              showTourOnMap(tour_id,tour_titel);
+
             });
 
             $tour_status.appendTo($tour);
