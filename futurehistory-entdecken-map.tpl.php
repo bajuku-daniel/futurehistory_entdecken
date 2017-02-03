@@ -53,5 +53,46 @@
     </div>
     <div id="thumbnail-pois">
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="add-to-modal" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Bild hinzufügen / entfernen</h4>
+          </div>
+
+          <div class="modal-add-body">
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="login-modal" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Lieber Besucher</h4>
+          </div>
+          <div class="modal-body">
+            <?php $destination = drupal_get_destination();?>
+            <p>Zum Anlegen einer Bildersammlung oder einer Tour bitte <a href="/user/login?destination=<?php print $destination['destination']; ?>">ANMELDEN</a> oder <a href="/user/register?destination=<?php print $destination['destination']; ?>">REGISTRIEREN</a></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div><!-- end entdecken-map-nav -->
 </div><!-- end row-entdecken -->

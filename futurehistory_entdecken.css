@@ -195,33 +195,42 @@ div.ui-slider-range.ui-widget-header {
   display:none;
 }
 
-.thumbnail-control .left {
-  display: block;
-  float: left;
-  width: 50%;
-}
+
 .thumbnail-control .left a, .thumbnail-control .right a  {
-  clear:both;
-  display:block;
-  margin-top:10px;
+  clear: both;
+  display: block;
+  line-height: 16px;
+  margin-top: 10px;
 }
-.thumbnail-control .left i, .thumbnail-control .right i {
+.thumbnail-control .right i {
   display: block;
   float: left;
-  margin-right: 10px;
-  font-size:38px;
+  font-size: 54px;
+  margin-right: 0;
+  margin-top: -9px;
 
 }
 
 .thumbnail-control .left i {
-  font-size:42px;
+  display: block;
+  float: left;
+  font-size: 42px;
+  margin-right: 9px;
+  margin-top: -2px;
+}
+
+.thumbnail-control .left {
+  display: block;
+  float: left;
+  width: 50%;
+  cursor: pointer; cursor: hand;
 }
 
 .thumbnail-control .right {
   display: block;
   float: left;
   width: 50%;
-  margin-top:10px;
+  cursor: pointer; cursor: hand;
 }
 
 /* --------------------------------------------------------------------
