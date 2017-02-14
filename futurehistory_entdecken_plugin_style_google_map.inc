@@ -307,6 +307,9 @@ class futurehistory_entdecken_plugin_style_google_map extends views_plugin_style
     //drupal_add_js(drupal_get_path('module', 'futurehistory_entdecken') . '/markerclusterer.js');
     drupal_add_js(drupal_get_path('module', 'futurehistory_entdecken') . '/futurehistory_entdecken.js');
     drupal_add_js(drupal_get_path('module', 'futurehistory_entdecken') . '/js-plugins/jquery.scrollTo.min.js');
+
+    drupal_add_js(drupal_get_path('module', 'futurehistory_entdecken') . '/js-plugins/tooltipster.bundle.min.js');
+    drupal_add_css(drupal_get_path('module', 'futurehistory_entdecken') . '/js-plugins/css/tooltipster.bundle.min.css',array('group' => CSS_DEFAULT, 'type' => 'file'));
     $bbox_raw = (isset($_GET['bbox']) ? $_GET['bbox'] : 'noBbox');
 
 

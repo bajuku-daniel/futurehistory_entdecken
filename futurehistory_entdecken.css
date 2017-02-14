@@ -78,6 +78,8 @@
   right:0px;
   position:absolute;
   z-index:3;
+  left: -414px;
+  top: 0px;
 }
 
 #thumbnail-sort-box {
@@ -275,12 +277,34 @@ div.ui-slider-range.ui-widget-header {
  * --------------------------------------------------------------------
 */
 
-.tour_selector{
+.tour_selector {
   font-size: 12px;
+  display: flex; /* or inline-flex */
+  flex-flow: row wrap;
+  justify-content: space-between;
+
+}
+.tour_selector .status{
+  order: 1;
+  width: 30px;
+  /*flex-grow: 1;*/
+}
+.tour_selector .info{
   cursor: pointer;
+  order: 2;
+  flex-grow: 10;
 }
 
-.tour_selector:hover{
+.tour_selector .info:hover,
+.tour_selector.active .info
+{
   color: #A04E9C;
 }
+.tour_selector .details{
+  order: 3;
+  /*flex-grow: 1;*/
+}
 
+.tour_selector .tourtip{
+  margin: 0 5px 0 5px;
+}
