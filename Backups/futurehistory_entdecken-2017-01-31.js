@@ -13,7 +13,6 @@
   var YearRange = [];
   // we need the initial center if someone starts from a bookmark without a cookie - lets go to germany
   var mapCenter = undefined;
-  var mapIdGlobal = undefined;
   var LAST_place = undefined;
   var mapZoom = 8;
   var min_zoom = 6;
@@ -23,7 +22,6 @@
   var RequestDate = 'all';
   var poi_url = '/de/fh_view/fh_bbox_pois';
   var cat_url = '/de/fh_view/fh_view_taxonomy.json';
-  var overlay_url = '/de/flag-lists/links/js' // add nid in the request
   var marker_content = [];
   var sort = 'dist';
   var fh_place;
@@ -69,26 +67,9 @@
     new google.maps.Point(7, 32) //anchor point
   );
 
-  // Function: generateModal
-  // Generate the Modal "add to tour / collection" - modal link structure in flag_list.module and futurehistory-entdecken-map.tpl.php
-  Drupal.futurehistoryEntdecken.generateModal = function(nid, mapId) {
-    var tourCreateAccess = Drupal.settings.futurehistoryEntdecken.tour_access;  // get the acces setting generated in futurehistory_entdecken_plugin_style_google_map.php
-
-    if (tourCreateAccess == true) {
-      $.get(overlay_url + '?nid='  + nid, function(html){
-        $('#add-to-modal .modal-add-body').html(html); // get and push the html
-        $('#add-to-modal').modal('show', {backdrop: 'static'});
-        Drupal.flagLink(); // call flaglink funktion for the link toggle
-        Drupal.futurehistoryEntdecken.setLastViewCookie(nid , mapId);
-      });
-    } else {
-      Drupal.futurehistoryEntdecken.setLastViewCookie(nid , mapId);
-      $('#login-modal').modal('show', {backdrop: 'static'}); // not authorized - log me in scotty ;)
-    }
-  }
-
   //google map style elements
   var map_styles = [ { "featureType": "poi.park", "stylers": [ { "visibility": "on" } ] },{ "featureType": "poi.attraction", "stylers": [ { "visibility": "on" } ] },{ "featureType": "poi.business", "stylers": [ { "visibility": "off" } ] },{ "featureType": "poi.government", "stylers": [ { "visibility": "on" } ] },{ "featureType": "poi.medical", "stylers": [ { "visibility": "off" } ] },{ "featureType": "poi.school", "stylers": [ { "visibility": "off" } ] },{ "featureType": "poi.place_of_worship", "stylers": [ { "visibility": "on" } ] },{ "featureType": "poi.school", "stylers": [ { "visibility": "off" } ] }];
+
   // Function: markMapCenter
   // set the "center" - marker to calculate the distance
   Drupal.futurehistoryEntdecken.markMapCenter = function(mapId, Center) {
@@ -102,7 +83,7 @@
         zIndex: google.maps.Marker.MAX_ZINDEX
       });
       // console.log('new center mark ', Drupal.futurehistoryEntdecken[mapId].center_marker.getPosition().lat(), Drupal.futurehistoryEntdecken[mapId].center_marker.getPosition().lng());
-    } else {
+    } else { 
       // console.log('move center mark to ', Center);
       Drupal.futurehistoryEntdecken[mapId].center_marker.setPosition(Center);
     }
@@ -160,7 +141,7 @@
       } else {
         // test if id is in hidden list
         for ( var x = 0; x < RAW[i].hidePOIs.length; x++) {
-          if (RAW[i].hidePOIs[x].id === id) {
+          if (RAW[i].hidePOIs[x].id === id) { 
             Drupal.futurehistoryEntdecken.delMapArrow(RAW[i].hidePOIs[x]);
             RAW[i].hidePOIs[x].activated = false;
             RAW[i].setIcon(fh_marker_blue_cross);
@@ -231,15 +212,11 @@
     $("#time_slider").on( "slidestop", function( event, ui ) {
       Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
     });
-
-
-
   };
 
   //Function: getMarkers
-  //Returns a Marker array from the bbox request // sets class indictor according to selected filters
+  //Returns a Marker array from the bbox request
   //Parameters: bounds, date, kategorie
-
   Drupal.futurehistoryEntdecken.getMarkers = function (bounds, RequestDate, kategorie, sort, mapId, mapCenter){
     var bbox_bottom = bounds.getSouthWest().lat();
     var bbox_top = bounds.getNorthEast().lat();
@@ -248,480 +225,28 @@
     var bbox = bbox_left + ',' + bbox_bottom + ',' + bbox_right + ',' + bbox_top;
     var RequestArgs = {};
 
-    if(tourdisply_is_Active){
-      requestArgIndicatorClass = 'tour';
-    }else{
-      requestArgIndicatorClass = '';
-    }
-
-
-    if(author.constructor === Array && author.length > 1){
-      author = author.join("+");
-      requestArgIndicatorClass = requestArgIndicatorClass + ' author';
-    }else if(author.constructor === Array && author.length == 1){
-      author = author;
-      requestArgIndicatorClass = requestArgIndicatorClass + ' author';
-    }else{
-      author = "all";
-    }
+    // console.log('getmarker for kategory: ', kategorie.toString(), ' len ', kategorie.toString().length);
     if (kategorie.length) {
-      // 1,2,3 (AND) and 1+2+3(OR).
-      RequestArgs = {bbox : bbox, date : RequestDate, kategorie_id : kategorie.join('+'), autor_uid : author}
-      requestArgIndicatorClass = requestArgIndicatorClass + ' kategorie';
+      RequestArgs = {bbox : bbox, date : RequestDate, kategorie_id : kategorie.toString() }
     } else {
-      RequestArgs = {bbox : bbox, date : RequestDate, autor_uid : author }
+      RequestArgs = {bbox : bbox, date : RequestDate }
     }
-
-    // check date range for changes
-    var dateDefaultStateCheck = (RequestDate !== 'all') &&
-        (RequestDate !== (parseInt(Drupal.settings.futurehistoryEntdecken.first_date)+"--"+parseInt(Drupal.settings.futurehistoryEntdecken.last_date)));
-   if(dateDefaultStateCheck){
-     requestArgIndicatorClass = requestArgIndicatorClass + ' date';
-   }
-    // update class on filter button
-    $('#thumbnail-navigation-filter-button').attr('class', requestArgIndicatorClass);
-
-
-    clearAjaxCalls();
     // start the ajax request
-    ajaxXHR["gm"] = $.ajax({
+    $.ajax({
       url: poi_url ,
       method: 'get',
       data: RequestArgs,
       dataType: 'json',
       success: function(data) {
         var marker_content = data;
-        if(!tourdisply_is_Active){
-          if(directionsDisplay.setMap){
-            directionsDisplay.setMap(null);
-            directionsDisplay.setDirections({routes: []});
-          }
-          // call the marker and thumbnail functions
-          // console.log('ajax success... call setMapMarkers');
-          Drupal.futurehistoryEntdecken.setMapMarkers(marker_content, mapId);
-          Drupal.futurehistoryEntdecken.setMapThumbnails(marker_content, mapId, mapCenter);
-          aggregateToursAuthorData(data, mapId, mapCenter);
-        }
+        // call the marker and thumbnail functions
+        // console.log('ajax success... call setMapMarkers');
+        Drupal.futurehistoryEntdecken.setMapMarkers(marker_content, mapId);
+        Drupal.futurehistoryEntdecken.setMapThumbnails(marker_content, mapId, mapCenter);
       }
     });
   }
 
-  /**
-   * aggregateToursAuthorData
-   *
-   * Testing tour Data
-   *
-   * @param data
-   */
-  function aggregateToursAuthorData(data, mapId, mapCenter) {
-    var item, attr, tourdata;
-    var tours_unique = [];
-    var toursDataInResult = [];
-    var pois_by_author = [];
-    var uidAuthorData = [];
-
-    // reset
-    // pois_by_nid = [];
-
-    for (item in data) {
-      if (pois_by_author[data[item]['uname']] === undefined) {
-        pois_by_author[data[item]['uname']] = [];
-      }
-      pois_by_author[data[item]['uname']].push(data[item]);
-      for (attr in data[item]) {
-        pois_by_nid[data[item]['Nid']] = data[item];
-        if (attr === "tour_id" && data[item][attr] !== "NULL") {
-          tours_unique[data[item][attr]] = data[item];
-        }
-      }
-    }
-
-    for (tourdata in tours_unique) {
-      toursDataInResult.push(tours_unique[tourdata]);
-    }
-
-    for (user in pois_by_author) {
-      uidAuthorData[user] = {count: pois_by_author[user].length, uid: pois_by_author[user][0]['uid']};
-    }
-
-    setUpdateAuthor(uidAuthorData);
-    setUpdateTours(toursDataInResult);
-
-
-
-    ////  TODO: REFACTOR ALL CHANGES
-    initializeAccordions();
-
-
-    //// DEMO CALL
-    // showTourOnMap(toursDataInResult[0]["tour_id"]);
-
-
-  }
-
-
-  /**
-   *
-   * @param tourID
-   */
-  function showTourOnMap(tour_id,tourname,distance) {
-    // todo: verhalten bei verschieben wenn strecke bestehen beleibt  / wegfallen soll
-
-    // start the ajax request to get tour details
-    ajaxXHR["stom"] = $.ajax({
-      url: tour_url,
-      method: 'get',
-      data: "tour_id=" + tour_id,
-      dataType: 'json',
-      success: function (tourdata) {
-        var original_tourdata = [];
-        for (item in tourdata) {
-          if ('nid' in tourdata[item]) {
-            original_tourdata.push(pois_by_nid[tourdata[item]['nid']]);
-          }
-        }
-
-        // clearDirectionsMarkers();
-        if(directionsDisplay.setMap){
-          directionsDisplay.setMap(null);
-          directionsDisplay.setDirections({routes: []});
-        }
-
-        var directionsService = new google.maps.DirectionsService;
-        directionsDisplay = new google.maps.DirectionsRenderer({
-          polylineOptions: {
-            strokeOpacity: 0.8,
-          }
-        });
-        directionsDisplay.setMap(Drupal.futurehistoryEntdecken[mapIdGlobal].map);
-        directionsDisplay.setOptions({suppressMarkers: true});
-        // TEST update Map mit bestehender Markerauswahl - neue funktion zeichnet wegstrecken
-        calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata,distance);
-        // use_eval_to_call_last_calculateAndDisplayRoute = "calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata,distance)";
-        use_eval_to_call_last_calculateAndDisplayRoute = wrapFunction(calculateAndDisplayRoute,this,[directionsService, directionsDisplay, original_tourdata,distance]);
-
-        tourdisply_is_Active = true;
-        jQuery('#tour_selector').parent().find('h3').first().find('span').last().html(tourname);
-
-        // timeout needed to set markers - sometimes they dont show up - possibly due directions && marker update interference
-        var tout = setTimeout(
-            function () {
-              Drupal.futurehistoryEntdecken.setMapMarkers(original_tourdata, mapIdGlobal);
-              Drupal.futurehistoryEntdecken.setMapThumbnails(original_tourdata, mapIdGlobal, mapCenter);
-              clearTimeout(tout);
-
-            }, 500);
-      }
-    });
-
-  }
-
-
-
-  function enableFilterUI(){
-    jQuery("#time_slider").slider('enable');
-    jQuery("#thumbnail-filter-box input:radio").attr('disabled',false);
-    jQuery("#thumbnail-filter-box input:checkbox").attr('disabled',false);
-    $( "#kategory_selector" ).prev().removeClass( "ui-state-disabled" );
-    $( "#author_selector" ).prev().removeClass( "ui-state-disabled" );
-  }
-
-  function disbleFilterUI(){
-    jQuery("#time_slider").slider('disable');
-    jQuery("#thumbnail-filter-box input:radio").attr('disabled',true);
-    jQuery("#thumbnail-filter-box input:checkbox").attr('disabled',true);
-    $( "#kategory_selector" ).prev().addClass( "ui-state-disabled" );
-    $( "#author_selector" ).prev().addClass( "ui-state-disabled" );
-  }
-
-// Removes the markers from the map, but keeps them in the array.
-  function clearDirectionsMarkers() {
-    console.log('clearDirectionsMarkers');
-    enableFilterUI();
-    if (directionsDisplay.setMap) {
-      // reset RAW
-      while (RAW[0]) {
-        RAW.pop().setMap(null);
-      }
-      directionsDisplay.setMap(null);
-    }
-    tourdisply_is_Active = false;
-    use_eval_to_call_last_calculateAndDisplayRoute = '';
-
-    jQuery('#tour_selector').prev().find('span').last().html("Keine Tour gewählt");
-    jQuery('.tour_selector').removeClass('active');
-
-  }
-
-  function clearFilterSettings(){
-    author = [];
-    tourdisply_is_Active = false;
-    requestArgIndicatorClass = "";
-  }
-
-  function clearAjaxCalls() {
-    console.log('clearAjaxCalls');
-    // clear running xhr processes
-    for (var i = 0; i < ajaxXHR.length; i++) {
-      ajaxXHR[i].abort();
-    }
-    ajaxXHR = [];
-  }
-  /**
-   * Init Accordions function Filter UI
-   */
-  function initializeAccordions() {
-    var icons = {
-      header: "ui-icon-circle-arrow-e",
-      activeHeader: "ui-icon-circle-arrow-s"
-    };
-    $("#accordion").accordion({
-      icons: icons,
-      heightStyle: "content"
-    });
-    $( "#accordion" ).on( "accordionbeforeactivate", function (){
-      return ! arguments[1].newHeader.hasClass( "ui-state-disabled" );
-    })
-
-    // todo: refactor
-    // KATEGORIE HEADER
-    var selectedCategorylables = '';
-    jQuery("#kategory_selector input:checked").each(function () {
-      selectedCategorylables +=' '+ $(this).parent().text();
-    });
-    if(selectedCategorylables.length > 0){
-      jQuery('#kategory_selector').prev().find('span').last().html(selectedCategorylables);
-    }else{
-      jQuery('#kategory_selector').prev().find('span').last().html("Keine Kategorie gewählt");
-    }
-
-    // AUTOR HEADER
-    // todo: auto filter not working yet - view has to be extended
-    var selectedAutorlables = '';
-    jQuery("#author_selector input:checked").each(function () {
-      selectedAutorlables +=' '+ $(this).parent().text();
-    });
-    if(selectedAutorlables.length > 0){
-      jQuery('#author_selector').prev().find('span').last().html(selectedAutorlables);
-    }else{
-      jQuery('#author_selector').prev().find('span').last().html("Keine Autor gewählt");
-    }
-
-
-
-  }
-
-  /**
-   * global variables
-   *
-   */
-  var author = [];
-  var ajaxXHR = [];
-  var pois_by_nid = [];
-  var directionsDisplay = [];
-  var tourdisply_is_Active = false;
-  var tour_url = '/de/fh_view/list_tour_content';
-  var use_eval_to_call_last_calculateAndDisplayRoute = '';
-  var requestArgIndicatorClass = "";
-
-// Function wrapping code.
-// fn - reference to function.
-// context - what you want "this" to be.
-// params - array of parameters to pass to function.
-  var wrapFunction = function(fn, context, params) {
-    return function() {
-      fn.apply(context, params);
-    };
-  }
-
-  /**
-   * setUpdateAuthor - set Author filter UI
-   *
-   * @param authorData
-   */
-  function setUpdateAuthor(authorData) {
-    var $authors = $('#author_selector');
-    $authors.html('');
-    for (authorname in authorData) {
-      var count = authorData[authorname].count;
-      var uid = authorData[authorname].uid;
-      var ischecked = Boolean($.inArray(uid, author) !== -1);
-
-      if (ischecked) {
-        // $('#author_selector').parent();
-        // ?? do what
-      }
-      // .prop('checked', true);
-      $('<label />', {'for': 'cb' + uid, text: authorname + " (" + count + ")"}).appendTo($authors);
-      $('<input />', {type: 'checkbox', uid: 'cb' + uid, value: uid}).prop('checked', ischecked).appendTo($authors);
-    }
-
-    $("#author_selector input").change(function (e) {
-      var getCheckedVals = function () {
-        var allVals = [];
-        $("#author_selector input:checked").each(function () {
-          allVals.push($(this).val());
-        });
-        return allVals;
-      }
-      // set global author to be evaluated later elsewhere
-      author = getCheckedVals();
-
-      Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapIdGlobal, mapCenter);
-    });
-  }
-
-  /**
-   * set/updates tour filter markup/data
-   *
-   * @param toursFilteredData
-   */
-  function setUpdateTours(toursFilteredData) {
-    console.log('setUpdateTours');
-    var $tours = $('#tour_selector');
-    $tours.html('');
-    var tour_url_detail = "/de/fh_view/list_tours";
-    var tdd = new Array();
-
-    var prepareFilterOutput = function () {
-      for (var key in tdd) {
-        tdd[key].appendTo($tours);
-      }
-      $('.tourtip').tooltipster({
-        theme: 'tooltipster-noir',
-        trigger: 'hover',
-        contentAsHTML: true,
-        debug: false,
-        interactive: true,
-        maxWidth: 300
-      });
-    };
-
-    // call to get tour data
-    // should not be called allways !
-    // check request_result_count to trigger update of tour filter after last ajax result
-  var request_result_count=0;
-    for (var i = 0; i < toursFilteredData.length; i++) {
-      var toursItem = toursFilteredData[i];
-      var last = (i == toursFilteredData.length-1);
-      ajaxXHR["sut_"+i] = $.ajax({
-        url: tour_url_detail,
-        method: 'get',
-        data: "tour_id=" + toursItem.tour_id,
-        dataType: 'json',
-        indexValue: i,
-        last: last,
-        success: function (tourdetails, i){
-          request_result_count ++;
-
-          var distance = tourdetails[0].distance;
-          var tour_titel = tourdetails[0].title;
-          var zeitraum = tourdetails[0].tour_start_date + "-" + tourdetails[0].tour_end_date;
-          var autor = tourdetails[0].name;
-          var tour_id = tourdetails[0].tour_id;
-          var description = tourdetails[0].description;
-          var buildTourMarkup = function () {
-
-            var distanceConvert = function(){
-              var distanceC;
-              if(distance > 999){
-                distanceC = distance/1000;
-                distanceC = distanceC.toFixed(2)+ " km"
-              }else{
-                distanceC = distance + ' m';
-              }
-              return distanceC;
-            };
-
-            var $tour = $('<div />', {'class': 'tour_id_' + tour_id + " tour_selector"});
-            var $tour_status = $('<div />', {'class': 'status ui-icon-caret-1-e'});
-            var $tour_info = $('<div />', {'class': 'info', "data-tourid": tour_id, "data-distance": distance});
-            $tour_info.append("<span>" + tour_titel + " | " + zeitraum + "</span></br>");
-            $tour_info.append("<span>Strecke: " + distanceConvert() + " | von: " + autor + "</span>");
-            var $tour_details = $('<div />', {'class': 'details'});
-            var tour_detail_content = "<h4>"+tour_titel+"</h4><span>" + distanceConvert() + " | " + zeitraum + "</span></br><p>"+description+"</p>";
-            $tour_details.append("<span class='tour_id_"+tour_id+" tourtip' title='"+tour_detail_content+"'><img width='20px' src='/sites/all/modules/futurehistory/images/tooltip.png'></span>");
-
-            $tour_info.click(function (e) {
-              if($(this).parent().hasClass('active')){
-                // clearDirectionsMarkers();
-                $('.reset-filter-link').trigger('click');
-                jQuery('.tour_selector').removeClass('active');
-              }else{
-                jQuery('.tour_selector').removeClass('active');
-                clearAjaxCalls();
-                showTourOnMap(tour_id,tour_titel,distance);
-                $(this).parent().addClass('active');
-                disbleFilterUI();
-                // update class on filter button
-                requestArgIndicatorClass = 'tour';
-                $('#thumbnail-navigation-filter-button').attr('class', requestArgIndicatorClass );
-              }
-            });
-
-            $tour_status.appendTo($tour);
-            $tour_info.appendTo($tour);
-            $tour_details.appendTo($tour);
-            tdd[distance]=$tour;
-          }
-
-          buildTourMarkup();
-
-          if(request_result_count === toursFilteredData.length){
-            prepareFilterOutput();
-          }
-        }
-      });
-    }
-
-
-  }
-
-  function calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata,distance) {
-    var waypts = [];
-    for (var i = 0; i < original_tourdata.length; i++) {
-      if (i === 0) {
-        // Start EndPunkt benötigen Datenformat mit lng/lat oder Text e.g. New York,US
-        my_origin = original_tourdata[i]['lat'] + "," + original_tourdata[i]['lon'];
-      } else if (i === original_tourdata.length - 1) {
-        my_destination = original_tourdata[i]['lat'] + "," + original_tourdata[i]['lon'];
-      } else {
-        // waypoints benörigen datenformat mit folgender Struktur info
-        waypts.push({
-          location: new google.maps.LatLng(original_tourdata[i]['lat'], original_tourdata[i]['lon']),
-          stopover: true
-        });
-      }
-    }
-
-    directionsService.route({
-      origin: my_origin,
-      destination: my_destination,
-      waypoints: waypts,
-      optimizeWaypoints: true,
-      travelMode: google.maps.TravelMode.WALKING
-    }, function (response, status) {
-      if (status === google.maps.DirectionsStatus.OK) {
-        var polylineOptions = {
-          strokeColor: '#A04E9C',
-              strokeOpacity: 0.8,
-              strokeWeight: 5
-        };
-
-        if(distance > 10000){
-          polylineOptions.strokeOpacity = 0;
-        }
-
-        directionsDisplay.setOptions({
-          polylineOptions: polylineOptions
-        });
-
-        directionsDisplay.setDirections(response);
-      } else {
-        window.alert('Directions request failed due to ' + status);
-      }
-    });
-  }
 
   // Function: setMapThumbnails
   // list the marker Thumbnails and fill the LI elements wit IDs
@@ -773,9 +298,8 @@
       var nid = marker_content[i]['Nid'];
       var onclick_thumb  = 'onclick="Drupal.futurehistoryEntdecken.markerStateChange(' + nid + ', \'click\', \''+ mapId +'\', \'THUMB\')"';
       var onclick_detail = 'onclick="Drupal.futurehistoryEntdecken.setLastViewCookie(' + nid + ',  \''+ mapId +'\')"';
-      var onclick_modal = 'onclick="Drupal.futurehistoryEntdecken.generateModal(' + nid + ',  \''+ mapId +'\')"';
       var info_url = '/node/' + nid;
-      var poi_element = '<li id="thumb_' + nid + '" '+ onclick_thumb + '><div class="ansicht_title"> '+ marker_content[i]['title'] + ' | '+ marker_content[i]['Jahr'] + ' </div> <img src="'+ marker_content[i]['bild-haupt-thumb'] + '"></li><div id="tc-' + nid + '"  class="thumbnail-control"><div class="left" ' + onclick_modal + ' ><a class="ansicht-collection-dynamic-modal ' + nid + '""><i class="material-icons">library_add</i>Hinzu-<br>fügen</a></div><div class="right" '+ onclick_detail + ' ><a href="' + info_url + '"> <i class="material-icons">fullscreen</i> Bild<br>Details</a>';
+      var poi_element = '<li id="thumb_' + nid + '" '+ onclick_thumb + '><div class="ansicht_title"> '+ marker_content[i]['title'] + ' | '+ marker_content[i]['Jahr'] + ' </div> <img src="'+ marker_content[i]['bild-haupt-thumb'] + '"></li><div id="tc-' + nid + '"  class="thumbnail-control"><div class="left" '+ onclick_detail + '><a href="'+info_url+'"> <i class="material-icons">fullscreen</i> Bild<br>Details</a></div><div class="right"> <i class="material-icons">collections</i> in meine Sammlung</div> ';
       $('#thumbnail-pois').append(poi_element);
     }
 
@@ -816,7 +340,7 @@
       // console.log('scroll thumbs to top ');
       $('#thumbnail-pois').scrollTo($('#thumbnail-pois li').filter(":first"), 10, {offset:3});
     }
-    // call thumbs persistence engine
+    // call thumbs persistence engine 
     Drupal.futurehistoryEntdecken.BackFromBildDetail(mapId);
   };
 
@@ -851,7 +375,7 @@
       }
       // reset LAST_ACTIVE_NID is only a signal from cookie
       LAST_ACTIVE_NID = -1
-    }
+    } 
   }
 
   Drupal.futurehistoryEntdecken.setLastViewCookie = function(nid,mapId) {
@@ -919,11 +443,6 @@
       google.maps.event.addListener(marker, 'click', function() {
         // console.log('click on id ', marker.id);
         Drupal.futurehistoryEntdecken.markerStateChange(marker.id, 'click', mapId, 'MAP');
-        // TODO : JUST TESTING
-        if(use_eval_to_call_last_calculateAndDisplayRoute !== ''){
-          use_eval_to_call_last_calculateAndDisplayRoute();
-        }
-
       });
       RAW.push(marker);
     });
@@ -967,7 +486,7 @@
         // already sorted in hidden list of sombody other
         // splice later
         continue;
-      }
+      } 
     } // outer loop
 
     var r = RAW.length
@@ -1044,7 +563,7 @@
         // first test incluster --> mark activated and leave here because zoom_event reload and reprocess all
         if ( RAW[i].id == markerId && RAW[i].incluster && RAW[i].activated == false) {
           // console.log(' zoom to cluster extend and exit markerStateChange ', markerId)
-          // save state before cluster zoom: Lost avtive state before
+          // save state before cluster zoom: Lost avtive state before 
           LAST_ACTIVE_NID = markerId;
           Drupal.futurehistoryEntdecken[mapId].map.fitBounds(RAW[i].clusterBounds);
           RAW[i].activated = true;
@@ -1055,7 +574,7 @@
           if ( RAW[i].hidePOIs[x].id == markerId) {
              if (RAW[i].incluster && RAW[i].hidePOIs[x].activated == false) {
                // console.log(' HIDDEN: zoom to cluster extend and exit markerStateChange ', markerId);
-               // save state before cluster zoom: Lost avtive state before
+               // save state before cluster zoom: Lost avtive state before 
                LAST_ACTIVE_NID = markerId;
                Drupal.futurehistoryEntdecken[mapId].map.fitBounds(RAW[i].clusterBounds);
                RAW[i].hidePOIs[x].activated = true;
@@ -1094,13 +613,13 @@
         } else {
           // clicked on thumb of child marker
           for ( var x = 0; x < RAW[i].hidePOIs.length; x++) {
-            if ( RAW[i].hidePOIs[x].id == markerId) {
+            if ( RAW[i].hidePOIs[x].id == markerId) { 
               // console.log(' ID RAW[i].hidePOIs[x].activated ', markerId, RAW[i].hidePOIs[x].activated);
               if (RAW[i].hidePOIs[x].activated == true) {
-                // click on thumb of active child clicked
+                // click on thumb of active child clicked  
                 Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].hidePOIs[x].id, mapId);
               } else {
-                // click on thumb of inactive child clicked
+                // click on thumb of inactive child clicked  
                 activatedID = markerId;
                 RAW[i].hidePOIs[x].activated = true;
                 $('#thumbnail-pois li#thumb_'+RAW[i].hidePOIs[x].id+'').addClass('active');
@@ -1112,13 +631,13 @@
           } // eof loop all hidden Marker
         }
       }
-      // deactivate all other, except the just activated
+      // deactivate all other, except the just activated 
       // console.log('just activated ID ', activatedID);
       for ( var i = 0; i < RAW.length; i++) {
-        var found_in_hidden_list = false;
+        var found_in_hidden_list = false; 
         for ( var x = 0; x < RAW[i].hidePOIs.length; x++) {
           if ( RAW[i].hidePOIs[x].id == activatedID) {
-            found_in_hidden_list = true;
+            found_in_hidden_list = true; 
           } else {
             Drupal.futurehistoryEntdecken.deactivateMarker(RAW[i].hidePOIs[x].id, mapId);
           }
@@ -1157,7 +676,7 @@
         RAW[activateIDX].hidePOIs[x].activated = true;
         // console.log('activate hidden child', markerId);
       }
-      // hide all other
+      // hide all other 
       for ( var i = 0; i < RAW.length; i++) {
         for ( var x = 0; x < RAW[i].hidePOIs.length; x++) {
           if ( RAW[i].hidePOIs[x].id != markerId && RAW[i].id != markerId && RAW[i].hidePOIs[x].activated == true) {
@@ -1227,7 +746,7 @@
         } else {
           ActIcon = fh_marker_violet;
         }
-      }
+      } 
       if ( ActIcon === undefined) {
         // additionally check for hidden active marker
         var active_in_hidden_list = false;
@@ -1247,7 +766,7 @@
         }
       }
       if (ActIcon !== undefined) {
-        RAW[i].setIcon(ActIcon);
+        RAW[i].setIcon(ActIcon); 
       }
     }
   }
@@ -2008,7 +1527,7 @@ Drupal.futurehistoryEntdecken.MarkerClusterer.prototype.setReady_ = function(rea
               // console.log('do not draw hidden pois', cluster.markers_[m].id);
               for ( var x = 0; x < cluster.markers_[m].hidePOIs.length; x++) {
                 // console.log('iterate hidden list ', cluster.markers_[m].hidePOIs[x]);
-                if ( cluster.markers_[m].hidePOIs[x].activated ) {
+                if ( cluster.markers_[m].hidePOIs[x].activated ) {     
                   // console.log('but draw viewpos of activated hidden pois', cluster.markers_[m].hidePOIs[x].id);
                   Drupal.futurehistoryEntdecken.setMapArrow(cluster.markers_[m].hidePOIs[x], mapId);
                 }
@@ -2801,8 +2320,6 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
 };
   Drupal.behaviors.futurehistoryEntdecken = {
     attach: function (context, settings) {
-      console.log("Drupal.behaviors.futurehistoryEntdecken");
-      console.log("INIT");
       var mapId = '';
       var placesId = '';
 
@@ -2844,28 +2361,23 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
 
 
 
-
       $('.futurehistory-entdecken-map', context).each(function() {
 
 
         // MAP STUFF
-        // The MAP div is located in "futurehistory-entdecken-map.tpl.php"
+        // The MAP div is located in "futurehistory-entdecken-map.tpl.php" 
         // and feed with the $atribute options created in "futurehistory_entdecken_plugin_style_google_map.inc" i
         // and the associated VIEW in the Drupal Backend
 
-        function param(name) {
-          return (location.search.split(name + '=')[1] || '').split('&')[0];
-        }
-
         var $this = $(this);
-        mapIdGlobal = mapId = this.id;
+        mapId = this.id;
         Drupal.futurehistoryEntdecken[mapId] = {};
 
         // ajax request to get categories
         $.ajax({
           url: cat_url,
           // mapping must be complete before continuing, keep callback slim
-          async: false,
+          async: false, 
           method: 'get',
           data: {vid:'6'},
           dataType: 'json',
@@ -2896,22 +2408,21 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           }
         });
 
-
         // first cookie check - where did we come from?
         // if cookie ok we override the default map values and initials
         var fh_geolocation_cookie_data = JSON.parse($.cookie("fh_geolocation_cookie"));
         // console.log(' fh_geolocation_cookie_data ', fh_geolocation_cookie_data);
-
+        
         var fh_lastview_cookiedata = JSON.parse($.cookie('fh_lastview_cookie'));
 
         if (mapCenter == undefined) {
           // in der Nähe von Kassel mit der Zoomstufe 6
           // console.log(' mapCenter undefined ');
           var initial_center_lat = 51.31491849367987;
-          var initial_center_lng = 9.460614849999956;
+          var initial_center_lng = 9.460614849999956; 
           mapCenter =  new google.maps.LatLng(initial_center_lat,initial_center_lng);
           mapZoom = 6;
-        }
+        } 
         else {
           mapZoom = DEFAULT_ZOOM;
         }
@@ -2925,46 +2436,33 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           zoomControl: true,
           streetViewControl:false,
           rotateControl:false,
-        });
+        }); 
         // initial clear center marker, redo from URL, cookies or places
         Drupal.futurehistoryEntdecken[mapId].center_marker = undefined;
 
-
-        if (window.location.search.length > 1) {
+        if (window.location.hash.length > 1) {
           // set view parameters from URL hash
           // console.log(' set location from URL ', window.location.hash);
-          var url_x = param('x');
-          var url_y = param('y');
-          var url_z = param('z');
-          var url_k = param('k');
-          var url_d = param('d');
-          var url_s = param('s');
-          mapCenter = new google.maps.LatLng(parseFloat(url_y), parseFloat(url_x));
-          if (url_k.substring(0, 1) == ',') {
-            url_k = url_k.substring(1);
-          }
-          mapZoom = parseInt(url_z);
-          kategorie = url_k.split(',');
-          YearRange[0] = parseInt(url_d.split('--')[0]);
-          YearRange[1] = parseInt(url_d.split('--')[1]);
+          mapCenter = new google.maps.LatLng(parseFloat(window.location.hash.split('#')[1]), parseFloat(window.location.hash.split('#')[2]));
+          mapZoom = parseInt(window.location.hash.split('#')[3]);
+          kategorie = window.location.hash.split('#')[4].split(',');
+          // console.log('get kategorie from hash ID ', kategorie);
+
+          YearRange[0] = parseInt(window.location.hash.split('#')[5].split('--')[0]);
+          YearRange[1] = parseInt(window.location.hash.split('#')[5].split('--')[1]);
           RequestDate = String(YearRange[0]) + '--' + String(YearRange[1]);
-          sort = url_s;
-          // console.log('mapX ', url_x);
-          // console.log('mapY ', url_y);
-          // console.log('Zoom ', url_z);
-          // console.log('Kategorie ', url_k);
-          // console.log('Date', url_d);
-          // console.log('Sort ', url_s);
-          // console.log('YearRange ', YearRange);
+          sort = window.location.hash.split('#')[6];
+          // console.log('RequestDate from hash ', YearRange);
+          // console.log('sort from hash ', sort);
           Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
           Drupal.futurehistoryEntdecken[mapId].map.setZoom(mapZoom);
         } else if (fh_geolocation_cookie_data != null) {
             // if the cookie fh_geolocation_cookie_data contains a viewport override the map zoom with the viewport
             // console.log('No URL instructions, use fh_geolocation_cookie_data ', fh_geolocation_cookie_data);
-            // Overwrite: 2016-11-23: Zoomstufe bei
-            // Strasse + Hausnummer + Stadt
-            // Strasse + Stadt
-            // Gebäude + Stadt
+            // Overwrite: 2016-11-23: Zoomstufe bei 
+            // Strasse + Hausnummer + Stadt 
+            // Strasse + Stadt 
+            // Gebäude + Stadt 
             // einheitlich 17
             mapZoom = DEFAULT_ZOOM;
             Drupal.futurehistoryEntdecken[mapId].map.setZoom(DEFAULT_ZOOM);
@@ -3014,14 +2512,14 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
         window.onpopstate = function(event) {
           CALL_onpopstate = true;
           // console.log(" !! onpopstate location: " + document.location + " state ==  " + JSON.stringify(event.state));
-
+          
           var laststate = JSON.parse(JSON.stringify(event.state));
           if (laststate) {
             // console.log(' HISTORY back...', laststate.view );
             $('#places-autocomplete-map').val('');
             $('#places-autocomplete-map').blur();
-            var LastMapCenter = new google.maps.LatLng(parseFloat(laststate.view.split('&')[1]), parseFloat(laststate.view.split('&')[2]));
-            mapZoom = parseInt(laststate.view.split('&')[3]);
+            var LastMapCenter = new google.maps.LatLng(parseFloat(laststate.view.split('#')[1]), parseFloat(laststate.view.split('#')[2]));
+            mapZoom = parseInt(laststate.view.split('#')[3]);
             Drupal.futurehistoryEntdecken[mapId].map.setCenter(LastMapCenter);
             Drupal.futurehistoryEntdecken[mapId].map.setZoom(mapZoom);
           }
@@ -3054,12 +2552,12 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           var reqDate = String($("#time_slider").slider("values", 0) + "--" + $("#time_slider").slider("values", 1));
           var baseUrl = window.location.origin+window.location.pathname;
           var centerControlDiv = document.createElement('div');
-          var permaUrl  =  baseUrl + encodeURI('?y=' + coords.lat() +
-                                  '&x=' + coords.lng() +
-                                  '&z=' + Drupal.futurehistoryEntdecken[mapId].map.getZoom() +
-                                  '&k=' + kategorie.toString() +
-                                  '&d=' + reqDate +
-                                  '&s=' + sort);
+          var permaUrl  =  baseUrl + encodeURI('#' + coords.lat() +
+                                  '#' + coords.lng() +
+                                  '#' + Drupal.futurehistoryEntdecken[mapId].map.getZoom() +
+                                  '#' + kategorie.toString() +
+                                  '#' + reqDate +
+                                  '#' + sort);
 
           var permalink = '<a href="' + permaUrl + '">' + permaUrl + '</a>';
           centerControlDiv.index = 1;
@@ -3069,14 +2567,14 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
         });
 
         google.maps.event.addListener(Drupal.futurehistoryEntdecken[mapId].map, 'dragend', function() {
-           // use new center for sorting markers if no place defined
+           // use new center for sorting markers if no place defined 
            // set global
            //mapCenter =  new google.maps.LatLng(Drupal.futurehistoryEntdecken[mapId].map.getCenter().lat(),Drupal.futurehistoryEntdecken[mapId].map.getCenter().lng());
            mapCenter = Drupal.futurehistoryEntdecken[mapId].map.getCenter();
            var zoomLevel = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
            // history back again fires a dragend or zoom_changed event via onpopState, then we stay in place.... filter out
            if (!CALL_onpopstate) {
-             var view = '&' + encodeURI(mapCenter.lat() + '&' + mapCenter.lng() + '&' + Drupal.futurehistoryEntdecken[mapId].map.getZoom());
+             var view = '#' + encodeURI(mapCenter.lat() + '#' + mapCenter.lng() + '#' + Drupal.futurehistoryEntdecken[mapId].map.getZoom());
              history.pushState({view:view}, '', '');
              // console.log(' pushState ', view );
            } else {
@@ -3098,7 +2596,7 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           }
           // history back again fires a dragend or zoom_changed event via onpopState, then we stay in place.... filter out
           if (!CALL_onpopstate) {
-            var view = '&' + encodeURI(coords.lat() + '&' + coords.lng() + '&' + Drupal.futurehistoryEntdecken[mapId].map.getZoom());
+            var view = '#' + encodeURI(coords.lat() + '#' + coords.lng() + '#' + Drupal.futurehistoryEntdecken[mapId].map.getZoom());
             history.pushState({view:view}, '', '');
             // console.log(' pushState ', view );
           } else {
@@ -3125,8 +2623,6 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
 
         // Filter checkbox-events
         $("a[class=reset-filter-link]").click(function() {
-          clearDirectionsMarkers();
-          clearFilterSettings();
           kategorie = ['all'];
           for ( key in CAT ) {
             // deactivate all checkboxes
@@ -3137,10 +2633,9 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
           RequestDate = String(InitYearRange[0]) + '--' + String(InitYearRange[1]);
           // console.log(' kategorie array: ', kategorie);
           Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
-
         });
 
-        // sort checkboxes
+        // sort checkboxes 
         $("#fh_sort_dist").change(function() {
           $(this).prop("checked") ?  sort = 'dist' : sort = 'year';
           // console.log('sort criteria change to ', sort);
@@ -3168,16 +2663,16 @@ Drupal.futurehistoryEntdecken.ClusterIcon.prototype.createCss = function(pos) {
       });  //End EACH Funktion
 
       // reflect THUMB sort criteria from URL hash if present
-      if (sort == 'year') {
+      if (sort == 'year') { 
         $("#fh_sort_year").prop('checked', true);
       }
-      if (sort == 'dist') {
+      if (sort == 'dist') { 
         $("#fh_sort_dist").prop('checked', true);
       }
 
       // reflect kategorie from URL hash if present
       for ( key in CAT ) {
-        if (kategorie.indexOf(key) > -1) {
+        if (kategorie.indexOf(key) > -1) { 
           $('#cat_'+key).prop('checked', true);
           //console.log('Activate checkbox ', CAT[key]);
         } else {

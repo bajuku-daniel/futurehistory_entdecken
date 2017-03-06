@@ -1,4 +1,4 @@
-/* -------------------------------------------------------------------- 
+/* --------------------------------------------------------------------
  * Entdecken Map base Layout
  * ------------------------------------------------------------------ */
 .nav-no-border {
@@ -39,13 +39,13 @@
 }
 
 
-/* -------------------------------------------------------------------- 
+/* --------------------------------------------------------------------
  *  Filter and Poi box and buttons
  * ------------------------------------------------------------------ */
 
 #thumbnail-navigation-filter-button {
   width:50%;
-  height:60px; 
+  height:60px;
   display:block;
   background-color:#1A67AD;
   float:left;
@@ -56,7 +56,7 @@
 
 #thumbnail-navigation-sort-button {
   width:50%;
-  height:60px; 
+  height:60px;
   display:block;
   float:right;
   background-color:#1A67AD;
@@ -94,7 +94,7 @@
 }
 
 #sort_selector .sort-box {
-  border-bottom: 1px solid #8E8E8E;  
+  border-bottom: 1px solid #8E8E8E;
   margin-bottom: 10px;
   padding-bottom: 20px;
 }
@@ -117,36 +117,36 @@
 
 
 #fh-reset-filter, #sammlungen_selector, #time_slider_box   {
-  border-bottom: 1px solid #8E8E8E;  
+  border-bottom: 1px solid #8E8E8E;
   margin-bottom: 20px;
   padding-bottom: 20px;
 
 }
 
-/* -------------------------------------------------------------------- 
- * Date selection slider 
+/* --------------------------------------------------------------------
+ * Date selection slider
  * ------------------------------------------------------------------ */
 #time_slider_box {
   padding: 8px 8px 2px;
 }
 #time_display {
-  padding-top: 2px; 
+  padding-top: 2px;
   padding-left: 8px;
 }
-/* 
- * Display valid range in Violet text and slider 
+/*
+ * Display valid range in Violet text and slider
  */
 #time_range {
-  border: 0; 
-  color: #A04E9C; 
+  border: 0;
+  color: #A04E9C;
   font-weight: normal;
 }
 div.ui-slider-range.ui-widget-header {
-  background: #A04E9C; 
+  background: #A04E9C;
 }
 
 
-/* -------------------------------------------------------------------- 
+/* --------------------------------------------------------------------
  * style the thumbnails
  * ------------------------------------------------------------------ */
 
@@ -186,7 +186,7 @@ div.ui-slider-range.ui-widget-header {
 }
 
 
-/* -------------------------------------------------------------------- 
+/* --------------------------------------------------------------------
  * style the thumbnail controls
  * --------------------------------------------------------------------
 */
@@ -194,39 +194,48 @@ div.ui-slider-range.ui-widget-header {
 .thumbnail-control {
   height:70px;
   width: 100%;
-  display:none;  
+  display:none;
+}
+
+
+.thumbnail-control .left a, .thumbnail-control .right a  {
+  clear: both;
+  display: block;
+  line-height: 16px;
+  margin-top: 10px;
+}
+.thumbnail-control .right i {
+  display: block;
+  float: left;
+  font-size: 54px;
+  margin-right: 0;
+  margin-top: -9px;
+
+}
+
+.thumbnail-control .left i {
+  display: block;
+  float: left;
+  font-size: 42px;
+  margin-right: 9px;
+  margin-top: -2px;
 }
 
 .thumbnail-control .left {
   display: block;
   float: left;
   width: 50%;
-}
-.thumbnail-control .left a, .thumbnail-control .right a  {
-  clear:both;
-  display:block;
-  margin-top:10px;
-}
-.thumbnail-control .left i, .thumbnail-control .right i {
-  display: block;
-  float: left;
-  margin-right: 10px;
-  font-size:38px;
- 
-}
-
-.thumbnail-control .left i {
-  font-size:42px;
+  cursor: pointer; cursor: hand;
 }
 
 .thumbnail-control .right {
   display: block;
   float: left;
   width: 50%;
-  margin-top:10px;
+  cursor: pointer; cursor: hand;
 }
 
-/* -------------------------------------------------------------------- 
+/* --------------------------------------------------------------------
  * style the filterbox content
  * --------------------------------------------------------------------
 */
@@ -236,8 +245,8 @@ div.ui-slider-range.ui-widget-header {
   font-weight: normal;
 }
 
-/* -------------------------------------------------------------------- 
- * Responsive Settings 
+/* --------------------------------------------------------------------
+ * Responsive Settings
  * --------------------------------------------------------------------
 */
 .col-sm-4, .col-xs-4 {
@@ -250,9 +259,9 @@ div.ui-slider-range.ui-widget-header {
 }
 
 
-/* -------------------------------------------------------------------- 
- * move Karte | Satellit Dialog to bottom 
- * ------------------------------------------------------------------ 
+/* --------------------------------------------------------------------
+ * move Karte | Satellit Dialog to bottom
+ * ------------------------------------------------------------------
  * DF ausgeschaltet
 
 #newpos_map_selector {
