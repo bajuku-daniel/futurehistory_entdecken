@@ -248,41 +248,18 @@
     var bbox = bbox_left + ',' + bbox_bottom + ',' + bbox_right + ',' + bbox_top;
     var RequestArgs = {};
 
-    if(tourdisply_is_Active){
-      requestArgIndicatorClass = 'tour';
-    }else{
-      requestArgIndicatorClass = '';
-    }
+    clearAjaxCalls();
+    initializeRequestArgIndicator();
+    author = getAuthorArg();
 
 
-    if(author.constructor === Array && author.length > 1){
-      author = author.join("+");
-      requestArgIndicatorClass = requestArgIndicatorClass + ' author';
-    }else if(author.constructor === Array && author.length == 1){
-      author = author;
-      requestArgIndicatorClass = requestArgIndicatorClass + ' author';
-    }else{
-      author = "all";
-    }
     if (kategorie.length) {
       // 1,2,3 (AND) and 1+2+3(OR).
-      RequestArgs = {bbox : bbox, date : RequestDate, kategorie_id : kategorie.join('+'), autor_uid : author}
-      requestArgIndicatorClass = requestArgIndicatorClass + ' kategorie';
+      RequestArgs = {bbox : bbox, date : RequestDate, kategorie_id : kategorie.join(','), autor_uid : author}
     } else {
       RequestArgs = {bbox : bbox, date : RequestDate, autor_uid : author }
     }
 
-    // check date range for changes
-    var dateDefaultStateCheck = (RequestDate !== 'all') &&
-        (RequestDate !== (parseInt(Drupal.settings.futurehistoryEntdecken.first_date)+"--"+parseInt(Drupal.settings.futurehistoryEntdecken.last_date)));
-   if(dateDefaultStateCheck){
-     requestArgIndicatorClass = requestArgIndicatorClass + ' date';
-   }
-    // update class on filter button
-    $('#thumbnail-navigation-filter-button').attr('class', requestArgIndicatorClass);
-
-
-    clearAjaxCalls();
     // start the ajax request
     ajaxXHR["gm"] = $.ajax({
       url: poi_url ,
@@ -300,34 +277,109 @@
           // console.log('ajax success... call setMapMarkers');
           Drupal.futurehistoryEntdecken.setMapMarkers(marker_content, mapId);
           Drupal.futurehistoryEntdecken.setMapThumbnails(marker_content, mapId, mapCenter);
-          aggregateToursAuthorData(data, mapId, mapCenter);
+          initializeToursAuthorCategoryData(data, mapId, mapCenter);
         }
       }
     });
   }
 
+  function initializeRequestArgIndicator(){
+    if(tourdisply_is_Active){
+      requestArgIndicatorClass = 'tour';
+    }else{
+      requestArgIndicatorClass = '';
+    }
+
+    if (kategorie.length) {
+      requestArgIndicatorClass = requestArgIndicatorClass + ' kategorie';
+    }
+
+    // check date range for changes
+    var dateDefaultStateCheck = (RequestDate !== 'all') &&
+        (RequestDate !== (parseInt(Drupal.settings.futurehistoryEntdecken.first_date)+"--"+parseInt(Drupal.settings.futurehistoryEntdecken.last_date)));
+    if(dateDefaultStateCheck){
+      requestArgIndicatorClass = requestArgIndicatorClass + ' date';
+    }
+    // update class on filter button
+    $('#thumbnail-navigation-filter-button').attr('class', requestArgIndicatorClass);
+
+  }
+
+  function getAuthorArg(){
+    if(author.constructor === Array && author.length > 1){
+      author = author.join("+");
+      requestArgIndicatorClass = requestArgIndicatorClass + ' author';
+    }else if(author.constructor === Array && author.length == 1){
+      author = author;
+      requestArgIndicatorClass = requestArgIndicatorClass + ' author';
+    }else{
+      author = "all";
+    }
+
+    return author;
+  }
+
   /**
-   * aggregateToursAuthorData
+   * initializeToursAuthorCategoryData
    *
    * Testing tour Data
    *
    * @param data
    */
-  function aggregateToursAuthorData(data, mapId, mapCenter) {
+  function initializeToursAuthorCategoryData(data, mapId, mapCenter) {
     var item, attr, tourdata;
     var tours_unique = [];
     var toursDataInResult = [];
     var pois_by_author = [];
+    var pois_by_category = [];
     var uidAuthorData = [];
 
     // reset
     // pois_by_nid = [];
+
+    var cat_ids_by_name = [];
+    for (key in CAT) {
+      cat_ids_by_name[CAT[key]]=key;
+    }
+
+    function isArray(obj){
+      return !!obj && obj.constructor === Array;
+    }
 
     for (item in data) {
       if (pois_by_author[data[item]['uname']] === undefined) {
         pois_by_author[data[item]['uname']] = [];
       }
       pois_by_author[data[item]['uname']].push(data[item]);
+
+      if(data[item]['kategorie'] !== null) {
+        // categories can be in csv format
+        //
+        var kategorie_texts = data[item]['kategorie'];
+        if (kategorie_texts.indexOf(',') != -1) {
+          kategorie_texts = data[item]['kategorie'].split(',');
+        } else {
+          kategorie_texts = [kategorie_texts];
+        }
+
+        var len = kategorie_texts.length;
+        var kategorie_text;
+        while (len--) {
+          kategorie_text = $.trim(kategorie_texts.splice(0, 1)[0]);
+          var kategorie_id = cat_ids_by_name[kategorie_text];
+
+          if (kategorie_id !== undefined) {
+            if (!isArray(pois_by_category[kategorie_id])) {
+              pois_by_category[kategorie_id] = [];
+            }
+            pois_by_category[kategorie_id].push(data[item]);
+          }
+        }
+      }
+
+
+
+
       for (attr in data[item]) {
         pois_by_nid[data[item]['Nid']] = data[item];
         if (attr === "tour_id" && data[item][attr] !== "NULL") {
@@ -335,6 +387,7 @@
         }
       }
     }
+
 
     for (tourdata in tours_unique) {
       toursDataInResult.push(tours_unique[tourdata]);
@@ -344,19 +397,13 @@
       uidAuthorData[user] = {count: pois_by_author[user].length, uid: pois_by_author[user][0]['uid']};
     }
 
+
     setUpdateAuthor(uidAuthorData);
     setUpdateTours(toursDataInResult);
-
-
+    setUpdateCategories(pois_by_category);
 
     ////  TODO: REFACTOR ALL CHANGES
     initializeAccordions();
-
-
-    //// DEMO CALL
-    // showTourOnMap(toursDataInResult[0]["tour_id"]);
-
-
   }
 
 
@@ -570,6 +617,33 @@
       Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapIdGlobal, mapCenter);
     });
   }
+
+  /**
+   * Updates/sets the result count on category filters
+   *
+   * @param pois_by_category
+   */
+  function setUpdateCategories(pois_by_category){
+    console.log(pois_by_category);
+
+    var labels =$("#kategory_selector_table td label");
+
+    labels.each(function(){
+      var count = 0;
+      var value = $(this).find('input').first().val();
+      $(this).find('span').remove();
+
+
+
+      if(pois_by_category[value] !== undefined){
+        count = pois_by_category[value].length;
+      }
+
+      $(this).append("<span>("+count+")</span>");
+
+    });
+  }
+
 
   /**
    * set/updates tour filter markup/data
