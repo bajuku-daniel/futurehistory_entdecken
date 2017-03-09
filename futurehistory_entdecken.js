@@ -252,24 +252,11 @@
     //Parameters: bounds, date, kategorie
 
     Drupal.futurehistoryEntdecken.getMarkers = function (bounds, RequestDate, kategorie, sort, mapId, mapCenter) {
-        var bbox_bottom = bounds.getSouthWest().lat();
-        var bbox_top = bounds.getNorthEast().lat();
-        var bbox_right = bounds.getNorthEast().lng();
-        var bbox_left = bounds.getSouthWest().lng();
-        var bbox = bbox_left + ',' + bbox_bottom + ',' + bbox_right + ',' + bbox_top;
-        var RequestArgs = {};
-
         clearAjaxCalls();
         initializeRequestArgIndicator();
-        author = getAuthorArg();
 
+        var RequestArgs = getRequestArgs(bounds, RequestDate, kategorie);
 
-        if (kategorie.length) {
-            // 1,2,3 (AND) and 1+2+3(OR).
-            RequestArgs = {bbox: bbox, date: RequestDate, kategorie_id: kategorie.join(','), autor_uid: author}
-        } else {
-            RequestArgs = {bbox: bbox, date: RequestDate, autor_uid: author}
-        }
 
         // start the ajax request
         ajaxXHR["gm"] = $.ajax({
@@ -284,60 +271,24 @@
                         directionsDisplay.setMap(null);
                         directionsDisplay.setDirections({routes: []});
                     }
-                    // call the marker and thumbnail functions
-                    // console.log('ajax success... call setMapMarkers');
                     Drupal.futurehistoryEntdecken.setMapMarkers(marker_content, mapId);
                     Drupal.futurehistoryEntdecken.setMapThumbnails(marker_content, mapId, mapCenter);
-                    initializeToursAuthorCategoryData(data, mapId, mapCenter);
+                    Drupal.futurehistoryEntdecken.initializeToursAuthorCategoryData(data);
                 }
             }
         });
     }
 
-    function initializeRequestArgIndicator() {
-        if (tourdisply_is_Active) {
-            requestArgIndicatorClass = 'tour';
-        } else {
-            requestArgIndicatorClass = '';
-        }
 
-        if (kategorie.length) {
-            requestArgIndicatorClass = requestArgIndicatorClass + ' kategorie';
-        }
-
-        // check date range for changes
-        var dateDefaultStateCheck = (RequestDate !== 'all') &&
-            (RequestDate !== (parseInt(Drupal.settings.futurehistoryEntdecken.first_date) + "--" + parseInt(Drupal.settings.futurehistoryEntdecken.last_date)));
-        if (dateDefaultStateCheck) {
-            requestArgIndicatorClass = requestArgIndicatorClass + ' date';
-        }
-        // update class on filter button
-        $('#thumbnail-navigation-filter-button').attr('class', requestArgIndicatorClass);
-
-    }
-
-    function getAuthorArg() {
-        if (author.constructor === Array && author.length > 1) {
-            author = author.join("+");
-            requestArgIndicatorClass = requestArgIndicatorClass + ' author';
-        } else if (author.constructor === Array && author.length == 1) {
-            author = author;
-            requestArgIndicatorClass = requestArgIndicatorClass + ' author';
-        } else {
-            author = "all";
-        }
-
-        return author;
-    }
 
     /**
      * initializeToursAuthorCategoryData
      *
-     * Testing tour Data
+     * Parse result Data for Filter interaction
      *
      * @param data
      */
-    function initializeToursAuthorCategoryData(data, mapId, mapCenter) {
+    Drupal.futurehistoryEntdecken.initializeToursAuthorCategoryData = function (data) {
         var item, attr, tourdata;
         var tours_unique = [];
         var toursDataInResult = [];
@@ -353,9 +304,6 @@
             cat_ids_by_name[CAT[key]] = key;
         }
 
-        function isArray(obj) {
-            return !!obj && obj.constructor === Array;
-        }
 
         for (item in data) {
             if (pois_by_author[data[item]['uname']] === undefined) {
@@ -388,7 +336,6 @@
                 }
             }
 
-
             for (attr in data[item]) {
                 pois_by_nid[data[item]['Nid']] = data[item];
                 if (attr === "tour_id" && data[item][attr] !== "NULL") {
@@ -396,7 +343,6 @@
                 }
             }
         }
-
 
         for (tourdata in tours_unique) {
             toursDataInResult.push(tours_unique[tourdata]);
@@ -410,8 +356,6 @@
         setUpdateAuthor(uidAuthorData);
         setUpdateTours(toursDataInResult);
         setUpdateCategories(pois_by_category);
-
-        ////  TODO: REFACTOR ALL CHANGES
         initializeAccordions();
     }
 
@@ -421,8 +365,6 @@
      * @param tourID
      */
     function showTourOnMap(tour_id, tourname, distance) {
-        // todo: verhalten bei verschieben wenn strecke bestehen beleibt  / wegfallen soll
-
         // start the ajax request to get tour details
         ajaxXHR["stom"] = $.ajax({
             url: tour_url,
@@ -451,9 +393,8 @@
                 });
                 directionsDisplay.setMap(Drupal.futurehistoryEntdecken[mapIdGlobal].map);
                 directionsDisplay.setOptions({suppressMarkers: true});
-                // TEST update Map mit bestehender Markerauswahl - neue funktion zeichnet wegstrecken
+
                 calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata, distance);
-                // use_eval_to_call_last_calculateAndDisplayRoute = "calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata,distance)";
                 use_eval_to_call_last_calculateAndDisplayRoute = wrapFunction(calculateAndDisplayRoute, this, [directionsService, directionsDisplay, original_tourdata, distance]);
 
                 tourdisply_is_Active = true;
@@ -473,6 +414,64 @@
     }
 
 
+
+    function initializeRequestArgIndicator() {
+        if (tourdisply_is_Active && (requestArgIndicatorClass.indexOf("tour") == -1)) {
+            requestArgIndicatorClass += ' tour';
+        } else {
+            // requestArgIndicatorClass = '';
+        }
+
+        // check kategorie for changes
+        if (isArray(kategorie) && kategorie.length > 0 && kategorie[0] !== 'all' && (requestArgIndicatorClass.indexOf("kategorie") ==-1)) {
+            requestArgIndicatorClass = requestArgIndicatorClass + ' kategorie';
+        }
+
+        // check author for changes
+        if (author.constructor === Array && author.length > 1 && (requestArgIndicatorClass.indexOf("author") ==-1)) {
+            requestArgIndicatorClass = requestArgIndicatorClass + ' author';
+        } else if (author.constructor === Array && author.length == 1 && (requestArgIndicatorClass.indexOf("author") ==-1)) {
+            requestArgIndicatorClass = requestArgIndicatorClass + ' author';
+        }
+
+        // check date range for changes
+        var dateDefaultStateCheck = (RequestDate !== 'all') &&
+            (RequestDate !== (parseInt(Drupal.settings.futurehistoryEntdecken.first_date) + "--" + parseInt(Drupal.settings.futurehistoryEntdecken.last_date)));
+        if (dateDefaultStateCheck && (requestArgIndicatorClass.indexOf("date") == -1)) {
+            requestArgIndicatorClass = requestArgIndicatorClass + ' date';
+        }
+        // update class on filter button
+        $('#thumbnail-navigation-filter-button').attr('class', requestArgIndicatorClass);
+    }
+
+    function getRequestArgs(bounds, RequestDate, kategorie) {
+        var bbox_bottom = bounds.getSouthWest().lat();
+        var bbox_top = bounds.getNorthEast().lat();
+        var bbox_right = bounds.getNorthEast().lng();
+        var bbox_left = bounds.getSouthWest().lng();
+        var bbox = bbox_left + ',' + bbox_bottom + ',' + bbox_right + ',' + bbox_top;
+        var RequestArgs = {};
+        if (author.constructor === Array && author.length > 1) {
+            // 1,2,3 (AND) and 1+2+3(OR).
+            author = author.join("+");
+        } else if (author.constructor === Array && author.length == 1) {
+            // single
+            author = author;
+        } else {
+            // all
+            author = "all";
+        }
+
+        if (kategorie.length) {
+            // 1,2,3 (AND) and 1+2+3(OR).
+            RequestArgs = {bbox: bbox, date: RequestDate, kategorie_id: kategorie.join(','), autor_uid: author}
+        } else {
+            RequestArgs = {bbox: bbox, date: RequestDate, autor_uid: author}
+        }
+
+        return RequestArgs;
+    }
+
     function enableFilterUI() {
         jQuery("#time_slider").slider('enable');
         jQuery("#thumbnail-filter-box input:radio").attr('disabled', false);
@@ -489,9 +488,17 @@
         $("#author_selector").prev().addClass("ui-state-disabled");
     }
 
+    function _log(value) {
+        try {
+            console.log(value);
+        } catch (err) {
+        // no problems when no console
+        }
+    }
+
 // Removes the markers from the map, but keeps them in the array.
     function clearDirectionsMarkers() {
-        console.log('clearDirectionsMarkers');
+        _log('clearDirectionsMarkers');
         enableFilterUI();
         if (directionsDisplay.setMap) {
             // reset RAW
@@ -505,7 +512,6 @@
 
         jQuery('#tour_selector').prev().find('span').last().html("Keine Tour gewählt");
         jQuery('.tour_selector').removeClass('active');
-
     }
 
     function clearFilterSettings() {
@@ -515,7 +521,7 @@
     }
 
     function clearAjaxCalls() {
-        console.log('clearAjaxCalls');
+        _log('clearAjaxCalls');
         // clear running xhr processes
         for (var i = 0; i < ajaxXHR.length; i++) {
             ajaxXHR[i].abort();
@@ -533,6 +539,7 @@
         };
         $("#accordion").accordion({
             icons: icons,
+            collapsible: true,
             heightStyle: "content"
         });
         $("#accordion").on("accordionbeforeactivate", function () {
@@ -597,6 +604,9 @@
         };
     }
 
+    function isArray(obj) {
+        return !!obj && obj.constructor === Array;
+    }
     /**
      * setUpdateAuthor - set Author filter UI
      *
@@ -644,7 +654,7 @@
      * @param pois_by_category
      */
     function setUpdateCategories(pois_by_category) {
-        console.log(pois_by_category);
+        _log(pois_by_category);
 
         var labels = $("#kategory_selector_table td label");
 
@@ -667,10 +677,11 @@
     /**
      * set/updates tour filter markup/data
      *
+     * todo refactor
      * @param toursFilteredData
      */
     function setUpdateTours(toursFilteredData) {
-        console.log('setUpdateTours');
+        _log('setUpdateTours');
         var $tours = $('#tour_selector');
         $tours.html('');
         var tour_url_detail = "/de/fh_view/list_tours";
@@ -691,8 +702,6 @@
         };
 
         // call to get tour data
-        // should not be called allways !
-        // check request_result_count to trigger update of tour filter after last ajax result
         var request_result_count = 0;
         for (var i = 0; i < toursFilteredData.length; i++) {
             var toursItem = toursFilteredData[i];
@@ -742,17 +751,19 @@
                         $tour_info.click(function (e) {
                             if ($(this).parent().hasClass('active')) {
                                 // clearDirectionsMarkers();
-                                $('.reset-filter-link').trigger('click');
+
+                                // $('.reset-filter-link').trigger('click');
+                                clearDirectionsMarkers();
+                                Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapIdGlobal, mapCenter);
                                 jQuery('.tour_selector').removeClass('active');
                             } else {
                                 jQuery('.tour_selector').removeClass('active');
+                                $(this).parent().addClass('active');
+
                                 clearAjaxCalls();
                                 showTourOnMap(tour_id, tour_titel, distance);
-                                $(this).parent().addClass('active');
                                 disbleFilterUI();
-                                // update class on filter button
-                                requestArgIndicatorClass = 'tour';
-                                $('#thumbnail-navigation-filter-button').attr('class', requestArgIndicatorClass);
+                                initializeRequestArgIndicator();
                             }
                         });
 
