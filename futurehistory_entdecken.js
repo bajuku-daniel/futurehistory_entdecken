@@ -304,6 +304,8 @@
             cat_ids_by_name[CAT[key]] = key;
         }
 
+        _log(data.length);
+        currentResultCount = data.length;
 
         for (item in data) {
             if (pois_by_author[data[item]['uname']] === undefined) {
@@ -444,9 +446,9 @@
         // update class on filter button
         $('#thumbnail-navigation-filter-button').attr('class', requestArgIndicatorClass);
         if(requestArgIndicatorClass === ""){
-            $("#fh-reset-filter").hide();
+            $("#reset-filter-link").hide();
         }else{
-            $("#fh-reset-filter").show();
+            $("#reset-filter-link").show();
         }
     }
 
@@ -587,6 +589,8 @@
             jQuery('#author_selector').prev().find('span').last().html("Kein Autor gewählt");
         }
 
+        $(".fh-reset-filter-count").html(currentResultCount);
+
 
     }
 
@@ -602,6 +606,7 @@
     var tour_url = '/de/fh_view/list_tour_content';
     var use_eval_to_call_last_calculateAndDisplayRoute = '';
     var requestArgIndicatorClass = "";
+    var currentResultCount = 0;
 
 // Function wrapping code.
 // fn - reference to function.
@@ -624,36 +629,39 @@
     function setUpdateAuthor(authorData) {
         var $authors = $('#author_selector');
         // $authors.html('');
-        if(author.length > 0){
-            $authors.find('label').not("[for='cb"+author[0]+"']:first").remove();
-            $authors.find('input').not("[value='"+author[0]+"']:first").remove();
+        if(isArray(author) && author.length > 0){
+           $a =  $authors.find("label[for='cb"+author[0]+"']");
+           $b =  $authors.find("input[value='"+author[0]+"']");
+            $authors.html('<table id="kategory_selector_table"><tr><td></td><td></td><td></td></tr></table>').find('td:first').append($a).append($b);
         }else{
-            $authors.find('label').remove();
-            $authors.find('input').remove();
-        }
-    // && $authors.find("label[for='cb"+author[0]+"']").size() > 0
+            // $authors.find('label').remove();
+            // $authors.find('input').remove();
+            $authors.html('');
 
+
+        var authorsDom ="<table id='kategory_selector_table'>";
+        var i=0;
         for (authorname in authorData) {
             var count = authorData[authorname].count;
             var uid = authorData[authorname].uid;
             var ischecked = Boolean($.inArray(uid, author) !== -1);
 
-            if (ischecked) {
-                // $('#author_selector').parent();
-                // ?? do what
-            }
-            // .prop('checked', true);
 
-            if(! isArray(author) || author[0] !== uid) {
-                $('<label />', {'for': 'cb' + uid, text: authorname + " (" + count + ")"}).appendTo($authors);
-                $('<input />', {
-                    type: 'checkbox',
-                    uid: 'cb' + uid,
-                    value: uid
-                }).prop('checked', ischecked).appendTo($authors);
+            if (i % 3 === 0) {
+                authorsDom += '<tr>'
             }
+            if (!isArray(author) || author[0] !== uid) {
+                authorsDom += '<td><label for="cb' + uid + '" ><input type="checkbox" uid="cb' + uid + '" value="' + uid + '" \>&nbsp;' + authorname +' ('+count+ ')</label></td>';
+            }
+            if ((i + 1) % 3 === 0) {
+                authorsDom += '</tr>'
+            }
+
+            i++;
         }
-
+        authorsDom += "</table>";
+        $(authorsDom).appendTo($authors);
+        }
         $("#author_selector input").change(function (e) {
             var getCheckedVals = function () {
                 var allVals = [];
@@ -677,7 +685,7 @@
     function setUpdateCategories(pois_by_category) {
         _log(pois_by_category);
 
-        var labels = $("#kategory_selector_table td label");
+        var labels = $("#kategory_selector_table:first td label");
 
         labels.each(function () {
             var count = 0;

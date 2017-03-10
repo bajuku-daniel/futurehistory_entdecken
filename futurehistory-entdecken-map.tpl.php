@@ -19,6 +19,7 @@
     <div id="thumbnail-filter-box">
 
       <div id="fh-reset-filter">
+        <div class="fh-reset-filter-count"></div>
         <a class="reset-filter-link" id="reset-filter-link"><?php print t('X Filter zurücksetzen'); ?></a>
       </div>
 
