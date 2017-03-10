@@ -1,0 +1,311 @@
+/**
+*  Filterscreen
+*/
+
+
+.ui-state-default .ui-icon {
+    background-image: url(map-images/ui-icons_888888_256x240.png);
+    display: inline-block;
+    margin-top: 3px;
+    margin-right: 3px;
+    margin-left: 2px;
+}
+
+#thumbnail-filter-box {
+
+    background-color: rgba(173, 172, 172, 1);
+    padding: 10px;
+    font-size: 14px;
+    color: #3756a4;
+
+}
+
+
+#fh-reset-filter, #sammlungen_selector, #time_slider_box {
+    border-bottom: 1px solid #8E8E8E;
+    margin-bottom: 10px;
+    padding: 8px;
+    background-color: #ffffff;
+    border-radius: 3px;
+    color: #3756a4;
+    padding-top: 8px;
+    	font-weight: 400!important;
+
+}
+
+#sammlungen_selector > form > label {
+	margin-right: 20px;
+		font-weight: 400!important;
+
+
+}
+
+#sammlungen_selector {
+background-image: url(map-images/collection_1.png);
+background-position: left center;
+background-repeat: no-repeat;
+padding-left: 50px;
+}
+
+
+#time_slider {
+max-width:280px;
+margin-top: 10px;
+}
+
+.ui-slider-horizontal .ui-slider-range {
+    height: 3px;
+    background-color: #3756a4!important;
+    border:none!important;
+}
+
+.ui-slider-horizontal {
+    height: 3px;
+}
+
+
+.ui-slider .ui-slider-handle {
+    width: 0.9em;
+    height:1em;
+    border-radius: 10px;
+    border: 2px solid #cdcdcd!important;
+     margin-top: -1px!important;
+ 
+}
+
+
+#time_display {
+	margin-left: 70px;
+}
+
+#time_display > label{
+display:none;	
+}
+
+#time_slider_box {
+background-image: url(map-images/calendar.png);
+background-position: left center;
+background-repeat: no-repeat;
+padding-left: 60px;
+
+}
+
+.ui-widget-content {
+    border: none;
+    background: #fff url(images/ui-bg_flat_75_ffffff_40x100.png) 50% 50% repeat-x;
+        font-size: 14px!important;
+    color: #3756a4;
+        font-family: 'Source Sans Pro', sans-serif;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    border: none;
+    background: #fff;
+    font-weight: 600;
+    color: #3756a4;
+    margin-top: 10px;
+  
+}
+
+
+span.ui-accordion-header-icon.ui-icon.ui-icon-circle-arrow-e
+ {
+ 	
+    background-image: url(map-images/arrow-down.png);
+    background-position: top center;
+    float: right;
+
+}
+
+span.ui-accordion-header-icon.ui-icon.ui-icon-circle-arrow-s
+
+ {
+ 	  background-image: url(map-images/arrow_0.png);
+    background-position: top center;
+    float: right;
+
+}
+
+
+.ui-accordion-header {
+padding: 8px!important;
+
+}
+
+.ui-accordion-content {
+padding-left: 8px!important;
+padding-bottom: 8px;
+padding-right: 8px;
+
+}
+
+
+
+
+
+.tour_selector {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border-top: 1px solid #cdcdcd;
+	font-size: 14px;
+	font-weight: 400;
+	background-color: #ffffff;
+
+}
+
+
+.tour_selector:hover {
+	background-color: #dce6fe;
+	transition: background-color 0.5s;
+
+
+}
+
+
+.status {
+display:none;
+
+}
+
+
+#kategory_selector_table input {
+	display:block;
+	width: 15px;
+	margin: 0 auto;
+}
+
+#kategory_selector_table label {
+	text-align:center;
+	max-width: 150px;
+	margin-left:0px!important;
+	padding-left:0px!important;
+
+
+	
+
+}
+
+#kategory_selector_table td {
+	text-align:center;
+	padding: 8px;
+	border: 1px dotted #cdcdcd;
+
+}
+
+
+#kategory_selector_table td:hover {
+	background-color: #dce6fe;
+	transition: background-color 0.5s;
+
+
+}
+
+
+
+
+ #kategory_selector_table {
+table-layout: fixed;
+word-wrap: break-word;
+width: 365px;
+
+}
+
+label > span {
+display:block;
+
+}
+
+
+
+
+
+#author_selector {
+
+text-align:center;
+
+
+}
+
+
+
+#author_selector > label {
+
+margin-right: 5px;
+padding-top: 5px;
+display:block;
+border-top:1px solid#cdcdcd;
+background-color: #ffffff;
+
+
+}
+
+
+#author_selector > label:hover {
+	background-color: #dce6fe;
+	transition: background-color 0.2s;
+
+
+}
+
+
+
+
+
+#author_selector > input {
+
+width: 15px;
+display:inline-block;
+background-color: #ffffff;
+
+}
+
+div.filter-close > a {
+
+border-radius:4px!important;
+background-color: #3756a4;
+color: #fff;
+font-weight:400;
+}
+
+div.filter-close > a:hover {
+
+	background-color: #112c6f;
+	transition: background-color 0.5s;
+
+}
+
+
+#ui-accordion-accordion-header-0
+
+ {
+background-image: url(map-images/tour.png);
+background-position: left center;
+background-repeat: no-repeat;
+
+}
+
+
+#ui-accordion-accordion-header-1
+
+ {
+background-image: url(map-images/category.png);
+background-position: left center;
+background-repeat: no-repeat;
+
+}
+
+
+#ui-accordion-accordion-header-2
+
+ {
+background-image: url(map-images/author.png);
+background-position: left center;
+background-repeat: no-repeat;
+
+}
+
+
+.accordion h3 {
+padding-left: 50px!important;
+	
+}

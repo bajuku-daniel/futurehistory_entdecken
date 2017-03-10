@@ -419,7 +419,7 @@
         if (tourdisply_is_Active && (requestArgIndicatorClass.indexOf("tour") == -1)) {
             requestArgIndicatorClass += ' tour';
         } else {
-            // requestArgIndicatorClass = '';
+            requestArgIndicatorClass = '';
         }
 
         // check kategorie for changes
@@ -440,8 +440,14 @@
         if (dateDefaultStateCheck && (requestArgIndicatorClass.indexOf("date") == -1)) {
             requestArgIndicatorClass = requestArgIndicatorClass + ' date';
         }
+
         // update class on filter button
         $('#thumbnail-navigation-filter-button').attr('class', requestArgIndicatorClass);
+        if(requestArgIndicatorClass === ""){
+            $("#fh-reset-filter").hide();
+        }else{
+            $("#fh-reset-filter").show();
+        }
     }
 
     function getRequestArgs(bounds, RequestDate, kategorie) {
@@ -574,7 +580,10 @@
         });
         if (selectedAutorlables.length > 0) {
             jQuery('#author_selector').prev().find('span').last().html(selectedAutorlables);
-        } else {
+        } else if (author !== '' && author !== 'all') {
+            _log(author);
+            // jQuery('#author_selector').prev().find('span').last().html(author);
+        }else {
             jQuery('#author_selector').prev().find('span').last().html("Keine Autor gewählt");
         }
 
@@ -614,7 +623,16 @@
      */
     function setUpdateAuthor(authorData) {
         var $authors = $('#author_selector');
-        $authors.html('');
+        // $authors.html('');
+        if(author.length > 0){
+            $authors.find('label').not("[for='cb"+author[0]+"']:first").remove();
+            $authors.find('input').not("[value='"+author[0]+"']:first").remove();
+        }else{
+            $authors.find('label').remove();
+            $authors.find('input').remove();
+        }
+    // && $authors.find("label[for='cb"+author[0]+"']").size() > 0
+
         for (authorname in authorData) {
             var count = authorData[authorname].count;
             var uid = authorData[authorname].uid;
@@ -625,12 +643,15 @@
                 // ?? do what
             }
             // .prop('checked', true);
-            $('<label />', {'for': 'cb' + uid, text: authorname + " (" + count + ")"}).appendTo($authors);
-            $('<input />', {
-                type: 'checkbox',
-                uid: 'cb' + uid,
-                value: uid
-            }).prop('checked', ischecked).appendTo($authors);
+
+            if(! isArray(author) || author[0] !== uid) {
+                $('<label />', {'for': 'cb' + uid, text: authorname + " (" + count + ")"}).appendTo($authors);
+                $('<input />', {
+                    type: 'checkbox',
+                    uid: 'cb' + uid,
+                    value: uid
+                }).prop('checked', ischecked).appendTo($authors);
+            }
         }
 
         $("#author_selector input").change(function (e) {
@@ -746,7 +767,7 @@
                         $tour_info.append("<span>Strecke: " + distanceConvert() + " | von: " + autor + "</span>");
                         var $tour_details = $('<div />', {'class': 'details'});
                         var tour_detail_content = "<h4>" + tour_titel + "</h4><span>" + distanceConvert() + " | " + zeitraum + "</span></br><p>" + description + "</p>";
-                        $tour_details.append("<span class='tour_id_" + tour_id + " tourtip' title='" + tour_detail_content + "'><img width='20px' src='/sites/all/modules/futurehistory/images/tooltip.png'></span>");
+                        $tour_details.append("<span class='tour_id_" + tour_id + " tourtip' title='" + tour_detail_content + "'><img width='20px' src='/sites/all/modules/futurehistory_entdecken/map-images/info.png'></span>");
 
                         $tour_info.click(function (e) {
                             if ($(this).parent().hasClass('active')) {
