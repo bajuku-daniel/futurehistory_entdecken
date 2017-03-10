@@ -24,7 +24,7 @@
 
       <div id="sammlungen_selector">
         <form>
-          <input type="radio" id="fh_show_only_collections" name="show_collections" /> <label for="fh_show_only_collections"> <?php print t('Nur Sammlungen anzeigen'); ?> </label>
+          <input type="radio" id="fh_show_only_collections" name="show_collections" /> <label for="fh_show_only_collections"> <?php print t('Nur Sammlung anzeigen'); ?> </label>
           <input type="radio" checked="checked" id="fh_show_all_collections" name="show_collections" /> <label for="fh_show_all_collections"> <?php print t('Alles anzeigen'); ?></label>
         </form>
       </div>
@@ -43,7 +43,7 @@
         <div id="tour_selector"></div>
 
         <h3><?php print t('Kategorien'); ?> |
-          <span><?php print t('Keine kategorie gewählt'); ?></span></h3>
+          <span><?php print t('Keine Kategorie gewählt'); ?></span></h3>
         <div id="kategory_selector"></div>
 
         <h3><?php print t('Autor'); ?> |

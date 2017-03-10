@@ -565,7 +565,7 @@
         if (selectedCategorylables.length > 0) {
             jQuery('#kategory_selector').prev().find('span').last().html(selectedCategorylables);
         } else {
-            jQuery('#kategory_selector').prev().find('span').last().html("Keine Kategorie gewählt");
+            jQuery('#kategory_selector').prev().find('span').last().html("Keine Kategorien gewählt");
         }
 
         // AUTOR HEADER
@@ -584,7 +584,7 @@
             _log(author);
             // jQuery('#author_selector').prev().find('span').last().html(author);
         }else {
-            jQuery('#author_selector').prev().find('span').last().html("Keine Autor gewählt");
+            jQuery('#author_selector').prev().find('span').last().html("Kein Autor gewählt");
         }
 
 
