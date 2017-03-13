@@ -710,8 +710,14 @@
         var $authors = $('#author_selector');
         // $authors.html('');
         // check if author has selection and force/keep display of author // case when 0 results with active filters
+        _log(author[0].length);
         if (isArray(author) && author.length > 0 && ($authors.find("input[value='" + author[0] + "']").size() > 0)) {
             $a = $authors.find("label[for='cb" + author[0] + "']");
+           //update count 
+            for (authorname in authorData) {
+                var count = authorData[authorname].count;
+            }
+            $a.find("span").text(' ('+count+')');
             $b = $authors.find("input[value='" + author[0] + "']");
             $authors.html('<table id="kategory_selector_table"><tr><td></td><td></td><td></td></tr></table>').find('td:first').append($a).append($b);
         } else {
@@ -738,7 +744,7 @@
                 }
                 // add selected author item also for initial load e.g. from cookie data
                 if (!isArray(author) || author[0] !== uid || $authors.find("input[value='" + author[0] + "']").size() == 0) {
-                    authorsDom += '<td><label for="cb' + uid + '" ><input type="checkbox" uid="cb' + uid + '" value="' + uid + '"  '+ischecked+' \>&nbsp;' + authorname + ' (' + count + ')</label></td>';
+                    authorsDom += '<td><label for="cb' + uid + '" ><input type="checkbox" uid="cb' + uid + '" value="' + uid + '"  '+ischecked+' \>&nbsp;' + authorname + '<span>(' + count + ')</span></label></td>';
                 }
                 if ((i + 1) % 3 === 0) {
                     authorsDom += '</tr>'
