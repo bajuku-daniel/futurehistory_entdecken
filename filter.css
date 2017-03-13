@@ -309,3 +309,115 @@ background-repeat: no-repeat;
 padding-left: 50px!important;
 	
 }
+
+
+/* weitere Styles für Filer-Screens */
+
+
+#fh-reset-filter > div:after {
+    content: ' Ergebnisse'
+
+}
+
+.fh-reset-filter-count {
+    display:inline-block;
+}
+
+#reset-filter-link {
+
+    float:right;
+    display: table-cell;
+    padding-top: 3px;
+    padding-bottom:3px;
+    padding-left: 10px;
+    padding-right:10px;
+    margin-top:-4px;
+    margin-right:-3px;
+    background-color: #1a67ad;
+    color: #fff;
+    border-radius:3px;
+
+}
+
+#reset-filter-link:hover {
+
+
+    background-color: #112c6f;
+    transition: background-color 0.5s;
+    text-decoration:none;
+    cursor: pointer;
+
+}
+
+
+#time_slider {
+
+    background-color: #adacac;
+}
+
+
+#thumbnail-navigation-filter-button, #thumbnail-navigation-sort-button {
+    height: 40px;
+    padding-top:10px;
+
+}
+
+#thumbnail-navigation {
+    height:40px;
+}
+
+#thumbnail-sort-box {
+    padding: 10px;
+    display: none;
+    width: 400px;
+    height: 185px;
+    background-color: #adacac;
+    right: 296px;
+    position: absolute;
+    z-index: 3;
+    top:0px;
+    font-size:14px;
+}
+
+#sort_selector .sort-box {
+    background-color: #fff;
+    border-bottom: 1px solid #fff;
+    margin-bottom: -10px;
+    padding-top: 5px;
+    padding-left:10px;
+    border-radius:3px;
+    height: 35px;
+    color: #3553a4;
+
+}
+
+#sort_selector .sort-box label {
+    font-weight:400;
+}
+
+.sort-close {
+    border-radius: 4px!important;
+    background-color: #3756a4;
+    color: #fff;
+    font-weight: 400;
+
+
+}
+
+
+.sort-close a, .filter-close a {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+    background-color: #3756a4;
+    color: #fff;
+    margin-top: 50px;
+    display: block;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.sort-close a:hover, .filter-close a:hover {
+    background-color: #112c6f;
+    transition: background-color 0.5s;
+}
