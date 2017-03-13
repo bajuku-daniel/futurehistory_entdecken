@@ -225,6 +225,8 @@
     //Function: DateSlider
     //used for initialization abnd reset
     Drupal.futurehistoryEntdecken.DateSlider = function (mapId, InitYearRange) {
+        _log("InitYearRange");
+        _log(InitYearRange);
         // the Date Range : date=all <-- all dates, date=--1990 <-- all bevfore 1990, date=1990-- <-- all after 1990, date=1800--1990 <-- all between 1800 and 1990
         // date slider stuff (linde@webgis.de, 2016/05)
         $("#time_slider").slider({
@@ -252,6 +254,21 @@
     //Parameters: bounds, date, kategorie
 
     Drupal.futurehistoryEntdecken.getMarkers = function (bounds, RequestDate, kategorie, sort, mapId, mapCenter) {
+
+        if (window.firstCall === undefined) {
+            window.firstCall = false;
+            var state = checkStateCookie();
+            if(state !== false){
+                _log(RequestDate);
+                // bounds = state.bounds;
+                RequestDate = state.RequestDate;
+                kategorie = state.kategorie;
+                author = state.author;
+                mapCenter = state.mapcenter;
+
+            }
+        }
+
         clearAjaxCalls();
         initializeRequestArgIndicator();
 
@@ -274,6 +291,8 @@
                     Drupal.futurehistoryEntdecken.setMapMarkers(marker_content, mapId);
                     Drupal.futurehistoryEntdecken.setMapThumbnails(marker_content, mapId, mapCenter);
                     Drupal.futurehistoryEntdecken.initializeToursAuthorCategoryData(data);
+                    setStateCookie(RequestDate);
+
                 }
             }
         });
@@ -565,6 +584,65 @@
         ajaxXHR = [];
     }
 
+
+    /**
+     * check state cookie for initializeOnPageLoad
+     * returns cookie values and set map settings on initialization
+     *
+     * @returns {boolean}
+     */
+    function checkStateCookie(){
+        _log($.cookie("fh_state_cookie"));
+        var cookie_data = JSON.parse($.cookie("fh_state_cookie"));
+
+        _log(cookie_data);
+
+
+        if((cookie_data) && (cookie_data.initializeOnPageLoad !== 'undefined' || cookie_data.initializeOnPageLoad !== null) && Boolean(cookie_data.initializeOnPageLoad) === true){
+            author = cookie_data.author;
+            kategorie = cookie_data.kategorie;
+            mapCenter = new google.maps.LatLng(parseFloat(cookie_data.lat), parseFloat(cookie_data.lng));
+            Drupal.futurehistoryEntdecken[mapIdGlobal].map.setCenter(mapCenter);
+            Drupal.futurehistoryEntdecken[mapIdGlobal].map.setZoom(parseFloat(cookie_data.zoom));
+            if(cookie_data.RequestDate[0] !== 'all'){
+                Drupal.futurehistoryEntdecken.DateSlider(mapIdGlobal, cookie_data.RequestDate.split("--"));
+            }
+
+            return cookie_data;
+        }
+        return false;
+    }
+
+
+    /**
+     * Store current map/filter settings in cookie
+     *
+     * @param RequestDate
+     */
+    function setStateCookie(RequestDate){
+        var mapzoom = Drupal.futurehistoryEntdecken[mapIdGlobal].map.getZoom();
+        var mapcenter = Drupal.futurehistoryEntdecken[mapIdGlobal].map.getCenter();
+        var maplat = mapcenter.lat();
+        var maplng = mapcenter.lng();
+
+
+        var activeFilters = {
+            initializeOnPageLoad: false,
+            lat: maplat,
+            lng: maplng,
+            RequestDate: RequestDate,
+            mapcenter: mapcenter,
+            zoom: mapzoom
+        };
+        activeFilters['author'] = author;
+        activeFilters['kategorie'] = kategorie;
+        activeFilters['bounds'] = bounds;
+        activeFilters['RequestDate'] = RequestDate;
+
+        $.cookie('fh_state_cookie', JSON.stringify(activeFilters), {path: '/'});
+
+    }
+
     /**
      * Init Accordions function Filter UI
      */
@@ -631,38 +709,45 @@
     function setUpdateAuthor(authorData) {
         var $authors = $('#author_selector');
         // $authors.html('');
-        if(isArray(author) && author.length > 0){
-           $a =  $authors.find("label[for='cb"+author[0]+"']");
-           $b =  $authors.find("input[value='"+author[0]+"']");
+        // check if author has selection and force/keep display of author // case when 0 results with active filters
+        if (isArray(author) && author.length > 0 && ($authors.find("input[value='" + author[0] + "']").size() > 0)) {
+            $a = $authors.find("label[for='cb" + author[0] + "']");
+            $b = $authors.find("input[value='" + author[0] + "']");
             $authors.html('<table id="kategory_selector_table"><tr><td></td><td></td><td></td></tr></table>').find('td:first').append($a).append($b);
-        }else{
+        } else {
             // $authors.find('label').remove();
             // $authors.find('input').remove();
             $authors.html('');
 
 
-        var authorsDom ="<table id='kategory_selector_table'>";
-        var i=0;
-        for (authorname in authorData) {
-            var count = authorData[authorname].count;
-            var uid = authorData[authorname].uid;
-            var ischecked = Boolean($.inArray(uid, author) !== -1);
+            var authorsDom = "<table id='kategory_selector_table'>";
+            var i = 0;
+            for (authorname in authorData) {
+                var count = authorData[authorname].count;
+                var uid = authorData[authorname].uid;
+                var ischecked = Boolean($.inArray(uid, author) !== -1);
+                if(ischecked){
+                    ischecked = " checked='checked'";
+                }else{
+                    ischecked = '';
+                }
 
 
-            if (i % 3 === 0) {
-                authorsDom += '<tr>'
-            }
-            if (!isArray(author) || author[0] !== uid) {
-                authorsDom += '<td><label for="cb' + uid + '" ><input type="checkbox" uid="cb' + uid + '" value="' + uid + '" \>&nbsp;' + authorname +' ('+count+ ')</label></td>';
-            }
-            if ((i + 1) % 3 === 0) {
-                authorsDom += '</tr>'
-            }
+                if (i % 3 === 0) {
+                    authorsDom += '<tr>'
+                }
+                // add selected author item also for initial load e.g. from cookie data
+                if (!isArray(author) || author[0] !== uid || $authors.find("input[value='" + author[0] + "']").size() == 0) {
+                    authorsDom += '<td><label for="cb' + uid + '" ><input type="checkbox" uid="cb' + uid + '" value="' + uid + '"  '+ischecked+' \>&nbsp;' + authorname + ' (' + count + ')</label></td>';
+                }
+                if ((i + 1) % 3 === 0) {
+                    authorsDom += '</tr>'
+                }
 
-            i++;
-        }
-        authorsDom += "</table>";
-        $(authorsDom).appendTo($authors);
+                i++;
+            }
+            authorsDom += "</table>";
+            $(authorsDom).appendTo($authors);
         }
         $("#author_selector input").change(function (e) {
             var getCheckedVals = function () {
@@ -685,7 +770,7 @@
      * @param pois_by_category
      */
     function setUpdateCategories(pois_by_category) {
-        _log(pois_by_category);
+        _log("pois_by_category");
 
         var labels = $("#kategory_selector_table:first td label");
 
@@ -700,6 +785,10 @@
             }
 
             $(this).append("<span>(" + count + ")</span>");
+
+            if(kategorie.indexOf(value) !== -1){
+                $(this).find('input').prop( "checked", true );
+            }
 
         });
     }
@@ -1027,6 +1116,7 @@
             place_lat: place_lat,
             place_lng: place_lng
         };
+
         // console.log(' delete fh_geolocation_cookie ');
         $.cookie('fh_geolocation_cookie', null, {path: '/'});
         // console.log(' set fh_lastview_cookie ', fh_cookie_view);
