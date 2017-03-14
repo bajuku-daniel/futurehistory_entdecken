@@ -421,3 +421,13 @@ padding-left: 50px!important;
     background-color: #112c6f;
     transition: background-color 0.5s;
 }
+
+#time_slider .ui-slider-handle,
+#accordion h3,
+#sammlungen_selector label,
+#accordion #kategory_selector label,
+#accordion #author_selector label input
+{
+    cursor: pointer;
+}
+
