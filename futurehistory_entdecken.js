@@ -252,8 +252,8 @@
     //Parameters: bounds, date, kategorie
 
     Drupal.futurehistoryEntdecken.getMarkers = function (bounds, RequestDate, kategorie, sort, mapId, mapCenter) {
-        // _log("window.firstCall");
-        // _log(window.firstCall);
+        _log("window.firstCall");
+        _log(arguments.callee.caller.name);
         if (window.firstCall === undefined) {
             window.firstCall = false;
             var state = checkStateCookie();
@@ -542,6 +542,7 @@
         var bbox_left = bounds.getSouthWest().lng();
         var bbox = bbox_left + ',' + bbox_bottom + ',' + bbox_right + ',' + bbox_top;
         var RequestArgs = {};
+        _log("AUTOR "+author)
         if (author.constructor === Array && author.length > 1) {
             // 1,2,3 (AND) and 1+2+3(OR).
             author = author.join("+");
@@ -553,13 +554,14 @@
             author = "all";
         }
 
+
         if (kategorie.length) {
             // 1,2,3 (AND) and 1+2+3(OR).
             RequestArgs = {bbox: bbox, date: RequestDate, kategorie_id: kategorie.join(','), autor_uid: author}
         } else {
             RequestArgs = {bbox: bbox, date: RequestDate, autor_uid: author}
         }
-
+        _log(RequestArgs)
         return RequestArgs;
     }
 
@@ -3083,6 +3085,7 @@
             txtSize + 'px; font-family:Arial,sans-serif; font-weight:bold');
         return style.join('');
     };
+
     Drupal.behaviors.futurehistoryEntdecken = {
         attach: function (context, settings) {
             console.log("Drupal.behaviors.futurehistoryEntdecken");
@@ -3221,6 +3224,8 @@
                     var url_k = param('k');
                     var url_d = param('d');
                     var url_s = param('s');
+                    var url_a = param('a');
+                    var url_t = param('t');
                     mapCenter = new google.maps.LatLng(parseFloat(url_y), parseFloat(url_x));
                     if (url_k.substring(0, 1) == ',') {
                         url_k = url_k.substring(1);
@@ -3231,13 +3236,15 @@
                     YearRange[1] = parseInt(url_d.split('--')[1]);
                     RequestDate = String(YearRange[0]) + '--' + String(YearRange[1]);
                     sort = url_s;
-                    // console.log('mapX ', url_x);
-                    // console.log('mapY ', url_y);
-                    // console.log('Zoom ', url_z);
-                    // console.log('Kategorie ', url_k);
-                    // console.log('Date', url_d);
-                    // console.log('Sort ', url_s);
-                    // console.log('YearRange ', YearRange);
+                    author = url_a === 'all'?url_a:[url_a];
+
+                    if(url_t !== '' || url_t != undefined){
+                        url_t = decodeURI(url_t);
+                        lastShowTourOnMapCall = url_t.split(',');
+                    }
+
+
+
                     Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
                     Drupal.futurehistoryEntdecken[mapId].map.setZoom(mapZoom);
                 } else if (fh_geolocation_cookie_data != null) {
@@ -3318,6 +3325,7 @@
                         mapCenter = new google.maps.LatLng(Drupal.futurehistoryEntdecken[mapId].map.getCenter().lat(), Drupal.futurehistoryEntdecken[mapId].map.getCenter().lng());
                         Drupal.futurehistoryEntdecken.markMapCenter(mapId, mapCenter);
                     }
+                    _log("ARE WE HERE kategorie ",kategorie);
                     Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
                 });
 
@@ -3336,12 +3344,19 @@
                     var reqDate = String($("#time_slider").slider("values", 0) + "--" + $("#time_slider").slider("values", 1));
                     var baseUrl = window.location.origin + window.location.pathname;
                     var centerControlDiv = document.createElement('div');
+                    var td = '';
+                    if(tourdisply_is_Active){
+                        td = "&t="+encodeURI(lastShowTourOnMapCall.join(','));
+                    }
+                    _log("td: "+td);
+
                     var permaUrl = baseUrl + encodeURI('?y=' + coords.lat() +
                             '&x=' + coords.lng() +
                             '&z=' + Drupal.futurehistoryEntdecken[mapId].map.getZoom() +
                             '&k=' + kategorie.toString() +
                             '&d=' + reqDate +
-                            '&s=' + sort);
+                            '&a=' + author +
+                            '&s=' + sort + td);
 
                     var permalink = '<a href="' + permaUrl + '">' + permaUrl + '</a>';
                     centerControlDiv.index = 1;
