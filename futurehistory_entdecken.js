@@ -411,7 +411,7 @@
 
     function _log(value) {
         try {
-            // console.log(arguments.callee.caller.name+': ',value);
+            console.log(arguments.callee.caller.name+': ',value);
         } catch (err) {
             // no problems when no console
         }
@@ -824,10 +824,15 @@ var tourStash = [];
             for (var item in tourStash) {
                 tdd[tourStash[item][0]] = tourStash[item][1];
             }
-            for (var e = 0; e < toursFilteredData.length; e++) {
-                var toursItem = toursFilteredData[e];
-                var tourID = toursItem.tour_id
-                tdd[tourStash[tourID][0]].appendTo($tours);
+            for (var dist in tdd) {
+                for (var e = 0; e < toursFilteredData.length; e++) {
+                    var toursItem = toursFilteredData[e];
+                    var tourID = toursItem.tour_id;
+                    if(tourStash[tourID][0] === dist){
+                        tdd[tourStash[tourID][0]].appendTo($tours);
+                        break;
+                    }
+                }
             }
 
             $('.tourtip').tooltipster({
