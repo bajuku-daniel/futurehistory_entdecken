@@ -257,6 +257,7 @@
             var state = checkStateCookie();
             if(state !== false){
                 _log("state",state);
+                window.firstCall = 'active';
                 // _log(state.initializeOnPageLoad);
                 RequestDate = state.RequestDate;
                 kategorie = state.kategorie;
@@ -948,8 +949,8 @@ var tourStash = [];
 
         // tours on pageload must be loaded after other filters have been processed
         // Filter mostly (!cat) do rely on valid results
-        if(lastShowTourOnMapCall.length === 3 && window.firstCall === false){
-            // _log("-----------> RECHECK LOGIC HERE");
+        if(lastShowTourOnMapCall.length === 3 && window.firstCall === 'active'){
+            _log("-----------> RECHECK LOGIC HERE");
             window.firstCall = "second";
             $('.tour_id_'+lastShowTourOnMapCall[0]+" .info").trigger('click');
         }
@@ -3265,6 +3266,7 @@ var tourStash = [];
                     if(url_t !== '' || url_t != undefined){
                         url_t = decodeURI(url_t);
                         lastShowTourOnMapCall = url_t.split(',');
+                        window.firstCall = 'active'
                     }
 
 
