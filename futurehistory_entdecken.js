@@ -987,7 +987,7 @@ var tourStash = [];
             origin: my_origin,
             destination: my_destination,
             waypoints: waypts,
-            optimizeWaypoints: true,
+            optimizeWaypoints: false,
             travelMode: google.maps.TravelMode.WALKING
         }, function (response, status) {
             if (status === google.maps.DirectionsStatus.OK) {
