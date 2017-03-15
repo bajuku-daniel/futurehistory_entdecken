@@ -359,7 +359,18 @@
             for (attr in data[item]) {
                 pois_by_nid[data[item]['Nid']] = data[item];
                 if (attr === "tour_id" && data[item][attr] !== "NULL") {
-                    tours_unique[data[item][attr]] = data[item];
+                    var tids = data[item][attr];
+                    if (tids.indexOf(',') != -1) {
+                        tids = tids.split(',');
+                    } else {
+                        tids = [tids];
+                    }
+                    for (tid in tids) {
+                        data[item][attr] = tids[tid];
+                        tours_unique[tids[tid]] = data[item];
+                        // tours_unique[data[item][attr]] = data[item];
+                    }
+
                 }
             }
         }
@@ -412,7 +423,7 @@
 
     function _log(value) {
         try {
-            console.log(arguments.callee.caller.name+': ',value);
+            // console.log(arguments.callee.caller.name+': ',value);
         } catch (err) {
             // no problems when no console
         }
