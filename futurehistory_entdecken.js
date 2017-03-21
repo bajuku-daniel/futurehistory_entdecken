@@ -268,7 +268,7 @@
                 // _log("window.firstCall END");
             }
         }
-
+        disbleAllUI();
         clearAjaxCalls();
         initializeRequestArgIndicator();
 
@@ -292,7 +292,7 @@
                     Drupal.futurehistoryEntdecken.setMapThumbnails(marker_content, mapId, mapCenter);
                     Drupal.futurehistoryEntdecken.initializeToursAuthorCategoryData(data);
                     setStateCookie(RequestDate);
-
+                    enableAllUI();
                 }
             }
         });
@@ -388,7 +388,6 @@
         setUpdateTours(toursDataInResult);
         setUpdateCategories(pois_by_category);
         initializeAccordions();
-
     }
 
 
@@ -423,10 +422,21 @@
 
     function _log(value) {
         try {
-            console.log(arguments.callee.caller.name+': ',value);
+            // console.log(arguments.callee.caller.name+': ',value);
         } catch (err) {
             // no problems when no console
         }
+    }
+
+    function enableAllUI() {
+        console.log(arguments.callee.caller.name);
+        // $( "#accordion" ).accordion("option", "disabled", false);
+        var isAccordion = $("#accordion").hasClass("ui-accordion");
+        if(isAccordion){
+            // $( "#accordion" ).accordion(  "enable" );
+        }
+
+        enableFilterUI();
     }
 
     function enableFilterUI() {
@@ -435,6 +445,17 @@
         jQuery("#thumbnail-filter-box input:checkbox").attr('disabled', false);
         $("#kategory_selector").prev().removeClass("ui-state-disabled");
         $("#author_selector").prev().removeClass("ui-state-disabled");
+    }
+
+    function disbleAllUI() {
+        console.log(arguments.callee.caller.name);
+        // $( "#accordion" ).accordion("option", "disabled", true);
+        var isAccordion = $("#accordion").hasClass("ui-accordion");
+        if(isAccordion){
+            // $( "#accordion" ).accordion("disable" );
+        }
+
+        disbleFilterUI();
     }
 
     function disbleFilterUI() {
@@ -451,7 +472,7 @@
      */
     function showTourOnMap(tour_id, tourname, distance) {
         // _log("showTourOnMap",tour_id,tourname,distance);
-
+        disbleAllUI();
         lastShowTourOnMapCall = [tour_id, tourname, distance];
         // start the ajax request to get tour details
         _log("ajaxXHR showTourOnMap");
@@ -471,6 +492,8 @@
 
                     }
                 }
+
+                enableAllUI();
 
                 // clearDirectionsMarkers();
                 if (directionsDisplay.setMap) {
@@ -926,20 +949,19 @@ var tourStash = [];
                             e.stopImmediatePropagation();
                             e.stopPropagation();
 
-
+                            clearAjaxCalls();
                             if ($(this).parent().hasClass('active')) {
                                 clearDirectionsMarkers();
-                                Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapIdGlobal, mapCenter);
+                                tourdisply_is_Active = false;
+                                lastShowTourOnMapCall = false;
                                 jQuery('.tour_selector').removeClass('active');
+                                Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapIdGlobal, mapCenter);
+
                             } else {
                                 jQuery('.tour_selector').removeClass('active');
                                 $(this).parent().addClass('active');
-
-                                clearAjaxCalls();
                                 showTourOnMap($(this).data('tourid'), $(this).data('tourtitel'), $(this).data('distance'));
-                                disbleFilterUI();
                                 initializeRequestArgIndicator();
-
                             }
                         });
 
