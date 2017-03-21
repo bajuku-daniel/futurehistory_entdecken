@@ -423,7 +423,7 @@
 
     function _log(value) {
         try {
-            // console.log(arguments.callee.caller.name+': ',value);
+            console.log(arguments.callee.caller.name+': ',value);
         } catch (err) {
             // no problems when no console
         }
@@ -883,8 +883,8 @@ var tourStash = [];
                 last: last,
                 success: function (tourdetails, i) {
                     request_result_count++;
-                    if( $('.tour_id_'+tourdetails[0].tour_id).size() > 0){
-                        // return;
+                    if(tourdetails[0] == undefined || $('.tour_id_'+tourdetails[0].tour_id).size() > 0){
+                      return;
                     }
                     var distance = tourdetails[0].distance;
                     var tour_titel = tourdetails[0].title;
