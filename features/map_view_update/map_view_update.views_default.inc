@@ -432,5 +432,431 @@ function map_view_update_views_default_views() {
   );
   $export['fh_view_bbox'] = $view;
 
+  $view = new view();
+  $view->name = 'meine_ansichten';
+  $view->description = '';
+  $view->tag = 'default';
+  $view->base_table = 'node';
+  $view->human_name = 'Meine Ansichten';
+  $view->core = 7;
+  $view->api_version = '3.0';
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+  /* Display: Master */
+  $handler = $view->new_display('default', 'Master', 'default');
+  $handler->display->display_options['title'] = 'Meine Ansichten';
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'perm';
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['exposed_form']['options']['reset_button_label'] = 'Zurücksetzen';
+  $handler->display->display_options['exposed_form']['options']['exposed_sorts_label'] = 'Sortierung';
+  $handler->display->display_options['exposed_form']['options']['expose_sort_order'] = FALSE;
+  $handler->display->display_options['exposed_form']['options']['autosubmit'] = TRUE;
+  $handler->display->display_options['pager']['type'] = 'none';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['style_plugin'] = 'list';
+  $handler->display->display_options['row_plugin'] = 'fields';
+  /* No results behavior: Global: Text area */
+  $handler->display->display_options['empty']['area']['id'] = 'area';
+  $handler->display->display_options['empty']['area']['table'] = 'views';
+  $handler->display->display_options['empty']['area']['field'] = 'area';
+  $handler->display->display_options['empty']['area']['label'] = 'Keine eigenen Bilder';
+  $handler->display->display_options['empty']['area']['empty'] = TRUE;
+  $handler->display->display_options['empty']['area']['content'] = 'Es sind noch keine eigenen Bilder Vorhanden. <br> Jetzt <a href="/node/add/ansicht">eigene Bilder einstellen</a>.';
+  $handler->display->display_options['empty']['area']['format'] = 'full_html';
+  /* Relationship: Inhalt: Autor */
+  $handler->display->display_options['relationships']['uid']['id'] = 'uid';
+  $handler->display->display_options['relationships']['uid']['table'] = 'node';
+  $handler->display->display_options['relationships']['uid']['field'] = 'uid';
+  $handler->display->display_options['relationships']['uid']['required'] = TRUE;
+  /* Feld: Inhalt: Bild */
+  $handler->display->display_options['fields']['field_bild']['id'] = 'field_bild';
+  $handler->display->display_options['fields']['field_bild']['table'] = 'field_data_field_bild';
+  $handler->display->display_options['fields']['field_bild']['field'] = 'field_bild';
+  $handler->display->display_options['fields']['field_bild']['label'] = '';
+  $handler->display->display_options['fields']['field_bild']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_bild']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_bild']['settings'] = array(
+    'image_style' => 'fh_grid_view',
+    'image_link' => 'content',
+  );
+  /* Feld: Inhalt: Titel */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+  /* Feld: Inhalt: Jahr */
+  $handler->display->display_options['fields']['field_jahr']['id'] = 'field_jahr';
+  $handler->display->display_options['fields']['field_jahr']['table'] = 'field_data_field_jahr';
+  $handler->display->display_options['fields']['field_jahr']['field'] = 'field_jahr';
+  $handler->display->display_options['fields']['field_jahr']['label'] = '';
+  $handler->display->display_options['fields']['field_jahr']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_jahr']['settings'] = array(
+    'thousand_separator' => '',
+    'prefix_suffix' => 1,
+  );
+  /* Feld: Inhalt: Veröffentlicht */
+  $handler->display->display_options['fields']['status']['id'] = 'status';
+  $handler->display->display_options['fields']['status']['table'] = 'node';
+  $handler->display->display_options['fields']['status']['field'] = 'status';
+  $handler->display->display_options['fields']['status']['label'] = '';
+  $handler->display->display_options['fields']['status']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['status']['type'] = 'custom';
+  $handler->display->display_options['fields']['status']['type_custom_true'] = 'Veröffentlicht';
+  $handler->display->display_options['fields']['status']['type_custom_false'] = 'Entwurf';
+  $handler->display->display_options['fields']['status']['not'] = 0;
+  /* Feld: Inhalt: Edit link */
+  $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['label'] = '';
+  $handler->display->display_options['fields']['edit_node']['element_label_colon'] = FALSE;
+  /* Feld: Inhalt: Delete link */
+  $handler->display->display_options['fields']['delete_node']['id'] = 'delete_node';
+  $handler->display->display_options['fields']['delete_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['delete_node']['field'] = 'delete_node';
+  $handler->display->display_options['fields']['delete_node']['label'] = '';
+  $handler->display->display_options['fields']['delete_node']['element_label_colon'] = FALSE;
+  /* Feld: Inhalt: Bildposition */
+  $handler->display->display_options['fields']['field_stadt']['id'] = 'field_stadt';
+  $handler->display->display_options['fields']['field_stadt']['table'] = 'field_data_field_stadt';
+  $handler->display->display_options['fields']['field_stadt']['field'] = 'field_stadt';
+  $handler->display->display_options['fields']['field_stadt']['label'] = '';
+  $handler->display->display_options['fields']['field_stadt']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_stadt']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_stadt']['type'] = 'taxonomy_term_reference_plain';
+  /* Sort criterion: Inhalt: Post date */
+  $handler->display->display_options['sorts']['created']['id'] = 'created';
+  $handler->display->display_options['sorts']['created']['table'] = 'node';
+  $handler->display->display_options['sorts']['created']['field'] = 'created';
+  $handler->display->display_options['sorts']['created']['order'] = 'DESC';
+  $handler->display->display_options['sorts']['created']['exposed'] = TRUE;
+  $handler->display->display_options['sorts']['created']['expose']['label'] = 'Hinzugefügt am';
+  /* Sort criterion: Inhalt: Titel */
+  $handler->display->display_options['sorts']['title']['id'] = 'title';
+  $handler->display->display_options['sorts']['title']['table'] = 'node';
+  $handler->display->display_options['sorts']['title']['field'] = 'title';
+  $handler->display->display_options['sorts']['title']['exposed'] = TRUE;
+  $handler->display->display_options['sorts']['title']['expose']['label'] = 'Bildtitel';
+  /* Sort criterion: Inhalt: Jahr (field_jahr) */
+  $handler->display->display_options['sorts']['field_jahr_value']['id'] = 'field_jahr_value';
+  $handler->display->display_options['sorts']['field_jahr_value']['table'] = 'field_data_field_jahr';
+  $handler->display->display_options['sorts']['field_jahr_value']['field'] = 'field_jahr_value';
+  $handler->display->display_options['sorts']['field_jahr_value']['exposed'] = TRUE;
+  $handler->display->display_options['sorts']['field_jahr_value']['expose']['label'] = 'Bilddatum';
+  /* Contextual filter: Benutzer: Uid */
+  $handler->display->display_options['arguments']['uid']['id'] = 'uid';
+  $handler->display->display_options['arguments']['uid']['table'] = 'users';
+  $handler->display->display_options['arguments']['uid']['field'] = 'uid';
+  $handler->display->display_options['arguments']['uid']['relationship'] = 'uid';
+  $handler->display->display_options['arguments']['uid']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['uid']['exception']['title'] = 'Alle';
+  $handler->display->display_options['arguments']['uid']['default_argument_type'] = 'current_user';
+  $handler->display->display_options['arguments']['uid']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['uid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['uid']['summary_options']['items_per_page'] = '25';
+  /* Filter criterion: Veröffentlicht (selective) */
+  $handler->display->display_options['filters']['status_selective']['id'] = 'status_selective';
+  $handler->display->display_options['filters']['status_selective']['table'] = 'node';
+  $handler->display->display_options['filters']['status_selective']['field'] = 'status_selective';
+  $handler->display->display_options['filters']['status_selective']['ui_name'] = 'Veröffentlicht (selective)';
+  $handler->display->display_options['filters']['status_selective']['group'] = 1;
+  $handler->display->display_options['filters']['status_selective']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['status_selective']['expose']['operator_id'] = '';
+  $handler->display->display_options['filters']['status_selective']['expose']['label'] = 'Status';
+  $handler->display->display_options['filters']['status_selective']['expose']['use_operator'] = TRUE;
+  $handler->display->display_options['filters']['status_selective']['expose']['identifier'] = 'status_selective';
+  $handler->display->display_options['filters']['status_selective']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    4 => 0,
+    3 => 0,
+  );
+  $handler->display->display_options['filters']['status_selective']['selective_display_field'] = 'status';
+  $handler->display->display_options['filters']['status_selective']['selective_items_limit'] = '100';
+  /* Filter criterion: Inhalt: Typ */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'node';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'ansicht' => 'ansicht',
+  );
+  $handler->display->display_options['filters']['type']['group'] = 1;
+  /* Filter criterion: Bildposition (field_stadt) (selective) */
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['id'] = 'field_stadt_tid_selective';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['table'] = 'field_data_field_stadt';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['field'] = 'field_stadt_tid_selective';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['ui_name'] = 'Bildposition (field_stadt) (selective)';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['group'] = 1;
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['expose']['operator_id'] = '';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['expose']['label'] = 'Ort / Stadt';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['expose']['identifier'] = 'field_stadt_tid_selective';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    4 => 0,
+    3 => 0,
+  );
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['selective_display_field'] = 'field_stadt';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['selective_items_limit'] = '100';
+
+  /* Display: Seite */
+  $handler = $view->new_display('page', 'Seite', 'page_1');
+  $handler->display->display_options['path'] = 'user/meine_ansichten';
+  $handler->display->display_options['menu']['type'] = 'normal';
+  $handler->display->display_options['menu']['title'] = 'Eigene Bilder';
+  $handler->display->display_options['menu']['weight'] = '0';
+  $handler->display->display_options['menu']['name'] = 'user-menu';
+  $handler->display->display_options['menu']['context'] = 0;
+  $handler->display->display_options['menu']['context_only_inline'] = 0;
+  $translatables['meine_ansichten'] = array(
+    t('Master'),
+    t('Meine Ansichten'),
+    t('more'),
+    t('Apply'),
+    t('Zurücksetzen'),
+    t('Sortierung'),
+    t('Asc'),
+    t('Desc'),
+    t('Keine eigenen Bilder'),
+    t('Es sind noch keine eigenen Bilder Vorhanden. <br> Jetzt <a href="/node/add/ansicht">eigene Bilder einstellen</a>.'),
+    t('author'),
+    t('Veröffentlicht'),
+    t('Entwurf'),
+    t('Hinzugefügt am'),
+    t('Bildtitel'),
+    t('Bilddatum'),
+    t('Alle'),
+    t('Status'),
+    t('Ort / Stadt'),
+    t('Seite'),
+  );
+  $export['meine_ansichten'] = $view;
+
+  $view = new view();
+  $view->name = 'meine_touren';
+  $view->description = 'Auflistung der Touren im Portal';
+  $view->tag = 'default';
+  $view->base_table = 'flag_lists_flags';
+  $view->human_name = 'Touren Bereich: Auflistung der Touren im Portal';
+  $view->core = 7;
+  $view->api_version = '3.0';
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+  /* Display: Master */
+  $handler = $view->new_display('default', 'Master', 'default');
+  $handler->display->display_options['title'] = 'Meine Touren';
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'none';
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['exposed_form']['options']['reset_button_label'] = 'Zurücksetzen';
+  $handler->display->display_options['exposed_form']['options']['exposed_sorts_label'] = 'Sortierung';
+  $handler->display->display_options['pager']['type'] = 'none';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['style_plugin'] = 'list';
+  $handler->display->display_options['row_plugin'] = 'fields';
+  /* Kopfbereich: Global: Text area */
+  $handler->display->display_options['header']['area']['id'] = 'area';
+  $handler->display->display_options['header']['area']['table'] = 'views';
+  $handler->display->display_options['header']['area']['field'] = 'area';
+  $handler->display->display_options['header']['area']['content'] = '<h4>Meine Touren</h4>';
+  $handler->display->display_options['header']['area']['format'] = 'full_html';
+  /* No results behavior: Global: Text area */
+  $handler->display->display_options['empty']['area']['id'] = 'area';
+  $handler->display->display_options['empty']['area']['table'] = 'views';
+  $handler->display->display_options['empty']['area']['field'] = 'area';
+  $handler->display->display_options['empty']['area']['empty'] = TRUE;
+  $handler->display->display_options['empty']['area']['content'] = '<h4>Meine Touren </h4>
+<p>Du hast noch keine Tour erstellt. <br> Erkunde den <a href="/fh-entdecken-map">entdecken Bereich</a>, erstelle eine Tour und füge Bilder zu dieser hinzu.</p>';
+  $handler->display->display_options['empty']['area']['format'] = 'full_html';
+  /* Feld: Flag lists: fid */
+  $handler->display->display_options['fields']['fid']['id'] = 'fid';
+  $handler->display->display_options['fields']['fid']['table'] = 'flag_lists_flags';
+  $handler->display->display_options['fields']['fid']['field'] = 'fid';
+  $handler->display->display_options['fields']['fid']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['fid']['link_to_list'] = 0;
+  /* Feld: Flag lists: List title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'flag_lists_flags';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['title']['link_to_list'] = 1;
+  /* Feld: Global: Ansicht */
+  $handler->display->display_options['fields']['view']['id'] = 'view';
+  $handler->display->display_options['fields']['view']['table'] = 'views';
+  $handler->display->display_options['fields']['view']['field'] = 'view';
+  $handler->display->display_options['fields']['view']['label'] = '';
+  $handler->display->display_options['fields']['view']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['view']['hide_empty'] = TRUE;
+  $handler->display->display_options['fields']['view']['view'] = 'touren_bereich_subview_f_r_erstes_bild_der_tour';
+  $handler->display->display_options['fields']['view']['display'] = 'page_1';
+  $handler->display->display_options['fields']['view']['arguments'] = '[!fid]';
+  /* Feld: Flag lists: List description */
+  $handler->display->display_options['fields']['description']['id'] = 'description';
+  $handler->display->display_options['fields']['description']['table'] = 'flag_lists_flags';
+  $handler->display->display_options['fields']['description']['field'] = 'description';
+  $handler->display->display_options['fields']['description']['label'] = '';
+  $handler->display->display_options['fields']['description']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['description']['link_to_list'] = 0;
+  /* Feld: Flag lists: Tour distance in KM */
+  $handler->display->display_options['fields']['tour_distance']['id'] = 'tour_distance';
+  $handler->display->display_options['fields']['tour_distance']['table'] = 'flag_lists_flags';
+  $handler->display->display_options['fields']['tour_distance']['field'] = 'tour_distance';
+  $handler->display->display_options['fields']['tour_distance']['label'] = 'Wegstrecke in Metern';
+  $handler->display->display_options['fields']['tour_distance']['link_to_list'] = 0;
+  /* Feld: Flag lists: Tour start date */
+  $handler->display->display_options['fields']['period_start']['id'] = 'period_start';
+  $handler->display->display_options['fields']['period_start']['table'] = 'flag_lists_flags';
+  $handler->display->display_options['fields']['period_start']['field'] = 'period_start';
+  $handler->display->display_options['fields']['period_start']['label'] = 'Anfangsjahr';
+  $handler->display->display_options['fields']['period_start']['link_to_list'] = 0;
+  /* Feld: Flag lists: Tour end date */
+  $handler->display->display_options['fields']['period_end']['id'] = 'period_end';
+  $handler->display->display_options['fields']['period_end']['table'] = 'flag_lists_flags';
+  $handler->display->display_options['fields']['period_end']['field'] = 'period_end';
+  $handler->display->display_options['fields']['period_end']['label'] = 'Endjahr';
+  $handler->display->display_options['fields']['period_end']['link_to_list'] = 0;
+  /* Feld: Flag lists: Edit link */
+  $handler->display->display_options['fields']['edit_list']['id'] = 'edit_list';
+  $handler->display->display_options['fields']['edit_list']['table'] = 'flag_lists_flags';
+  $handler->display->display_options['fields']['edit_list']['field'] = 'edit_list';
+  $handler->display->display_options['fields']['edit_list']['label'] = '';
+  $handler->display->display_options['fields']['edit_list']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['edit_list']['text'] = 'Bearbeiten';
+  /* Feld: Flag lists: Delete link */
+  $handler->display->display_options['fields']['delete_list']['id'] = 'delete_list';
+  $handler->display->display_options['fields']['delete_list']['table'] = 'flag_lists_flags';
+  $handler->display->display_options['fields']['delete_list']['field'] = 'delete_list';
+  $handler->display->display_options['fields']['delete_list']['label'] = '';
+  $handler->display->display_options['fields']['delete_list']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['delete_list']['text'] = 'Tour Löschen';
+  /* Contextual filter: Benutzer: Uid */
+  $handler->display->display_options['arguments']['uid']['id'] = 'uid';
+  $handler->display->display_options['arguments']['uid']['table'] = 'users';
+  $handler->display->display_options['arguments']['uid']['field'] = 'uid';
+  $handler->display->display_options['arguments']['uid']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['uid']['exception']['title'] = 'Alle';
+  $handler->display->display_options['arguments']['uid']['default_argument_type'] = 'current_user';
+  $handler->display->display_options['arguments']['uid']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['uid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['uid']['summary_options']['items_per_page'] = '25';
+
+  /* Display: Page */
+  $handler = $view->new_display('page', 'Page', 'page');
+  $handler->display->display_options['path'] = 'user/touren';
+  $handler->display->display_options['menu']['type'] = 'normal';
+  $handler->display->display_options['menu']['title'] = 'Touren';
+  $handler->display->display_options['menu']['weight'] = '0';
+  $handler->display->display_options['menu']['name'] = 'user-menu';
+  $handler->display->display_options['menu']['context'] = 0;
+  $handler->display->display_options['menu']['context_only_inline'] = 0;
+  $translatables['meine_touren'] = array(
+    t('Master'),
+    t('Meine Touren'),
+    t('more'),
+    t('Apply'),
+    t('Zurücksetzen'),
+    t('Sortierung'),
+    t('Asc'),
+    t('Desc'),
+    t('<h4>Meine Touren</h4>'),
+    t('<h4>Meine Touren </h4>
+<p>Du hast noch keine Tour erstellt. <br> Erkunde den <a href="/fh-entdecken-map">entdecken Bereich</a>, erstelle eine Tour und füge Bilder zu dieser hinzu.</p>'),
+    t('fid'),
+    t('Wegstrecke in Metern'),
+    t('Anfangsjahr'),
+    t('Endjahr'),
+    t('Bearbeiten'),
+    t('Tour Löschen'),
+    t('Alle'),
+    t('Page'),
+  );
+  $export['meine_touren'] = $view;
+
+  $view = new view();
+  $view->name = 'touren_bereich_subview_f_r_erstes_bild_der_tour';
+  $view->description = 'show first image from tour ';
+  $view->tag = '';
+  $view->base_table = 'node';
+  $view->human_name = 'Touren Bereich: Subview für erstes Bild der Tour';
+  $view->core = 0;
+  $view->api_version = '3.0';
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+  /* Display: Defaults */
+  $handler = $view->new_display('default', 'Defaults', 'default');
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'none';
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['exposed_form']['options']['reset_button_label'] = 'Zurücksetzen';
+  $handler->display->display_options['exposed_form']['options']['exposed_sorts_label'] = 'Sortierung';
+  $handler->display->display_options['pager']['type'] = 'none';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['style_plugin'] = 'default';
+  $handler->display->display_options['row_plugin'] = 'fields';
+  /* Feld: Inhalt: Bild */
+  $handler->display->display_options['fields']['field_bild']['id'] = 'field_bild';
+  $handler->display->display_options['fields']['field_bild']['table'] = 'field_data_field_bild';
+  $handler->display->display_options['fields']['field_bild']['field'] = 'field_bild';
+  $handler->display->display_options['fields']['field_bild']['label'] = '';
+  $handler->display->display_options['fields']['field_bild']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_bild']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_bild']['settings'] = array(
+    'image_style' => 'fh_grid_view',
+    'image_link' => '',
+  );
+  /* Sort criterion: Flag lists: Time listed */
+  $handler->display->display_options['sorts']['timestamp']['id'] = 'timestamp';
+  $handler->display->display_options['sorts']['timestamp']['table'] = 'flag_lists_content';
+  $handler->display->display_options['sorts']['timestamp']['field'] = 'timestamp';
+  $handler->display->display_options['sorts']['timestamp']['order'] = 'DESC';
+  /* Contextual filter: Flag lists: fid */
+  $handler->display->display_options['arguments']['fid']['id'] = 'fid';
+  $handler->display->display_options['arguments']['fid']['table'] = 'flag_lists_flags';
+  $handler->display->display_options['arguments']['fid']['field'] = 'fid';
+  $handler->display->display_options['arguments']['fid']['default_action'] = 'not found';
+  $handler->display->display_options['arguments']['fid']['exception']['title_enable'] = TRUE;
+  $handler->display->display_options['arguments']['fid']['exception']['title'] = 'Alle';
+  $handler->display->display_options['arguments']['fid']['title_enable'] = TRUE;
+  $handler->display->display_options['arguments']['fid']['title'] = '%1';
+  $handler->display->display_options['arguments']['fid']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['fid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['fid']['specify_validation'] = TRUE;
+  /* Filter criterion: Inhalt: Veröffentlicht */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = '1';
+  $handler->display->display_options['filters']['status']['group'] = '0';
+  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+
+  /* Display: Page */
+  $handler = $view->new_display('page', 'Page', 'page_1');
+  $handler->display->display_options['path'] = 'tour_picture';
+  $translatables['touren_bereich_subview_f_r_erstes_bild_der_tour'] = array(
+    t('Defaults'),
+    t('more'),
+    t('Apply'),
+    t('Zurücksetzen'),
+    t('Sortierung'),
+    t('Asc'),
+    t('Desc'),
+    t('Alle'),
+    t('%1'),
+    t('Page'),
+  );
+  $export['touren_bereich_subview_f_r_erstes_bild_der_tour'] = $view;
+
   return $export;
 }
