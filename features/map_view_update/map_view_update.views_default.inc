@@ -858,5 +858,185 @@ function map_view_update_views_default_views() {
   );
   $export['touren_bereich_subview_f_r_erstes_bild_der_tour'] = $view;
 
+  $view = new view();
+  $view->name = 'flag_bookmarks';
+  $view->description = 'A page listing the current user\'s bookmarks at /bookmarks.';
+  $view->tag = 'flag';
+  $view->base_table = 'node';
+  $view->human_name = '';
+  $view->core = 0;
+  $view->api_version = '3.0';
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+  /* Display: Defaults */
+  $handler = $view->new_display('default', 'Defaults', 'default');
+  $handler->display->display_options['title'] = 'Meine Sammlung';
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'perm';
+  $handler->display->display_options['access']['perm'] = 'flag bookmarks';
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['exposed_form']['options']['reset_button_label'] = 'Zurücksetzen';
+  $handler->display->display_options['exposed_form']['options']['exposed_sorts_label'] = 'Sortierung';
+  $handler->display->display_options['exposed_form']['options']['expose_sort_order'] = FALSE;
+  $handler->display->display_options['exposed_form']['options']['autosubmit'] = TRUE;
+  $handler->display->display_options['pager']['type'] = 'none';
+  $handler->display->display_options['style_plugin'] = 'list';
+  $handler->display->display_options['row_plugin'] = 'fields';
+  /* No results behavior: Global: Text area */
+  $handler->display->display_options['empty']['text']['id'] = 'text';
+  $handler->display->display_options['empty']['text']['table'] = 'views';
+  $handler->display->display_options['empty']['text']['field'] = 'area';
+  $handler->display->display_options['empty']['text']['empty'] = TRUE;
+  $handler->display->display_options['empty']['text']['content'] = 'Es sind noch keine Bilder zu deiner Sammlung hinzugefügt. <br> Erkunde den <a href="/fh-entdecken-map">entdecken Bereich</a> und füge Bilder zu deiner Sammlung hinzu';
+  $handler->display->display_options['empty']['text']['format'] = 'full_html';
+  /* Relationship: Flags: bookmarks */
+  $handler->display->display_options['relationships']['flag_content_rel']['id'] = 'flag_content_rel';
+  $handler->display->display_options['relationships']['flag_content_rel']['table'] = 'node';
+  $handler->display->display_options['relationships']['flag_content_rel']['field'] = 'flag_content_rel';
+  $handler->display->display_options['relationships']['flag_content_rel']['label'] = 'bookmarks';
+  $handler->display->display_options['relationships']['flag_content_rel']['flag'] = 'bookmarks';
+  /* Relationship: Inhalt: Autor */
+  $handler->display->display_options['relationships']['uid_1']['id'] = 'uid_1';
+  $handler->display->display_options['relationships']['uid_1']['table'] = 'node';
+  $handler->display->display_options['relationships']['uid_1']['field'] = 'uid';
+  /* Feld: Inhalt: Bild */
+  $handler->display->display_options['fields']['field_bild']['id'] = 'field_bild';
+  $handler->display->display_options['fields']['field_bild']['table'] = 'field_data_field_bild';
+  $handler->display->display_options['fields']['field_bild']['field'] = 'field_bild';
+  $handler->display->display_options['fields']['field_bild']['label'] = '';
+  $handler->display->display_options['fields']['field_bild']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_bild']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_bild']['settings'] = array(
+    'image_style' => 'fh_grid_view',
+    'image_link' => '',
+  );
+  /* Feld: Inhalt: Titel */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+  /* Feld: Inhalt: Jahr */
+  $handler->display->display_options['fields']['field_jahr']['id'] = 'field_jahr';
+  $handler->display->display_options['fields']['field_jahr']['table'] = 'field_data_field_jahr';
+  $handler->display->display_options['fields']['field_jahr']['field'] = 'field_jahr';
+  $handler->display->display_options['fields']['field_jahr']['label'] = '';
+  $handler->display->display_options['fields']['field_jahr']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_jahr']['settings'] = array(
+    'thousand_separator' => '',
+    'prefix_suffix' => 1,
+  );
+  /* Feld: Flags: Flag link */
+  $handler->display->display_options['fields']['ops']['id'] = 'ops';
+  $handler->display->display_options['fields']['ops']['table'] = 'flagging';
+  $handler->display->display_options['fields']['ops']['field'] = 'ops';
+  $handler->display->display_options['fields']['ops']['relationship'] = 'flag_content_rel';
+  $handler->display->display_options['fields']['ops']['label'] = '';
+  $handler->display->display_options['fields']['ops']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['ops']['link_type'] = 'normal';
+  /* Feld: Inhalt: Bildposition */
+  $handler->display->display_options['fields']['field_stadt']['id'] = 'field_stadt';
+  $handler->display->display_options['fields']['field_stadt']['table'] = 'field_data_field_stadt';
+  $handler->display->display_options['fields']['field_stadt']['field'] = 'field_stadt';
+  $handler->display->display_options['fields']['field_stadt']['label'] = '';
+  $handler->display->display_options['fields']['field_stadt']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_stadt']['element_label_colon'] = FALSE;
+  /* Feld: Flags: Flagged time */
+  $handler->display->display_options['fields']['timestamp']['id'] = 'timestamp';
+  $handler->display->display_options['fields']['timestamp']['table'] = 'flagging';
+  $handler->display->display_options['fields']['timestamp']['field'] = 'timestamp';
+  $handler->display->display_options['fields']['timestamp']['relationship'] = 'flag_content_rel';
+  $handler->display->display_options['fields']['timestamp']['date_format'] = 'long';
+  $handler->display->display_options['fields']['timestamp']['second_date_format'] = 'long';
+  /* Sort criterion: Flags: Flagged time */
+  $handler->display->display_options['sorts']['timestamp']['id'] = 'timestamp';
+  $handler->display->display_options['sorts']['timestamp']['table'] = 'flagging';
+  $handler->display->display_options['sorts']['timestamp']['field'] = 'timestamp';
+  $handler->display->display_options['sorts']['timestamp']['relationship'] = 'flag_content_rel';
+  $handler->display->display_options['sorts']['timestamp']['exposed'] = TRUE;
+  $handler->display->display_options['sorts']['timestamp']['expose']['label'] = 'Hinzugefügt am';
+  /* Sort criterion: Inhalt: Jahr (field_jahr) */
+  $handler->display->display_options['sorts']['field_jahr_value']['id'] = 'field_jahr_value';
+  $handler->display->display_options['sorts']['field_jahr_value']['table'] = 'field_data_field_jahr';
+  $handler->display->display_options['sorts']['field_jahr_value']['field'] = 'field_jahr_value';
+  $handler->display->display_options['sorts']['field_jahr_value']['exposed'] = TRUE;
+  $handler->display->display_options['sorts']['field_jahr_value']['expose']['label'] = 'Bilddatum';
+  /* Sort criterion: Inhalt: Titel */
+  $handler->display->display_options['sorts']['title']['id'] = 'title';
+  $handler->display->display_options['sorts']['title']['table'] = 'node';
+  $handler->display->display_options['sorts']['title']['field'] = 'title';
+  $handler->display->display_options['sorts']['title']['exposed'] = TRUE;
+  $handler->display->display_options['sorts']['title']['expose']['label'] = 'Bildtitel';
+  /* Filter criterion: Inhalt: Veröffentlicht */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = '1';
+  $handler->display->display_options['filters']['status']['group'] = '0';
+  $handler->display->display_options['filters']['status']['expose']['operator_id'] = '';
+  $handler->display->display_options['filters']['status']['expose']['label'] = 'Veröffentlicht';
+  $handler->display->display_options['filters']['status']['expose']['operator'] = 'status_op';
+  $handler->display->display_options['filters']['status']['expose']['identifier'] = 'status';
+  $handler->display->display_options['filters']['status']['expose']['required'] = TRUE;
+  /* Filter criterion: Bildposition (field_stadt) (selective) */
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['id'] = 'field_stadt_tid_selective';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['table'] = 'field_data_field_stadt';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['field'] = 'field_stadt_tid_selective';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['ui_name'] = 'Bildposition (field_stadt) (selective)';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['expose']['operator_id'] = '';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['expose']['label'] = 'Ort / Stadt';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['expose']['use_operator'] = TRUE;
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['expose']['identifier'] = 'field_stadt_tid_selective';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    4 => 0,
+    3 => 0,
+  );
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['selective_display_field'] = 'field_stadt';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['selective_items_limit'] = '100';
+
+  /* Display: Page */
+  $handler = $view->new_display('page', 'Page', 'page');
+  $handler->display->display_options['path'] = 'user/sammlungen';
+  $handler->display->display_options['menu']['type'] = 'normal';
+  $handler->display->display_options['menu']['title'] = 'Meine Sammlung';
+  $handler->display->display_options['menu']['weight'] = '0';
+  $handler->display->display_options['menu']['name'] = 'user-menu';
+  $handler->display->display_options['menu']['context'] = 0;
+  $handler->display->display_options['menu']['context_only_inline'] = 0;
+  $translatables['flag_bookmarks'] = array(
+    t('Defaults'),
+    t('Meine Sammlung'),
+    t('more'),
+    t('Apply'),
+    t('Zurücksetzen'),
+    t('Sortierung'),
+    t('Asc'),
+    t('Desc'),
+    t('Es sind noch keine Bilder zu deiner Sammlung hinzugefügt. <br> Erkunde den <a href="/fh-entdecken-map">entdecken Bereich</a> und füge Bilder zu deiner Sammlung hinzu'),
+    t('bookmarks'),
+    t('author'),
+    t('Flagged time'),
+    t('Hinzugefügt am'),
+    t('Bilddatum'),
+    t('Bildtitel'),
+    t('Veröffentlicht'),
+    t('Ort / Stadt'),
+    t('Page'),
+  );
+
+
+  $export['flag_bookmarks'] = $view;
+
+
+
+
+
+
+
   return $export;
 }
