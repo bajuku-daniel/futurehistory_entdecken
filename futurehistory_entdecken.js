@@ -186,7 +186,7 @@
     // Set/Update the view direction on a map
     Drupal.futurehistoryEntdecken.setMapArrow = function (marker, mapId) {
 
-        // console.log(' set marker viewdir', marker.pie);
+        _log(' set marker viewdir', marker.pie);
         marker.pie.setMap(null);
         var zoomLevel = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
         if (zoomLevel <= 18) {
@@ -396,6 +396,7 @@
      *
      */
     var author = [];
+    var filter_by_collection = 'all';
     var ajaxXHR = [];
     var pois_by_nid = [];
     var directionsDisplay = [];
@@ -423,10 +424,28 @@
     function _log(value) {
         try {
             // console.log(arguments.callee.caller.name+': ',value);
+            mylog.log(arguments.callee.caller.name+': ',value);
         } catch (err) {
             // no problems when no console
         }
     }
+
+    var mylog = (function () {
+        return {
+            log: function() {
+                var args = Array.prototype.slice.call(arguments);
+                console.log.apply(console, args);
+            },
+            warn: function() {
+                var args = Array.prototype.slice.call(arguments);
+                console.warn.apply(console, args);
+            },
+            error: function() {
+                var args = Array.prototype.slice.call(arguments);
+                console.error.apply(console, args);
+            }
+        }
+    }());
 
     function enableAllUI() {
         console.log(arguments.callee.caller.name);
@@ -471,11 +490,11 @@
      * @param tourID
      */
     function showTourOnMap(tour_id, tourname, distance) {
-        // _log("showTourOnMap",tour_id,tourname,distance);
+        _log(tour_id,tourname,distance);
         disbleAllUI();
         lastShowTourOnMapCall = [tour_id, tourname, distance];
         // start the ajax request to get tour details
-        _log("ajaxXHR showTourOnMap");
+
         ajaxXHR["stom"] = $.ajax({
             url: tour_url,
             method: 'get',
@@ -483,16 +502,18 @@
             dataType: 'json',
             success: function (tourdata) {
                 var original_tourdata = [];
+                _log(tourdata);
                 for (item in tourdata) {
                     if ('nid' in tourdata[item]) {
                         var poi = pois_by_nid[tourdata[item]['nid']];
+                        _log(poi);
                         if(typeof poi !== 'undefined'){
                             original_tourdata.push(poi);
                         }
 
                     }
                 }
-
+                _log(original_tourdata);
                 enableAllUI();
 
                 // clearDirectionsMarkers();
@@ -510,8 +531,10 @@
                 directionsDisplay.setMap(Drupal.futurehistoryEntdecken[mapIdGlobal].map);
                 directionsDisplay.setOptions({suppressMarkers: true});
 
-                calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata, distance);
-                use_eval_to_call_last_calculateAndDisplayRoute = wrapFunction(calculateAndDisplayRoute, this, [directionsService, directionsDisplay, original_tourdata, distance]);
+                calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata.slice(), distance);
+                use_eval_to_call_last_calculateAndDisplayRoute = wrapFunction(calculateAndDisplayRoute, this, [directionsService, directionsDisplay, original_tourdata.slice(), distance]);
+
+
 
                 tourdisply_is_Active = true;
                 setStateCookie(RequestDate);
@@ -520,8 +543,8 @@
                 // timeout needed to set markers - sometimes they dont show up - possibly due directions && marker update interference
                 var tout = setTimeout(
                     function () {
-                        Drupal.futurehistoryEntdecken.setMapMarkers(original_tourdata, mapIdGlobal);
-                        Drupal.futurehistoryEntdecken.setMapThumbnails(original_tourdata, mapIdGlobal, mapCenter);
+                        Drupal.futurehistoryEntdecken.setMapMarkers(original_tourdata.slice(), mapIdGlobal);
+                        Drupal.futurehistoryEntdecken.setMapThumbnails(original_tourdata.slice(), mapIdGlobal, mapCenter);
                         clearTimeout(tout);
 
                     }, 500);
@@ -533,6 +556,7 @@
 
 
     function initializeRequestArgIndicator() {
+        mylog.warn(requestArgIndicatorClass);
         if (tourdisply_is_Active && (requestArgIndicatorClass.indexOf("tour") == -1)) {
             requestArgIndicatorClass += ' tour';
         } else {
@@ -549,6 +573,13 @@
             requestArgIndicatorClass = requestArgIndicatorClass + ' author';
         } else if (author.constructor === Array && author.length == 1 && (requestArgIndicatorClass.indexOf("author") ==-1)) {
             requestArgIndicatorClass = requestArgIndicatorClass + ' author';
+        }
+
+        // check sammlung filter for changes
+        if (filter_by_collection.indexOf('all') === -1) {
+            if(requestArgIndicatorClass.indexOf("sammlung") === -1){
+                requestArgIndicatorClass = requestArgIndicatorClass + ' sammlung';
+            }
         }
 
         // check date range for changes
@@ -586,11 +617,16 @@
             author = "all";
         }
 
+        RequestArgs = {bbox: bbox, date: RequestDate, autor_uid: author};
+
         if (kategorie.length) {
             // 1,2,3 (AND) and 1+2+3(OR).
-            RequestArgs = {bbox: bbox, date: RequestDate, kategorie_id: kategorie.join(','), autor_uid: author}
-        } else {
-            RequestArgs = {bbox: bbox, date: RequestDate, autor_uid: author}
+            RequestArgs['kategorie_id'] =  kategorie.join(',');
+        }
+        RequestArgs['suid'] =  'all';
+        if (filter_by_collection.indexOf('all') === -1) {
+            // 1,2,3 (AND) and 1+2+3(OR).
+            RequestArgs['suid'] =  13;
         }
 
         return RequestArgs;
@@ -642,6 +678,7 @@
             // _log(cookie_data);
             author = cookie_data.author;
             kategorie = cookie_data.kategorie;
+            filter_by_collection  = cookie_data.filter_by_collection;
             mapCenter = new google.maps.LatLng(parseFloat(cookie_data.lat), parseFloat(cookie_data.lng));
             Drupal.futurehistoryEntdecken[mapIdGlobal].map.setCenter(mapCenter);
             Drupal.futurehistoryEntdecken[mapIdGlobal].map.setZoom(parseFloat(cookie_data.zoom));
@@ -682,6 +719,7 @@
         activeFilters['author'] = tourdisply_is_Active;
         activeFilters['author'] = author;
         activeFilters['kategorie'] = kategorie;
+        activeFilters['filter_by_collection'] = filter_by_collection;
         activeFilters['bounds'] = bounds;
         activeFilters['RequestDate'] = RequestDate;
         _log("setStateCookie");
@@ -700,8 +738,10 @@
         $("#accordion").accordion({
             icons: icons,
             collapsible: true,
+            active : 'none',
             heightStyle: "content"
         });
+
         $("#accordion").on("accordionbeforeactivate", function () {
             return !arguments[1].newHeader.hasClass("ui-state-disabled");
         })
@@ -742,6 +782,15 @@
         }
 
         $(".fh-reset-filter-count").html(currentResultCount);
+
+        $('#sammlungen_selector input').on('click',function(e){
+           filter_by_collection = $(this).attr('id');
+            Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapIdGlobal, mapCenter);
+        });
+        if (filter_by_collection.indexOf('all') === -1) {
+            $("#fh_show_only_collections").prop( "checked", true );
+            $("#fh_show_all_collections").prop( "checked", false );
+        }
 
 
     }
@@ -1001,7 +1050,9 @@ var tourStash = [];
      */
     function calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata, distance) {
         var waypts = [];
+
         for (var i = 0; i < original_tourdata.length; i++) {
+            _log(original_tourdata[i]);
             if (i === 0) {
                 // Start EndPunkt benötigen Datenformat mit lng/lat oder Text e.g. New York,US
                 my_origin = original_tourdata[i]['lat'] + "," + original_tourdata[i]['lon'];
@@ -1054,45 +1105,46 @@ var tourStash = [];
     Drupal.futurehistoryEntdecken.setMapThumbnails = function (marker_content, mapId, mapCenter) {
         $('#thumbnail-pois').empty();
 
-        // thumb-sort: distance from center versus age
-        if (sort == 'dist') {
-            // sort after distance from center/ or later from clicked point....
-            var dist;
-            var sortCenter = mapCenter;
-            if (Drupal.futurehistoryEntdecken[mapId].center_marker != undefined) {
-                sortCenter = Drupal.futurehistoryEntdecken[mapId].center_marker.getPosition();
-            }
+        if (!tourdisply_is_Active) {
+            // thumb-sort: distance from center versus age
+            if (sort == 'dist') {
+                // sort after distance from center/ or later from clicked point....
+                var dist;
+                var sortCenter = mapCenter;
+                if (Drupal.futurehistoryEntdecken[mapId].center_marker != undefined) {
+                    sortCenter = Drupal.futurehistoryEntdecken[mapId].center_marker.getPosition();
+                }
 
-            for (var i = 0; i < marker_content.length; i++) {
-                dist = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(marker_content[i].lat, marker_content[i].lon), sortCenter);
-                // new property "distance_to_center":
-                marker_content[i]["distance_to_center"] = dist;
-            }
+                for (var i = 0; i < marker_content.length; i++) {
+                    dist = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(marker_content[i].lat, marker_content[i].lon), sortCenter);
+                    // new property "distance_to_center":
+                    marker_content[i]["distance_to_center"] = dist;
+                }
 
-            marker_content.sort(function (a, b) {
-                if (a.distance_to_center > b.distance_to_center) {
-                    return 1;
-                }
-                if (a.distance_to_center < b.distance_to_center) {
-                    return -1;
-                }
-                // a must be equal to b
-                return 0;
-            });
-        } else {
-            // global var sort = year (sort by age)
-            marker_content.sort(function (a, b) {
-                if (a.Jahr > b.Jahr) {
-                    return 1;
-                }
-                if (a.Jahr < b.Jahr) {
-                    return -1;
-                }
-                // a must be equal to b
-                return 0;
-            });
+                marker_content.sort(function (a, b) {
+                    if (a.distance_to_center > b.distance_to_center) {
+                        return 1;
+                    }
+                    if (a.distance_to_center < b.distance_to_center) {
+                        return -1;
+                    }
+                    // a must be equal to b
+                    return 0;
+                });
+            } else {
+                // global var sort = year (sort by age)
+                marker_content.sort(function (a, b) {
+                    if (a.Jahr > b.Jahr) {
+                        return 1;
+                    }
+                    if (a.Jahr < b.Jahr) {
+                        return -1;
+                    }
+                    // a must be equal to b
+                    return 0;
+                });
+            }
         }
-
         for (var i = 0; i < marker_content.length; i++) {
             // check if its in your collections
             //build the mouseover click and mouseout functions
@@ -1252,7 +1304,7 @@ var tourStash = [];
 
             // console.log('Add Listener Click-Event to marker id ', marker.id);
             google.maps.event.addListener(marker, 'click', function () {
-                // console.log('click on id ', marker.id);
+                console.log('click on id ', marker.id);
                 Drupal.futurehistoryEntdecken.markerStateChange(marker.id, 'click', mapId, 'MAP');
                 // TODO : JUST TESTING
                 if (use_eval_to_call_last_calculateAndDisplayRoute !== '') {
@@ -1369,7 +1421,10 @@ var tourStash = [];
     // Function: markerStateChange
     // hover and out the marker and thumbnails
     Drupal.futurehistoryEntdecken.markerStateChange = function (markerId, action, mapId, src) {
-        // if marker belongs to active tour recenter tour
+
+        // if marker belongs to active tour => RE-Center tour on Map
+        // but redraws route wrong
+        _log(tourdisply_is_Active);
         if(tourdisply_is_Active){
             use_eval_to_call_last_calculateAndDisplayRoute();
         }
@@ -1378,7 +1433,7 @@ var tourStash = [];
 
         var ThumbInClusterProcessing = false;
         if (src == 'THUMB') {
-            // console.log('Click on Thumb ID ', markerId);
+            console.log('Click on Thumb ID ', markerId);
             for (var i = 0; i < RAW.length; i++) {
 
                 // first test incluster --> mark activated and leave here because zoom_event reload and reprocess all
@@ -3284,17 +3339,23 @@ var tourStash = [];
                     var url_s = param('s');
                     var url_a = param('a');
                     var url_t = param('t');
+                    var url_suid = param('suid');
                     mapCenter = new google.maps.LatLng(parseFloat(url_y), parseFloat(url_x));
                     if (url_k.substring(0, 1) == ',') {
                         url_k = url_k.substring(1);
                     }
                     mapZoom = parseInt(url_z);
-                    kategorie = url_k.split(',');
+                    var k_split = url_k.split(',');
+                    if(k_split[0] == ''){
+                        k_split[0] = 'all';
+                    }
+                    kategorie = k_split;
                     YearRange[0] = parseInt(url_d.split('--')[0]);
                     YearRange[1] = parseInt(url_d.split('--')[1]);
                     RequestDate = String(YearRange[0]) + '--' + String(YearRange[1]);
                     sort = url_s;
                     author = url_a === 'all'?url_a:[url_a];
+                    filter_by_collection = url_suid;
 
                     if(url_t !== '' || url_t != undefined){
                         url_t = decodeURI(url_t);
@@ -3412,9 +3473,10 @@ var tourStash = [];
                     var permaUrl = baseUrl + encodeURI('?y=' + coords.lat() +
                             '&x=' + coords.lng() +
                             '&z=' + Drupal.futurehistoryEntdecken[mapId].map.getZoom() +
-                            '&k=' + kategorie.toString() +
+                            '&k=' + kategorie.toString()+
                             '&d=' + reqDate +
                             '&a=' + author +
+                            '&suid=' + filter_by_collection +
                             '&s=' + sort + td);
 
                     var permalink = '<a href="' + permaUrl + '">' + permaUrl + '</a>';
