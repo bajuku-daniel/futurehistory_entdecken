@@ -19,3 +19,8 @@ cd ../../themes/future_history/ && git pull origin dev && cd -
 cd ../futurehistory/ && git pull origin dev && cd -
 
 drush cc all
+
+
+#drush user-password Romalu3 --password="test"
+#drush user-create rafael --mail="rafael.hiss@gmail.com" --password="rafael_fuhi_2016"
+#drush user-create test --mail="test@test.com" --password="test"
