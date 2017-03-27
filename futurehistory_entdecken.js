@@ -1104,7 +1104,8 @@ var tourStash = [];
     // list the marker Thumbnails and fill the LI elements wit IDs
     Drupal.futurehistoryEntdecken.setMapThumbnails = function (marker_content, mapId, mapCenter) {
         $('#thumbnail-pois').empty();
-
+        mylog.warn('setMapThumbnails');
+        _log(tourdisply_is_Active);
         if (!tourdisply_is_Active) {
             // thumb-sort: distance from center versus age
             if (sort == 'dist') {
@@ -3340,6 +3341,7 @@ var tourStash = [];
                     var url_a = param('a');
                     var url_t = param('t');
                     var url_suid = param('suid');
+                    var url_fi = param('fi');
                     mapCenter = new google.maps.LatLng(parseFloat(url_y), parseFloat(url_x));
                     if (url_k.substring(0, 1) == ',') {
                         url_k = url_k.substring(1);
@@ -3355,6 +3357,10 @@ var tourStash = [];
                     RequestDate = String(YearRange[0]) + '--' + String(YearRange[1]);
                     sort = url_s;
                     author = url_a === 'all'?url_a:[url_a];
+
+                    if(url_suid !== '' || url_suid != undefined){
+                        url_suid = 'all'
+                    }
                     filter_by_collection = url_suid;
 
                     if(url_t !== '' || url_t != undefined){
@@ -3362,6 +3368,20 @@ var tourStash = [];
                         lastShowTourOnMapCall = url_t.split(',');
                         window.firstCall = 'active'
                     }
+
+
+                    if(url_fi == 'true'){
+                        // highlight the item if the fi param isset
+                        // suggesting its allways the first in the sidebar
+                        // todo: refactor
+                        var tout = setTimeout(
+                            function () {
+                                $("#thumbnail-pois li").first().trigger('click');
+                                clearTimeout(tout);
+
+                            }, 3000);
+                    }
+                    //
 
 
 
