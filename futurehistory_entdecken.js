@@ -625,8 +625,8 @@
         }
         RequestArgs['suid'] =  'all';
         if (filter_by_collection.indexOf('all') === -1) {
-            // 1,2,3 (AND) and 1+2+3(OR).
-            RequestArgs['suid'] =  13;
+            // TODO get current user ID
+            RequestArgs['suid'] =  $("#fh_show_only_collections").data("uid");
         }
 
         return RequestArgs;
@@ -783,8 +783,10 @@
 
         $(".fh-reset-filter-count").html(currentResultCount);
 
-        $('#sammlungen_selector input').on('click',function(e){
+        $('#sammlungen_selector input').unbind('click');
+        $('#sammlungen_selector input').one('click',function(e){
            filter_by_collection = $(this).attr('id');
+            _log('handler check');
             Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapIdGlobal, mapCenter);
         });
         if (filter_by_collection.indexOf('all') === -1) {
