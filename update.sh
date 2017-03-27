@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-git pull origin dev_rh
+git pull origin master
 
 #mkdir -p ../../../../../db_backup
 drush sql-dump > ../../../../../db_backup/$(date +"%Y-%m-%d__%H-%M-%S".sql)
@@ -15,8 +15,8 @@ drush fr -y map_view_update
 
 
 
-cd ../../themes/future_history/ && git pull origin dev && cd -
-cd ../futurehistory/ && git pull origin dev && cd -
+cd ../../themes/future_history/ && git pull origin master && cd -
+cd ../futurehistory/ && git pull origin master && cd -
 
 drush cc all
 
