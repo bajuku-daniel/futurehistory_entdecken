@@ -73,7 +73,6 @@
     // Generate the Modal "add to tour / collection" - modal link structure in flag_list.module and futurehistory-entdecken-map.tpl.php
     Drupal.futurehistoryEntdecken.generateModal = function (nid, mapId) {
         var tourCreateAccess = Drupal.settings.futurehistoryEntdecken.tour_access;  // get the acces setting generated in futurehistory_entdecken_plugin_style_google_map.php
-
         if (tourCreateAccess == true) {
             $.get(overlay_url + '?nid=' + nid, function (html) {
                 $('#add-to-modal .modal-add-body').html(html); // get and push the html
@@ -252,11 +251,15 @@
     //Parameters: bounds, date, kategorie
 
     Drupal.futurehistoryEntdecken.getMarkers = function (bounds, RequestDate, kategorie, sort, mapId, mapCenter) {
+        _log("getMarkers ");
+        _log(window.firstCall);
         if (window.firstCall === undefined) {
             window.firstCall = false;
             var state = checkStateCookie();
+            _log("state",state);
+            _log(state);
             if(state !== false){
-                _log("state",state);
+
                 window.firstCall = 'active';
                 // _log(state.initializeOnPageLoad);
                 RequestDate = state.RequestDate;
@@ -275,6 +278,7 @@
         var RequestArgs = getRequestArgs(bounds, RequestDate, kategorie);
 
         _log("start the ajax getMarkers ");
+        //
         // start the ajax request
         ajaxXHR["gm"] = $.ajax({
             url: poi_url,
@@ -502,7 +506,7 @@
             dataType: 'json',
             success: function (tourdata) {
                 var original_tourdata = [];
-                _log(tourdata);
+                // _log(tourdata);
                 for (item in tourdata) {
                     if ('nid' in tourdata[item]) {
                         var poi = pois_by_nid[tourdata[item]['nid']];
@@ -513,7 +517,7 @@
 
                     }
                 }
-                _log(original_tourdata);
+                // _log(original_tourdata);
                 enableAllUI();
 
                 // clearDirectionsMarkers();
@@ -672,7 +676,17 @@
      * @returns {boolean}
      */
     function checkStateCookie() {
+        _log("checkStateCookie");
         var cookie_data = JSON.parse($.cookie("fh_state_cookie"));
+        _log(cookie_data);
+        // flag-lists/add/ansich
+        // check referer condition to set value for autoCookieInitialisation
+
+        var referrer = document.referrer;
+        if ((referrer.indexOf("flag-lists/add/ansicht") !== -1)) {
+            cookie_data.initializeOnPageLoad = true;
+        }
+
 
         if ((cookie_data) && (cookie_data.initializeOnPageLoad !== 'undefined' || cookie_data.initializeOnPageLoad !== null) && Boolean(cookie_data.initializeOnPageLoad) === true) {
             // _log(cookie_data);
@@ -686,7 +700,7 @@
                 Drupal.futurehistoryEntdecken.DateSlider(mapIdGlobal, cookie_data.RequestDate.split("--"));
             }
 
-            _log("checkStateCookie");
+
             return cookie_data;
         }
         return false;
@@ -1052,7 +1066,7 @@ var tourStash = [];
         var waypts = [];
 
         for (var i = 0; i < original_tourdata.length; i++) {
-            _log(original_tourdata[i]);
+            // _log(original_tourdata[i]);
             if (i === 0) {
                 // Start EndPunkt benötigen Datenformat mit lng/lat oder Text e.g. New York,US
                 my_origin = original_tourdata[i]['lat'] + "," + original_tourdata[i]['lon'];
@@ -3352,9 +3366,11 @@ var tourStash = [];
                         k_split[0] = 'all';
                     }
                     kategorie = k_split;
+
                     YearRange[0] = parseInt(url_d.split('--')[0]);
                     YearRange[1] = parseInt(url_d.split('--')[1]);
-                    RequestDate = String(YearRange[0]) + '--' + String(YearRange[1]);
+                    RequestDate = (url_d === 'all')?url_d:String(YearRange[0]) + '--' + String(YearRange[1]);
+
                     sort = url_s;
                     author = url_a === 'all'?url_a:[url_a];
 
@@ -3362,7 +3378,8 @@ var tourStash = [];
                         url_suid = 'all'
                     }
                     filter_by_collection = url_suid;
-
+console.log("============url_t");
+console.log(url_t);
                     if(url_t !== '' || url_t != undefined){
                         url_t = decodeURI(url_t);
                         lastShowTourOnMapCall = url_t.split(',');

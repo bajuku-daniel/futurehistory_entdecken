@@ -167,6 +167,10 @@ display:none;
 
 }
 
+.modal-body .status {
+display:block;
+}
+
 
 #kategory_selector_table input {
 	display:block;
