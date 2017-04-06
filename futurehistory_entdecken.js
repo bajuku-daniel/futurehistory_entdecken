@@ -251,7 +251,7 @@
     //Parameters: bounds, date, kategorie
 
     Drupal.futurehistoryEntdecken.getMarkers = function (bounds, RequestDate, kategorie, sort, mapId, mapCenter) {
-        // _log("getMarkers ");
+
         // _log(window.firstCall);
         if (window.firstCall === undefined) {
             window.firstCall = false;
@@ -492,7 +492,8 @@
      * @param tourID
      */
     function showTourOnMap(tour_id, tourname, distance) {
-        // _log(tour_id,tourname,distance);
+        _log("showTourOnMap");
+        _log(tour_id,tourname,distance);
         disbleAllUI();
         lastShowTourOnMapCall = [tour_id, tourname, distance];
         // start the ajax request to get tour details
@@ -504,9 +505,10 @@
             dataType: 'json',
             success: function (tourdata) {
                 var original_tourdata = [];
-                // _log(tourdata);
+                _log(tourdata);
                 for (item in tourdata) {
-                    if ('nid' in tourdata[item]) {
+                    // if ('nid' in tourdata[item]) {
+                    if (typeof tourdata[item] !== 'undefined' && typeof tourdata[item].nid !== 'undefined' ) {
                         var poi = pois_by_nid[tourdata[item]['nid']];
                         // _log(poi);
                         if(typeof poi !== 'undefined'){
@@ -515,7 +517,7 @@
 
                     }
                 }
-                // _log(original_tourdata);
+                _log(original_tourdata);
                 enableAllUI();
                 $(".fh-reset-filter-count").html(original_tourdata.length);
 
@@ -796,15 +798,16 @@
         }
 
         var currCountDisplay = currentResultCount;
-        if(tourdisply_is_Active){
-            // currCountDisplay = 5;
-        }
         $(".fh-reset-filter-count").html(currCountDisplay);
 
+        $('#sammlungen_selector input').off('click');
         $('#sammlungen_selector input').on('click',function(e){
+            clearAjaxCalls();
            filter_by_collection = $(this).attr('id');
             Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapIdGlobal, mapCenter);
+            disbleAllUI();
         });
+
         if (filter_by_collection.indexOf('all') === -1) {
             $("#fh_show_only_collections").prop( "checked", true );
             $("#fh_show_all_collections").prop( "checked", false );
@@ -917,6 +920,8 @@ var tourStash = [];
      * @param toursFilteredData
      */
     function setUpdateTours(toursFilteredData) {
+        _log("IE TRACE "+toursFilteredData);
+        _log(toursFilteredData);
         var $tours = $('#tour_selector');
         $tours.html('');
         var tour_url_detail = "/de/fh_view/list_tours";
@@ -930,7 +935,7 @@ var tourStash = [];
                 for (var e = 0; e < toursFilteredData.length; e++) {
                     var toursItem = toursFilteredData[e];
                     var tourID = toursItem.tour_id;
-                    if(tourStash[tourID][0] === dist){
+                    if (tourStash[tourID][0] === dist) {
                         tdd[tourStash[tourID][0]].appendTo($tours);
                         break;
                     }
@@ -952,13 +957,17 @@ var tourStash = [];
 
         // call to get tour data
         // could be one ajax call only
+        // ist_tours?tour_id=all
+        // TODO:REFACTOR call to list_tour_content not needed could be includet
+
         var request_result_count = 0;
         // return;
         for (var i = 0; i < toursFilteredData.length; i++) {
+_log("tour outer loop "+i);
             var toursItem = toursFilteredData[i];
             var last = (i == toursFilteredData.length - 1);
 
-            if(tourStash[toursItem.tour_id] !== undefined){
+            if (tourStash[toursItem.tour_id] !== undefined) {
                 continue;
             }
 
@@ -966,80 +975,85 @@ var tourStash = [];
             ajaxXHR["sut_" + i] = $.ajax({
                 url: tour_url_detail,
                 method: 'get',
-                data: "tour_id=" + toursItem.tour_id,
+                data: "tour_id=all",
                 dataType: 'json',
                 indexValue: i,
                 async: false,
                 last: last,
-                success: function (tourdetails, i) {
-                    request_result_count++;
-                    if(tourdetails[0] == undefined || $('.tour_id_'+tourdetails[0].tour_id).size() > 0){
-                      return;
+                success: function (allTourDetails, i) {
+                    _log("success ");
+                    for (var key in allTourDetails) {
+                        var tourdetails = [allTourDetails[key]];
+                        _log(tourdetails);
+                        request_result_count++;
+                        if (tourdetails[0] == undefined || $('.tour_id_' + tourdetails[0].tour_id).size() > 0) {
+                            return;
+                        }
+                        var distance = tourdetails[0].distance;
+                        var tour_titel = tourdetails[0].title;
+                        var zeitraum = tourdetails[0].tour_start_date + "-" + tourdetails[0].tour_end_date;
+                        var autor = tourdetails[0].name;
+                        var tour_id = tourdetails[0].tour_id;
+                        var description = tourdetails[0].description;
+
+                        var buildTourMarkup = function () {
+
+                            var distanceConvert = function () {
+                                var distanceC;
+                                if (distance > 999) {
+                                    distanceC = distance / 1000;
+                                    distanceC = distanceC.toFixed(2) + " km"
+                                } else {
+                                    distanceC = distance + ' m';
+                                }
+                                return distanceC;
+                            };
+
+                            var $tour = $('<div />', {'class': 'tour_id_' + tour_id + " tour_selector"});
+                            var $tour_status = $('<div />', {'class': 'status ui-icon-caret-1-e'});
+                            var $tour_info = $('<div />', {
+                                'class': 'info',
+                                "data-tourid": tour_id,
+                                "data-tourtitel": tour_titel,
+                                "data-distance": distance
+                            });
+                            $tour_info.append("<span>" + tour_titel + " | " + zeitraum + "</span></br>");
+                            $tour_info.append("<span>Strecke: " + distanceConvert() + " | von: " + autor + "</span>");
+                            var $tour_details = $('<div />', {'class': 'details'});
+                            var tour_detail_content = "<h4>" + tour_titel + "</h4><span>" + distanceConvert() + " | " + zeitraum + "</span></br><p>" + description + "</p>";
+                            $tour_details.append("<span class='tour_id_" + tour_id + " tourtip' title='" + tour_detail_content + "'><img width='20px' src='/sites/all/modules/futurehistory_entdecken/map-images/info.png'></span>");
+
+
+                            // $tour_info.click(function (e) {
+                            $(document).on('click', '#tour_selector .info', {}, function (e) {
+                                e.stopImmediatePropagation();
+                                e.stopPropagation();
+
+                                clearAjaxCalls();
+                                if ($(this).parent().hasClass('active')) {
+                                    clearDirectionsMarkers();
+                                    tourdisply_is_Active = false;
+                                    lastShowTourOnMapCall = false;
+                                    jQuery('.tour_selector').removeClass('active');
+                                    Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapIdGlobal, mapCenter);
+
+                                } else {
+                                    jQuery('.tour_selector').removeClass('active');
+                                    $(this).parent().addClass('active');
+                                    showTourOnMap($(this).data('tourid'), $(this).data('tourtitel'), $(this).data('distance'));
+                                    initializeRequestArgIndicator();
+                                }
+                            });
+
+                            $tour_status.appendTo($tour);
+                            $tour_info.appendTo($tour);
+                            $tour_details.appendTo($tour);
+
+                            tourStash[tour_id] = [distance, $tour];
+                        }
+
+                        buildTourMarkup();
                     }
-                    var distance = tourdetails[0].distance;
-                    var tour_titel = tourdetails[0].title;
-                    var zeitraum = tourdetails[0].tour_start_date + "-" + tourdetails[0].tour_end_date;
-                    var autor = tourdetails[0].name;
-                    var tour_id = tourdetails[0].tour_id;
-                    var description = tourdetails[0].description;
-
-                    var buildTourMarkup = function () {
-
-                        var distanceConvert = function () {
-                            var distanceC;
-                            if (distance > 999) {
-                                distanceC = distance / 1000;
-                                distanceC = distanceC.toFixed(2) + " km"
-                            } else {
-                                distanceC = distance + ' m';
-                            }
-                            return distanceC;
-                        };
-
-                        var $tour = $('<div />', {'class': 'tour_id_' + tour_id + " tour_selector"});
-                        var $tour_status = $('<div />', {'class': 'status ui-icon-caret-1-e'});
-                        var $tour_info = $('<div />', {
-                            'class': 'info',
-                            "data-tourid": tour_id,
-                            "data-tourtitel": tour_titel,
-                            "data-distance": distance
-                        });
-                        $tour_info.append("<span>" + tour_titel + " | " + zeitraum + "</span></br>");
-                        $tour_info.append("<span>Strecke: " + distanceConvert() + " | von: " + autor + "</span>");
-                        var $tour_details = $('<div />', {'class': 'details'});
-                        var tour_detail_content = "<h4>" + tour_titel + "</h4><span>" + distanceConvert() + " | " + zeitraum + "</span></br><p>" + description + "</p>";
-                        $tour_details.append("<span class='tour_id_" + tour_id + " tourtip' title='" + tour_detail_content + "'><img width='20px' src='/sites/all/modules/futurehistory_entdecken/map-images/info.png'></span>");
-
-
-                        // $tour_info.click(function (e) {
-                        $(document).on('click','#tour_selector .info', {} ,function (e) {
-                            e.stopImmediatePropagation();
-                            e.stopPropagation();
-
-                            clearAjaxCalls();
-                            if ($(this).parent().hasClass('active')) {
-                                clearDirectionsMarkers();
-                                tourdisply_is_Active = false;
-                                lastShowTourOnMapCall = false;
-                                jQuery('.tour_selector').removeClass('active');
-                                Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapIdGlobal, mapCenter);
-
-                            } else {
-                                jQuery('.tour_selector').removeClass('active');
-                                $(this).parent().addClass('active');
-                                showTourOnMap($(this).data('tourid'), $(this).data('tourtitel'), $(this).data('distance'));
-                                initializeRequestArgIndicator();
-                            }
-                        });
-
-                        $tour_status.appendTo($tour);
-                        $tour_info.appendTo($tour);
-                        $tour_details.appendTo($tour);
-
-                        tourStash[tour_id] = [distance,$tour];
-                    }
-
-                    buildTourMarkup();
                 }
             });
         }
@@ -1066,7 +1080,9 @@ var tourStash = [];
      */
     function calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata, distance) {
         var waypts = [];
-
+        var my_origin='';
+        var my_destination='';
+        _log(original_tourdata);
         for (var i = 0; i < original_tourdata.length; i++) {
             // _log(original_tourdata[i]);
             if (i === 0) {
@@ -1082,7 +1098,9 @@ var tourStash = [];
                 });
             }
         }
-
+        _log(my_origin);
+        _log(my_destination);
+        _log(waypts);
         directionsService.route({
             origin: my_origin,
             destination: my_destination,
@@ -3535,7 +3553,11 @@ var tourStash = [];
                     // history back again fires a dragend or zoom_changed event via onpopState, then we stay in place.... filter out
                     if (!CALL_onpopstate) {
                         var view = '&' + encodeURI(mapCenter.lat() + '&' + mapCenter.lng() + '&' + Drupal.futurehistoryEntdecken[mapId].map.getZoom());
-                        history.pushState({view: view}, '', '');
+                        try {
+                            history.pushState({view: view}, '', '');
+                        } catch (err) {
+                        }
+
                         // console.log(' pushState ', view );
                     } else {
                         CALL_onpopstate = false;
@@ -3557,7 +3579,10 @@ var tourStash = [];
                     // history back again fires a dragend or zoom_changed event via onpopState, then we stay in place.... filter out
                     if (!CALL_onpopstate) {
                         var view = '&' + encodeURI(coords.lat() + '&' + coords.lng() + '&' + Drupal.futurehistoryEntdecken[mapId].map.getZoom());
-                        history.pushState({view: view}, '', '');
+                        try {
+                            history.pushState({view: view}, '', '');
+                        } catch (err) {
+                        }
                         // console.log(' pushState ', view );
                     } else {
                         CALL_onpopstate = false;

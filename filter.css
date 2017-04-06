@@ -92,7 +92,8 @@ padding-left: 60px;
 
 .ui-widget-content {
     border: none;
-    background: #fff url(map-images/ui-bg_flat_75_ffffff_40x100.png) 50% 50% repeat-x;
+    /*background: #fff url(map-images/ui-bg_flat_75_ffffff_40x100.png) 50% 50% repeat-x;*/
+    background: #fff;
         font-size: 14px!important;
     color: #3756a4;
         font-family: 'Source Sans Pro', sans-serif;
