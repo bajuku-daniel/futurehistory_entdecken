@@ -493,7 +493,9 @@
      */
     function showTourOnMap(tour_id, tourname, distance) {
         _log("showTourOnMap");
-        _log(tour_id,tourname,distance);
+        console.log(tour_id);
+        console.log(tourname);
+
         disbleAllUI();
         lastShowTourOnMapCall = [tour_id, tourname, distance];
         // start the ajax request to get tour details
@@ -505,19 +507,22 @@
             dataType: 'json',
             success: function (tourdata) {
                 var original_tourdata = [];
-                _log(tourdata);
-                for (item in tourdata) {
-                    // if ('nid' in tourdata[item]) {
-                    if (typeof tourdata[item] !== 'undefined' && typeof tourdata[item].nid !== 'undefined' ) {
-                        var poi = pois_by_nid[tourdata[item]['nid']];
+                console.log('check')
+                console.log(tourdata);
+                $.each(tourdata, function( index, value ) {
+                    console.log(value);
+                    console.log(value['nid']);
+                    console.log(value.nid);
+                    if (typeof value !== 'undefined' && typeof value.nid !== 'undefined' ) {
+                        var poi = pois_by_nid[value['nid']];
                         // _log(poi);
                         if(typeof poi !== 'undefined'){
                             original_tourdata.push(poi);
                         }
-
                     }
-                }
-                _log(original_tourdata);
+                });
+
+                console.log(original_tourdata);
                 enableAllUI();
                 $(".fh-reset-filter-count").html(original_tourdata.length);
 
@@ -535,7 +540,7 @@
                 });
                 directionsDisplay.setMap(Drupal.futurehistoryEntdecken[mapIdGlobal].map);
                 directionsDisplay.setOptions({suppressMarkers: true});
-
+                console.log('call');
                 calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata.slice(), distance);
                 use_eval_to_call_last_calculateAndDisplayRoute = wrapFunction(calculateAndDisplayRoute, this, [directionsService, directionsDisplay, original_tourdata.slice(), distance]);
 
@@ -921,7 +926,7 @@ var tourStash = [];
      */
     function setUpdateTours(toursFilteredData) {
         _log("IE TRACE "+toursFilteredData);
-        _log(toursFilteredData);
+        console.log(toursFilteredData);
         var $tours = $('#tour_selector');
         $tours.html('');
         var tour_url_detail = "/de/fh_view/list_tours";
@@ -1082,7 +1087,9 @@ _log("tour outer loop "+i);
         var waypts = [];
         var my_origin='';
         var my_destination='';
-        _log(original_tourdata);
+        console.log("calculateAndDisplayRoute");
+        console.log(distance);
+        console.log(original_tourdata);
         for (var i = 0; i < original_tourdata.length; i++) {
             // _log(original_tourdata[i]);
             if (i === 0) {
@@ -1098,9 +1105,9 @@ _log("tour outer loop "+i);
                 });
             }
         }
-        _log(my_origin);
-        _log(my_destination);
-        _log(waypts);
+        console.log(my_origin);
+        console.log(my_destination);
+        console.log(waypts);
         directionsService.route({
             origin: my_origin,
             destination: my_destination,
