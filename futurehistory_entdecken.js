@@ -924,7 +924,7 @@ var tourStash = [];
 
         var prepareFilterOutput = function () {
             for (var item in tourStash) {
-                tdd[tourStash[item][0]] = tourStash[item][1];
+                tdd[tourStash[item][0]] = tourStash[item][1].removeClass('ui-state-disabled');
             }
             for (var dist in tdd) {
                 for (var e = 0; e < toursFilteredData.length; e++) {
@@ -1054,8 +1054,6 @@ var tourStash = [];
             window.firstCall = "second";
             $('.tour_id_'+lastShowTourOnMapCall[0]+" .info").trigger('click');
         }
-
-
     }
 
     /**
