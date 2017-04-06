@@ -21,6 +21,7 @@
       <div id="fh-reset-filter">
         <div class="fh-reset-filter-count"></div>
         <a class="reset-filter-link" id="reset-filter-link"><?php print t('X Filter zurücksetzen'); ?></a>
+        <a href="#" class="filter-close"><?php print t('X Schließen'); ?></a>
       </div>
 
       <div id="sammlungen_selector">
@@ -54,7 +55,7 @@
 
 
 
-      <div class="filter-close"><a href="#"><?php print t('SCHLIEßEN'); ?></a></div>
+
     </div>
 
     <div id="thumbnail-sort-box">

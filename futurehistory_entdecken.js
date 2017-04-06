@@ -185,7 +185,7 @@
     // Set/Update the view direction on a map
     Drupal.futurehistoryEntdecken.setMapArrow = function (marker, mapId) {
 
-        _log(' set marker viewdir', marker.pie);
+        // _log(' set marker viewdir', marker.pie);
         marker.pie.setMap(null);
         var zoomLevel = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
         if (zoomLevel <= 18) {
@@ -251,13 +251,13 @@
     //Parameters: bounds, date, kategorie
 
     Drupal.futurehistoryEntdecken.getMarkers = function (bounds, RequestDate, kategorie, sort, mapId, mapCenter) {
-        _log("getMarkers ");
-        _log(window.firstCall);
+        // _log("getMarkers ");
+        // _log(window.firstCall);
         if (window.firstCall === undefined) {
             window.firstCall = false;
             var state = checkStateCookie();
-            _log("state",state);
-            _log(state);
+            // _log("state",state);
+            // _log(state);
             if(state !== false){
 
                 window.firstCall = 'active';
@@ -277,7 +277,7 @@
 
         var RequestArgs = getRequestArgs(bounds, RequestDate, kategorie);
 
-        _log("start the ajax getMarkers ");
+        // _log("start the ajax getMarkers ");
         //
         // start the ajax request
         ajaxXHR["gm"] = $.ajax({
@@ -452,13 +452,6 @@
     }());
 
     function enableAllUI() {
-        console.log(arguments.callee.caller.name);
-        // $( "#accordion" ).accordion("option", "disabled", false);
-        var isAccordion = $("#accordion").hasClass("ui-accordion");
-        if(isAccordion){
-            // $( "#accordion" ).accordion(  "enable" );
-        }
-
         enableFilterUI();
     }
 
@@ -467,17 +460,19 @@
         jQuery("#thumbnail-filter-box input:radio").attr('disabled', false);
         jQuery("#thumbnail-filter-box input:checkbox").attr('disabled', false);
         $("#kategory_selector").prev().removeClass("ui-state-disabled");
+        $("#kategory_selector").removeClass("ui-state-disabled");
         $("#author_selector").prev().removeClass("ui-state-disabled");
+        $("#author_selector").removeClass("ui-state-disabled");
+        jQuery("#tour_selector").prev().removeClass("ui-state-disabled");
+        jQuery(".tour_selector").prev().removeClass("ui-state-disabled");
+        //
     }
 
     function disbleAllUI() {
-        console.log(arguments.callee.caller.name);
-        // $( "#accordion" ).accordion("option", "disabled", true);
-        var isAccordion = $("#accordion").hasClass("ui-accordion");
-        if(isAccordion){
-            // $( "#accordion" ).accordion("disable" );
+        if(!tourdisply_is_Active){
+            $("#tour_selector").prev().addClass("ui-state-disabled");
+            $(".tour_selector").prev().addClass("ui-state-disabled");
         }
-
         disbleFilterUI();
     }
 
@@ -486,7 +481,10 @@
         jQuery("#thumbnail-filter-box input:radio").attr('disabled', true);
         jQuery("#thumbnail-filter-box input:checkbox").attr('disabled', true);
         $("#kategory_selector").prev().addClass("ui-state-disabled");
+        $("#kategory_selector").addClass("ui-state-disabled");
         $("#author_selector").prev().addClass("ui-state-disabled");
+        $("#author_selector").addClass("ui-state-disabled");
+        // $("#tour_selector").prev().addClass("ui-state-disabled");
     }
 
     /**
@@ -494,7 +492,7 @@
      * @param tourID
      */
     function showTourOnMap(tour_id, tourname, distance) {
-        _log(tour_id,tourname,distance);
+        // _log(tour_id,tourname,distance);
         disbleAllUI();
         lastShowTourOnMapCall = [tour_id, tourname, distance];
         // start the ajax request to get tour details
@@ -510,7 +508,7 @@
                 for (item in tourdata) {
                     if ('nid' in tourdata[item]) {
                         var poi = pois_by_nid[tourdata[item]['nid']];
-                        _log(poi);
+                        // _log(poi);
                         if(typeof poi !== 'undefined'){
                             original_tourdata.push(poi);
                         }
@@ -519,6 +517,7 @@
                 }
                 // _log(original_tourdata);
                 enableAllUI();
+                $(".fh-reset-filter-count").html(original_tourdata.length);
 
                 // clearDirectionsMarkers();
                 if (directionsDisplay.setMap) {
@@ -560,10 +559,10 @@
 
 
     function initializeRequestArgIndicator() {
-        mylog.warn(requestArgIndicatorClass);
+
         if (tourdisply_is_Active && (requestArgIndicatorClass.indexOf("tour") == -1)) {
             requestArgIndicatorClass += ' tour';
-        } else {
+        } else if(!tourdisply_is_Active) {
             requestArgIndicatorClass = '';
         }
 
@@ -660,7 +659,7 @@
     }
 
     function clearAjaxCalls() {
-        _log("clearAjaxCalls");
+        // _log("clearAjaxCalls");
         // clear running xhr processes
         for (var i = 0; i < ajaxXHR.length; i++) {
             ajaxXHR[i].abort();
@@ -676,9 +675,9 @@
      * @returns {boolean}
      */
     function checkStateCookie() {
-        _log("checkStateCookie");
+        // _log("checkStateCookie");
         var cookie_data = JSON.parse($.cookie("fh_state_cookie"));
-        _log(cookie_data);
+        // _log(cookie_data);
         // flag-lists/add/ansich
         // check referer condition to set value for autoCookieInitialisation
 
@@ -730,13 +729,12 @@
 
         activeFilters['tourdisply_is_Active'] = tourdisply_is_Active;
         activeFilters['lastShowTourOnMapCall'] = lastShowTourOnMapCall;
-        activeFilters['author'] = tourdisply_is_Active;
         activeFilters['author'] = author;
         activeFilters['kategorie'] = kategorie;
         activeFilters['filter_by_collection'] = filter_by_collection;
         activeFilters['bounds'] = bounds;
         activeFilters['RequestDate'] = RequestDate;
-        _log("setStateCookie");
+        // _log("setStateCookie");
         $.cookie('fh_state_cookie', JSON.stringify(activeFilters), {path: '/'});
         // _log(activeFilters);
     }
@@ -753,7 +751,9 @@
             icons: icons,
             collapsible: true,
             active : 'none',
-            heightStyle: "content"
+            autoHeight: false,
+            // clearStyle: true, autoHeight: false,
+            heightStyle: "fill"
         });
 
         $("#accordion").on("accordionbeforeactivate", function () {
@@ -795,7 +795,11 @@
             jQuery('#author_selector').prev().find('span').last().html("Kein Autor gewählt");
         }
 
-        $(".fh-reset-filter-count").html(currentResultCount);
+        var currCountDisplay = currentResultCount;
+        if(tourdisply_is_Active){
+            // currCountDisplay = 5;
+        }
+        $(".fh-reset-filter-count").html(currCountDisplay);
 
         $('#sammlungen_selector input').on('click',function(e){
            filter_by_collection = $(this).attr('id');
@@ -1046,7 +1050,7 @@ var tourStash = [];
         // tours on pageload must be loaded after other filters have been processed
         // Filter mostly (!cat) do rely on valid results
         if(lastShowTourOnMapCall.length === 3 && window.firstCall === 'active'){
-            _log("-----------> RECHECK LOGIC HERE");
+            // _log("-----------> RECHECK LOGIC HERE");
             window.firstCall = "second";
             $('.tour_id_'+lastShowTourOnMapCall[0]+" .info").trigger('click');
         }
@@ -1118,8 +1122,8 @@ var tourStash = [];
     // list the marker Thumbnails and fill the LI elements wit IDs
     Drupal.futurehistoryEntdecken.setMapThumbnails = function (marker_content, mapId, mapCenter) {
         $('#thumbnail-pois').empty();
-        mylog.warn('setMapThumbnails');
-        _log(tourdisply_is_Active);
+        // mylog.warn('setMapThumbnails');
+        // _log(tourdisply_is_Active);
         if (!tourdisply_is_Active) {
             // thumb-sort: distance from center versus age
             if (sort == 'dist') {
@@ -1439,7 +1443,7 @@ var tourStash = [];
 
         // if marker belongs to active tour => RE-Center tour on Map
         // but redraws route wrong
-        _log(tourdisply_is_Active);
+        // _log(tourdisply_is_Active);
         if(tourdisply_is_Active){
             use_eval_to_call_last_calculateAndDisplayRoute();
         }
@@ -3505,7 +3509,7 @@ console.log(url_t);
                     if(tourdisply_is_Active){
                         td = "&t="+encodeURI(lastShowTourOnMapCall.join(','));
                     }
-                    _log("td: "+td);
+                    // _log("td: "+td);
 
                     var permaUrl = baseUrl + encodeURI('?y=' + coords.lat() +
                             '&x=' + coords.lng() +

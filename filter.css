@@ -92,7 +92,7 @@ padding-left: 60px;
 
 .ui-widget-content {
     border: none;
-    background: #fff url(images/ui-bg_flat_75_ffffff_40x100.png) 50% 50% repeat-x;
+    background: #fff url(map-images/ui-bg_flat_75_ffffff_40x100.png) 50% 50% repeat-x;
         font-size: 14px!important;
     color: #3756a4;
         font-family: 'Source Sans Pro', sans-serif;
@@ -150,17 +150,15 @@ padding-right: 8px;
 	font-size: 14px;
 	font-weight: 400;
 	background-color: #ffffff;
-
+    max-height: 400px;
 }
 
 
 .tour_selector:hover {
 	background-color: #dce6fe;
 	transition: background-color 0.5s;
-
-
 }
-
+.ui-accordion .ui-accordion-content{ overflow-y:auto !important; }
 
 .status {
 display:none;
@@ -320,14 +318,14 @@ padding-left: 50px!important;
 
 #fh-reset-filter > div:after {
     content: ' Ergebnisse'
-
 }
 
 .fh-reset-filter-count {
     display:inline-block;
 }
 
-#reset-filter-link {
+#reset-filter-link,
+.filter-close{
 
     float:right;
     display: table-cell;
@@ -340,17 +338,16 @@ padding-left: 50px!important;
     background-color: #1a67ad;
     color: #fff;
     border-radius:3px;
-
+margin-right: 3px;
 }
 
-#reset-filter-link:hover {
-
-
+#reset-filter-link:hover,
+.filter-close:hover{
     background-color: #112c6f;
     transition: background-color 0.5s;
     text-decoration:none;
     cursor: pointer;
-
+    color: #ffffff;
 }
 
 
@@ -409,7 +406,7 @@ padding-left: 50px!important;
 }
 
 
-.sort-close a, .filter-close a {
+.sort-close a, .filter-closee a {
     padding-top: 10px;
     padding-bottom: 10px;
     width: 100%;
@@ -421,7 +418,7 @@ padding-left: 50px!important;
     border-radius: 4px;
 }
 
-.sort-close a:hover, .filter-close a:hover {
+.sort-close a:hover, .filter-closee a:hover {
     background-color: #112c6f;
     transition: background-color 0.5s;
 }
@@ -434,4 +431,155 @@ padding-left: 50px!important;
 {
     cursor: pointer;
 }
+
+
+/* FILTER ICON STATUS */
+
+
+#sammlungen_selector {
+    background-image:url(map-images/collection.png)!important;
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}
+
+
+#thumbnail-navigation-filter-button.kategorie {
+
+    background-image:url(map-images/category_filter.png);
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}
+
+#thumbnail-navigation-filter-button.author {
+
+    background-image:url(map-images/author_filter.png);
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}
+
+#thumbnail-navigation-filter-button.date {
+
+    background-image:url(map-images/calendar_filter.png);
+    background-position:left center;
+    background-repeat:no-repeat;}
+
+#thumbnail-navigation-filter-button.tour {
+
+    background-image:url(map-images/tour_filter.png);
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}
+
+
+#thumbnail-navigation-filter-button.sammlung {
+
+    background-image:url(map-images/collection_filter.png);
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}
+
+
+#thumbnail-navigation-filter-button.kategorie.date {
+
+    background-image:url(map-images/check.png);
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}
+
+#thumbnail-navigation-filter-button.kategorie.sammlung {
+
+    background-image:url(map-images/check.png);
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}
+
+#thumbnail-navigation-filter-button.kategorie.author {
+
+    background-image:url(map-images/check.png);
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}
+
+#thumbnail-navigation-filter-button.kategorie.tour {
+
+    background-image:url(map-images/check.png);
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}
+
+#thumbnail-navigation-filter-button.kategorie.author.date {
+
+    background-image:url(map-images/check.png);
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}
+
+#thumbnail-navigation-filter-button.kategorie.author.date.tour {
+
+    background-image:url(map-images/check.png);
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}
+
+
+#thumbnail-navigation-filter-button.kategorie.author.date.tour {
+
+    background-image:url(map-images/check.png);
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}
+
+
+#thumbnail-navigation-filter-button.author.date {
+
+    background-image:url(map-images/check.png);
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}
+
+#thumbnail-navigation-filter-button.sammlung.date {
+
+    background-image:url(map-images/check.png);
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}
+
+
+#thumbnail-navigation-filter-button.sammlung.tour {
+
+    background-image:url(map-images/check.png);
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}
+
+#thumbnail-navigation-filter-button.sammlung.kategorie {
+
+    background-image:url(map-images/check.png);
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}
+
+#thumbnail-navigation-filter-button.sammlung.author {
+
+    background-image:url(map-images/check.png);
+    background-position:left center;
+    background-repeat:no-repeat;
+
+}     
 
