@@ -448,7 +448,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.kategorie {
 
     background-image:url(map-images/category_filter.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;
 
 }
@@ -456,7 +456,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.author {
 
     background-image:url(map-images/author_filter.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;
 
 }
@@ -464,13 +464,13 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.date {
 
     background-image:url(map-images/calendar_filter.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;}
 
 #thumbnail-navigation-filter-button.tour {
 
     background-image:url(map-images/tour_filter.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;
 
 }
@@ -479,7 +479,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.sammlung {
 
     background-image:url(map-images/collection_filter.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;
 
 }
@@ -488,7 +488,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.kategorie.date {
 
     background-image:url(map-images/check.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;
 
 }
@@ -496,7 +496,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.kategorie.sammlung {
 
     background-image:url(map-images/check.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;
 
 }
@@ -504,7 +504,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.kategorie.author {
 
     background-image:url(map-images/check.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;
 
 }
@@ -512,7 +512,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.kategorie.tour {
 
     background-image:url(map-images/check.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;
 
 }
@@ -520,7 +520,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.kategorie.author.date {
 
     background-image:url(map-images/check.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;
 
 }
@@ -528,7 +528,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.kategorie.author.date.tour {
 
     background-image:url(map-images/check.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;
 
 }
@@ -537,7 +537,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.kategorie.author.date.tour {
 
     background-image:url(map-images/check.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;
 
 }
@@ -546,7 +546,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.author.date {
 
     background-image:url(map-images/check.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;
 
 }
@@ -554,7 +554,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.sammlung.date {
 
     background-image:url(map-images/check.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;
 
 }
@@ -563,7 +563,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.sammlung.tour {
 
     background-image:url(map-images/check.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;
 
 }
@@ -571,7 +571,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.sammlung.kategorie {
 
     background-image:url(map-images/check.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;
 
 }
@@ -579,7 +579,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.sammlung.author {
 
     background-image:url(map-images/check.png);
-    background-position:right center;
+    background-position:right 5px center;
     background-repeat:no-repeat;
 
 }     
