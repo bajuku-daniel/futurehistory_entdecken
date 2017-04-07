@@ -1,0 +1,149 @@
+
+
+#sammlungen_selector {
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/collection.png)!important;
+background-position:left center;
+background-repeat:no-repeat;
+   
+}
+
+
+#thumbnail-navigation-filter-button.kategorie {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/category_filter.png);
+background-position:left center;
+background-repeat:no-repeat;
+   
+}
+
+#thumbnail-navigation-filter-button.author {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/author_filter.png);
+background-position:left center;
+background-repeat:no-repeat;
+   
+}
+
+#thumbnail-navigation-filter-button.date {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/calendar_filter.png);
+background-position:left center;
+background-repeat:no-repeat;}
+
+#thumbnail-navigation-filter-button.tour {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/tour_filter.png);
+background-position:left center;
+background-repeat:no-repeat;
+   
+}
+
+
+#thumbnail-navigation-filter-button.sammlung {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/collection_filter.png);
+background-position:left center;
+background-repeat:no-repeat;
+   
+}
+
+
+#thumbnail-navigation-filter-button.kategorie.date {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/check.png);
+background-position:left center;
+background-repeat:no-repeat;
+   
+}
+
+#thumbnail-navigation-filter-button.kategorie.sammlung {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/check.png);
+background-position:left center;
+background-repeat:no-repeat;
+   
+}
+
+#thumbnail-navigation-filter-button.kategorie.author {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/check.png);
+background-position:left center;
+background-repeat:no-repeat;
+   
+}
+
+#thumbnail-navigation-filter-button.kategorie.tour {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/check.png);
+background-position:left center;
+background-repeat:no-repeat;
+   
+}
+   
+#thumbnail-navigation-filter-button.kategorie.author.date {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/check.png);
+background-position:left center;
+background-repeat:no-repeat;
+   
+}
+
+#thumbnail-navigation-filter-button.kategorie.author.date.tour {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/check.png);
+background-position:left center;
+background-repeat:no-repeat;
+   
+}
+
+
+#thumbnail-navigation-filter-button.kategorie.author.date.tour {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/check.png);
+background-position:left center;
+background-repeat:no-repeat;
+   
+}
+     
+
+#thumbnail-navigation-filter-button.author.date {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/check.png);
+background-position:left center;
+background-repeat:no-repeat;
+   
+}     
+
+#thumbnail-navigation-filter-button.sammlung.date {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/check.png);
+background-position:left center;
+background-repeat:no-repeat;
+   
+}     
+
+
+#thumbnail-navigation-filter-button.sammlung.tour {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/check.png);
+background-position:left center;
+background-repeat:no-repeat;
+   
+}     
+
+#thumbnail-navigation-filter-button.sammlung.kategorie {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/check.png);
+background-position:left center;
+background-repeat:no-repeat;
+   
+}     
+
+#thumbnail-navigation-filter-button.sammlung.author {
+
+background-image:url(http://www.ortmann-kollegen.de/_kunden/FuHi/filter/check.png);
+background-position:left center;
+background-repeat:no-repeat;
+   
+}     
+

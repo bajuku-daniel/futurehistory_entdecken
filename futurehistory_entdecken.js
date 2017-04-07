@@ -73,7 +73,6 @@
     // Generate the Modal "add to tour / collection" - modal link structure in flag_list.module and futurehistory-entdecken-map.tpl.php
     Drupal.futurehistoryEntdecken.generateModal = function (nid, mapId) {
         var tourCreateAccess = Drupal.settings.futurehistoryEntdecken.tour_access;  // get the acces setting generated in futurehistory_entdecken_plugin_style_google_map.php
-
         if (tourCreateAccess == true) {
             $.get(overlay_url + '?nid=' + nid, function (html) {
                 $('#add-to-modal .modal-add-body').html(html); // get and push the html
@@ -186,7 +185,7 @@
     // Set/Update the view direction on a map
     Drupal.futurehistoryEntdecken.setMapArrow = function (marker, mapId) {
 
-        _log(' set marker viewdir', marker.pie);
+        // _log(' set marker viewdir', marker.pie);
         marker.pie.setMap(null);
         var zoomLevel = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
         if (zoomLevel <= 18) {
@@ -252,11 +251,15 @@
     //Parameters: bounds, date, kategorie
 
     Drupal.futurehistoryEntdecken.getMarkers = function (bounds, RequestDate, kategorie, sort, mapId, mapCenter) {
+
+        // _log(window.firstCall);
         if (window.firstCall === undefined) {
             window.firstCall = false;
             var state = checkStateCookie();
+            // _log("state",state);
+            // _log(state);
             if(state !== false){
-                _log("state",state);
+
                 window.firstCall = 'active';
                 // _log(state.initializeOnPageLoad);
                 RequestDate = state.RequestDate;
@@ -274,7 +277,8 @@
 
         var RequestArgs = getRequestArgs(bounds, RequestDate, kategorie);
 
-        _log("start the ajax getMarkers ");
+        // _log("start the ajax getMarkers ");
+        //
         // start the ajax request
         ajaxXHR["gm"] = $.ajax({
             url: poi_url,
@@ -370,9 +374,9 @@
                         tours_unique[tids[tid]] = data[item];
                         // tours_unique[data[item][attr]] = data[item];
                     }
-
                 }
             }
+
         }
 
         for (tourdata in tours_unique) {
@@ -434,27 +438,35 @@
         return {
             log: function() {
                 var args = Array.prototype.slice.call(arguments);
-                console.log.apply(console, args);
+                try {
+                    console.log.apply(console, args);
+                } catch (err) {
+                    // no problems when no console
+                }
+
             },
             warn: function() {
                 var args = Array.prototype.slice.call(arguments);
-                console.warn.apply(console, args);
+                try {
+                    console.warn.apply(console, args);
+                } catch (err) {
+                    // no problems when no console
+                }
+
             },
             error: function() {
                 var args = Array.prototype.slice.call(arguments);
-                console.error.apply(console, args);
+                try {
+                    console.error.apply(console, args);
+                } catch (err) {
+                    // no problems when no console
+                }
+
             }
         }
     }());
 
     function enableAllUI() {
-        console.log(arguments.callee.caller.name);
-        // $( "#accordion" ).accordion("option", "disabled", false);
-        var isAccordion = $("#accordion").hasClass("ui-accordion");
-        if(isAccordion){
-            // $( "#accordion" ).accordion(  "enable" );
-        }
-
         enableFilterUI();
     }
 
@@ -463,17 +475,19 @@
         jQuery("#thumbnail-filter-box input:radio").attr('disabled', false);
         jQuery("#thumbnail-filter-box input:checkbox").attr('disabled', false);
         $("#kategory_selector").prev().removeClass("ui-state-disabled");
+        $("#kategory_selector").removeClass("ui-state-disabled");
         $("#author_selector").prev().removeClass("ui-state-disabled");
+        $("#author_selector").removeClass("ui-state-disabled");
+        jQuery("#tour_selector").prev().removeClass("ui-state-disabled");
+        jQuery(".tour_selector").prev().removeClass("ui-state-disabled");
+        //
     }
 
     function disbleAllUI() {
-        console.log(arguments.callee.caller.name);
-        // $( "#accordion" ).accordion("option", "disabled", true);
-        var isAccordion = $("#accordion").hasClass("ui-accordion");
-        if(isAccordion){
-            // $( "#accordion" ).accordion("disable" );
+        if(!tourdisply_is_Active){
+            $("#tour_selector").prev().addClass("ui-state-disabled");
+            $(".tour_selector").prev().addClass("ui-state-disabled");
         }
-
         disbleFilterUI();
     }
 
@@ -482,7 +496,10 @@
         jQuery("#thumbnail-filter-box input:radio").attr('disabled', true);
         jQuery("#thumbnail-filter-box input:checkbox").attr('disabled', true);
         $("#kategory_selector").prev().addClass("ui-state-disabled");
+        $("#kategory_selector").addClass("ui-state-disabled");
         $("#author_selector").prev().addClass("ui-state-disabled");
+        $("#author_selector").addClass("ui-state-disabled");
+        // $("#tour_selector").prev().addClass("ui-state-disabled");
     }
 
     /**
@@ -490,7 +507,6 @@
      * @param tourID
      */
     function showTourOnMap(tour_id, tourname, distance) {
-        _log(tour_id,tourname,distance);
         disbleAllUI();
         lastShowTourOnMapCall = [tour_id, tourname, distance];
         // start the ajax request to get tour details
@@ -502,19 +518,18 @@
             dataType: 'json',
             success: function (tourdata) {
                 var original_tourdata = [];
-                _log(tourdata);
-                for (item in tourdata) {
-                    if ('nid' in tourdata[item]) {
-                        var poi = pois_by_nid[tourdata[item]['nid']];
-                        _log(poi);
+                $.each(tourdata, function( index, value ) {
+                    if (typeof value !== 'undefined' && typeof value.nid !== 'undefined' ) {
+                        var poi = pois_by_nid[value['nid']];
+                        // _log(poi);
                         if(typeof poi !== 'undefined'){
                             original_tourdata.push(poi);
                         }
-
                     }
-                }
-                _log(original_tourdata);
+                });
+
                 enableAllUI();
+                $(".fh-reset-filter-count").html(original_tourdata.length);
 
                 // clearDirectionsMarkers();
                 if (directionsDisplay.setMap) {
@@ -534,8 +549,6 @@
                 calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata.slice(), distance);
                 use_eval_to_call_last_calculateAndDisplayRoute = wrapFunction(calculateAndDisplayRoute, this, [directionsService, directionsDisplay, original_tourdata.slice(), distance]);
 
-
-
                 tourdisply_is_Active = true;
                 setStateCookie(RequestDate);
                 jQuery('#tour_selector').parent().find('h3').first().find('span').last().html(tourname);
@@ -554,12 +567,10 @@
     }
 
 
-
     function initializeRequestArgIndicator() {
-        mylog.warn(requestArgIndicatorClass);
         if (tourdisply_is_Active && (requestArgIndicatorClass.indexOf("tour") == -1)) {
             requestArgIndicatorClass += ' tour';
-        } else {
+        } else if(!tourdisply_is_Active) {
             requestArgIndicatorClass = '';
         }
 
@@ -656,14 +667,13 @@
     }
 
     function clearAjaxCalls() {
-        _log("clearAjaxCalls");
+        // _log("clearAjaxCalls");
         // clear running xhr processes
         for (var i = 0; i < ajaxXHR.length; i++) {
             ajaxXHR[i].abort();
         }
         ajaxXHR = [];
     }
-
 
     /**
      * check state cookie for initializeOnPageLoad
@@ -672,7 +682,17 @@
      * @returns {boolean}
      */
     function checkStateCookie() {
+        // _log("checkStateCookie");
         var cookie_data = JSON.parse($.cookie("fh_state_cookie"));
+        // _log(cookie_data);
+        // flag-lists/add/ansich
+        // check referer condition to set value for autoCookieInitialisation
+
+        var referrer = document.referrer;
+        if ((referrer.indexOf("flag-lists/add/ansicht") !== -1)) {
+            cookie_data.initializeOnPageLoad = true;
+        }
+
 
         if ((cookie_data) && (cookie_data.initializeOnPageLoad !== 'undefined' || cookie_data.initializeOnPageLoad !== null) && Boolean(cookie_data.initializeOnPageLoad) === true) {
             // _log(cookie_data);
@@ -685,8 +705,6 @@
             if (cookie_data.RequestDate !== 'all') {
                 Drupal.futurehistoryEntdecken.DateSlider(mapIdGlobal, cookie_data.RequestDate.split("--"));
             }
-
-            _log("checkStateCookie");
             return cookie_data;
         }
         return false;
@@ -716,13 +734,12 @@
 
         activeFilters['tourdisply_is_Active'] = tourdisply_is_Active;
         activeFilters['lastShowTourOnMapCall'] = lastShowTourOnMapCall;
-        activeFilters['author'] = tourdisply_is_Active;
         activeFilters['author'] = author;
         activeFilters['kategorie'] = kategorie;
         activeFilters['filter_by_collection'] = filter_by_collection;
         activeFilters['bounds'] = bounds;
         activeFilters['RequestDate'] = RequestDate;
-        _log("setStateCookie");
+        // _log("setStateCookie");
         $.cookie('fh_state_cookie', JSON.stringify(activeFilters), {path: '/'});
         // _log(activeFilters);
     }
@@ -739,7 +756,9 @@
             icons: icons,
             collapsible: true,
             active : 'none',
-            heightStyle: "content"
+            autoHeight: false,
+            // clearStyle: true, autoHeight: false,
+            heightStyle: "fill"
         });
 
         $("#accordion").on("accordionbeforeactivate", function () {
@@ -781,14 +800,19 @@
             jQuery('#author_selector').prev().find('span').last().html("Kein Autor gewählt");
         }
 
-        $(".fh-reset-filter-count").html(currentResultCount);
+        var currCountDisplay = currentResultCount;
+        $(".fh-reset-filter-count").html(currCountDisplay);
 
-        $('#sammlungen_selector input').unbind('click');
-        $('#sammlungen_selector input').one('click',function(e){
+
+        $('#sammlungen_selector input').off('click');
+        $('#sammlungen_selector input').on('click',function(e){
+            clearAjaxCalls();
            filter_by_collection = $(this).attr('id');
             _log('handler check');
             Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapIdGlobal, mapCenter);
+            disbleAllUI();
         });
+
         if (filter_by_collection.indexOf('all') === -1) {
             $("#fh_show_only_collections").prop( "checked", true );
             $("#fh_show_all_collections").prop( "checked", false );
@@ -908,13 +932,13 @@ var tourStash = [];
 
         var prepareFilterOutput = function () {
             for (var item in tourStash) {
-                tdd[tourStash[item][0]] = tourStash[item][1];
+                tdd[tourStash[item][0]] = tourStash[item][1].removeClass('ui-state-disabled');
             }
             for (var dist in tdd) {
                 for (var e = 0; e < toursFilteredData.length; e++) {
                     var toursItem = toursFilteredData[e];
                     var tourID = toursItem.tour_id;
-                    if(tourStash[tourID][0] === dist){
+                    if (tourStash[tourID][0] === dist) {
                         tdd[tourStash[tourID][0]].appendTo($tours);
                         break;
                     }
@@ -936,13 +960,17 @@ var tourStash = [];
 
         // call to get tour data
         // could be one ajax call only
+        // ist_tours?tour_id=all
+        // TODO:REFACTOR call to list_tour_content not needed could be includet
+
         var request_result_count = 0;
         // return;
         for (var i = 0; i < toursFilteredData.length; i++) {
+
             var toursItem = toursFilteredData[i];
             var last = (i == toursFilteredData.length - 1);
 
-            if(tourStash[toursItem.tour_id] !== undefined){
+            if (tourStash[toursItem.tour_id] !== undefined) {
                 continue;
             }
 
@@ -950,80 +978,85 @@ var tourStash = [];
             ajaxXHR["sut_" + i] = $.ajax({
                 url: tour_url_detail,
                 method: 'get',
-                data: "tour_id=" + toursItem.tour_id,
+                data: "tour_id=all",
                 dataType: 'json',
                 indexValue: i,
                 async: false,
                 last: last,
-                success: function (tourdetails, i) {
-                    request_result_count++;
-                    if(tourdetails[0] == undefined || $('.tour_id_'+tourdetails[0].tour_id).size() > 0){
-                      return;
+                success: function (allTourDetails, i) {
+                    // _log("success ");
+                    for (var key in allTourDetails) {
+                        var tourdetails = [allTourDetails[key]];
+                        // _log(tourdetails);
+                        request_result_count++;
+                        if (tourdetails[0] == undefined || $('.tour_id_' + tourdetails[0].tour_id).size() > 0) {
+                            return;
+                        }
+                        var distance = tourdetails[0].distance;
+                        var tour_titel = tourdetails[0].title;
+                        var zeitraum = tourdetails[0].tour_start_date + "-" + tourdetails[0].tour_end_date;
+                        var autor = tourdetails[0].name;
+                        var tour_id = tourdetails[0].tour_id;
+                        var description = tourdetails[0].description;
+
+                        var buildTourMarkup = function () {
+
+                            var distanceConvert = function () {
+                                var distanceC;
+                                if (distance > 999) {
+                                    distanceC = distance / 1000;
+                                    distanceC = distanceC.toFixed(2) + " km"
+                                } else {
+                                    distanceC = distance + ' m';
+                                }
+                                return distanceC;
+                            };
+
+                            var $tour = $('<div />', {'class': 'tour_id_' + tour_id + " tour_selector"});
+                            var $tour_status = $('<div />', {'class': 'status ui-icon-caret-1-e'});
+                            var $tour_info = $('<div />', {
+                                'class': 'info',
+                                "data-tourid": tour_id,
+                                "data-tourtitel": tour_titel,
+                                "data-distance": distance
+                            });
+                            $tour_info.append("<span>" + tour_titel + " | " + zeitraum + "</span></br>");
+                            $tour_info.append("<span>Strecke: " + distanceConvert() + " | von: " + autor + "</span>");
+                            var $tour_details = $('<div />', {'class': 'details'});
+                            var tour_detail_content = "<h4>" + tour_titel + "</h4><span>" + distanceConvert() + " | " + zeitraum + "</span></br><p>" + description + "</p>";
+                            $tour_details.append("<span class='tour_id_" + tour_id + " tourtip' title='" + tour_detail_content + "'><img width='20px' src='/sites/all/modules/futurehistory_entdecken/map-images/info.png'></span>");
+
+
+                            // $tour_info.click(function (e) {
+                            $(document).on('click', '#tour_selector .info', {}, function (e) {
+                                e.stopImmediatePropagation();
+                                e.stopPropagation();
+
+                                clearAjaxCalls();
+                                if ($(this).parent().hasClass('active')) {
+                                    clearDirectionsMarkers();
+                                    tourdisply_is_Active = false;
+                                    lastShowTourOnMapCall = false;
+                                    jQuery('.tour_selector').removeClass('active');
+                                    Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapIdGlobal, mapCenter);
+
+                                } else {
+                                    jQuery('.tour_selector').removeClass('active');
+                                    $(this).parent().addClass('active');
+                                    showTourOnMap($(this).data('tourid'), $(this).data('tourtitel'), $(this).data('distance'));
+                                    initializeRequestArgIndicator();
+                                }
+                            });
+
+                            $tour_status.appendTo($tour);
+                            $tour_info.appendTo($tour);
+                            $tour_details.appendTo($tour);
+
+                            tourStash[tour_id] = [distance, $tour];
+                        }
+
+                        buildTourMarkup();
                     }
-                    var distance = tourdetails[0].distance;
-                    var tour_titel = tourdetails[0].title;
-                    var zeitraum = tourdetails[0].tour_start_date + "-" + tourdetails[0].tour_end_date;
-                    var autor = tourdetails[0].name;
-                    var tour_id = tourdetails[0].tour_id;
-                    var description = tourdetails[0].description;
-
-                    var buildTourMarkup = function () {
-
-                        var distanceConvert = function () {
-                            var distanceC;
-                            if (distance > 999) {
-                                distanceC = distance / 1000;
-                                distanceC = distanceC.toFixed(2) + " km"
-                            } else {
-                                distanceC = distance + ' m';
-                            }
-                            return distanceC;
-                        };
-
-                        var $tour = $('<div />', {'class': 'tour_id_' + tour_id + " tour_selector"});
-                        var $tour_status = $('<div />', {'class': 'status ui-icon-caret-1-e'});
-                        var $tour_info = $('<div />', {
-                            'class': 'info',
-                            "data-tourid": tour_id,
-                            "data-tourtitel": tour_titel,
-                            "data-distance": distance
-                        });
-                        $tour_info.append("<span>" + tour_titel + " | " + zeitraum + "</span></br>");
-                        $tour_info.append("<span>Strecke: " + distanceConvert() + " | von: " + autor + "</span>");
-                        var $tour_details = $('<div />', {'class': 'details'});
-                        var tour_detail_content = "<h4>" + tour_titel + "</h4><span>" + distanceConvert() + " | " + zeitraum + "</span></br><p>" + description + "</p>";
-                        $tour_details.append("<span class='tour_id_" + tour_id + " tourtip' title='" + tour_detail_content + "'><img width='20px' src='/sites/all/modules/futurehistory_entdecken/map-images/info.png'></span>");
-
-
-                        // $tour_info.click(function (e) {
-                        $(document).on('click','#tour_selector .info', {} ,function (e) {
-                            e.stopImmediatePropagation();
-                            e.stopPropagation();
-
-                            clearAjaxCalls();
-                            if ($(this).parent().hasClass('active')) {
-                                clearDirectionsMarkers();
-                                tourdisply_is_Active = false;
-                                lastShowTourOnMapCall = false;
-                                jQuery('.tour_selector').removeClass('active');
-                                Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapIdGlobal, mapCenter);
-
-                            } else {
-                                jQuery('.tour_selector').removeClass('active');
-                                $(this).parent().addClass('active');
-                                showTourOnMap($(this).data('tourid'), $(this).data('tourtitel'), $(this).data('distance'));
-                                initializeRequestArgIndicator();
-                            }
-                        });
-
-                        $tour_status.appendTo($tour);
-                        $tour_info.appendTo($tour);
-                        $tour_details.appendTo($tour);
-
-                        tourStash[tour_id] = [distance,$tour];
-                    }
-
-                    buildTourMarkup();
                 }
             });
         }
@@ -1034,12 +1067,10 @@ var tourStash = [];
         // tours on pageload must be loaded after other filters have been processed
         // Filter mostly (!cat) do rely on valid results
         if(lastShowTourOnMapCall.length === 3 && window.firstCall === 'active'){
-            _log("-----------> RECHECK LOGIC HERE");
+            // _log("-----------> RECHECK LOGIC HERE");
             window.firstCall = "second";
             $('.tour_id_'+lastShowTourOnMapCall[0]+" .info").trigger('click');
         }
-
-
     }
 
     /**
@@ -1052,9 +1083,10 @@ var tourStash = [];
      */
     function calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata, distance) {
         var waypts = [];
-
+        var my_origin='';
+        var my_destination='';
         for (var i = 0; i < original_tourdata.length; i++) {
-            _log(original_tourdata[i]);
+            // _log(original_tourdata[i]);
             if (i === 0) {
                 // Start EndPunkt benötigen Datenformat mit lng/lat oder Text e.g. New York,US
                 my_origin = original_tourdata[i]['lat'] + "," + original_tourdata[i]['lon'];
@@ -1106,8 +1138,8 @@ var tourStash = [];
     // list the marker Thumbnails and fill the LI elements wit IDs
     Drupal.futurehistoryEntdecken.setMapThumbnails = function (marker_content, mapId, mapCenter) {
         $('#thumbnail-pois').empty();
-        mylog.warn('setMapThumbnails');
-        _log(tourdisply_is_Active);
+        // mylog.warn('setMapThumbnails');
+        // _log(tourdisply_is_Active);
         if (!tourdisply_is_Active) {
             // thumb-sort: distance from center versus age
             if (sort == 'dist') {
@@ -1307,7 +1339,6 @@ var tourStash = [];
 
             // console.log('Add Listener Click-Event to marker id ', marker.id);
             google.maps.event.addListener(marker, 'click', function () {
-                console.log('click on id ', marker.id);
                 Drupal.futurehistoryEntdecken.markerStateChange(marker.id, 'click', mapId, 'MAP');
                 // TODO : JUST TESTING
                 if (use_eval_to_call_last_calculateAndDisplayRoute !== '') {
@@ -1427,7 +1458,7 @@ var tourStash = [];
 
         // if marker belongs to active tour => RE-Center tour on Map
         // but redraws route wrong
-        _log(tourdisply_is_Active);
+        // _log(tourdisply_is_Active);
         if(tourdisply_is_Active){
             use_eval_to_call_last_calculateAndDisplayRoute();
         }
@@ -1436,7 +1467,6 @@ var tourStash = [];
 
         var ThumbInClusterProcessing = false;
         if (src == 'THUMB') {
-            console.log('Click on Thumb ID ', markerId);
             for (var i = 0; i < RAW.length; i++) {
 
                 // first test incluster --> mark activated and leave here because zoom_event reload and reprocess all
@@ -3354,13 +3384,17 @@ var tourStash = [];
                         k_split[0] = 'all';
                     }
                     kategorie = k_split;
+
                     YearRange[0] = parseInt(url_d.split('--')[0]);
                     YearRange[1] = parseInt(url_d.split('--')[1]);
-                    RequestDate = String(YearRange[0]) + '--' + String(YearRange[1]);
+                    RequestDate = (url_d === 'all')?url_d:String(YearRange[0]) + '--' + String(YearRange[1]);
+
                     sort = url_s;
                     author = url_a === 'all'?url_a:[url_a];
 
-                    if(url_suid !== '' || url_suid != undefined){
+
+
+                    if(url_suid === '' || url_suid === undefined){
                         url_suid = 'all'
                     }
                     filter_by_collection = url_suid;
@@ -3490,7 +3524,7 @@ var tourStash = [];
                     if(tourdisply_is_Active){
                         td = "&t="+encodeURI(lastShowTourOnMapCall.join(','));
                     }
-                    _log("td: "+td);
+                    // _log("td: "+td);
 
                     var permaUrl = baseUrl + encodeURI('?y=' + coords.lat() +
                             '&x=' + coords.lng() +
@@ -3517,7 +3551,11 @@ var tourStash = [];
                     // history back again fires a dragend or zoom_changed event via onpopState, then we stay in place.... filter out
                     if (!CALL_onpopstate) {
                         var view = '&' + encodeURI(mapCenter.lat() + '&' + mapCenter.lng() + '&' + Drupal.futurehistoryEntdecken[mapId].map.getZoom());
-                        history.pushState({view: view}, '', '');
+                        try {
+                            history.pushState({view: view}, '', '');
+                        } catch (err) {
+                        }
+
                         // console.log(' pushState ', view );
                     } else {
                         CALL_onpopstate = false;
@@ -3539,7 +3577,10 @@ var tourStash = [];
                     // history back again fires a dragend or zoom_changed event via onpopState, then we stay in place.... filter out
                     if (!CALL_onpopstate) {
                         var view = '&' + encodeURI(coords.lat() + '&' + coords.lng() + '&' + Drupal.futurehistoryEntdecken[mapId].map.getZoom());
-                        history.pushState({view: view}, '', '');
+                        try {
+                            history.pushState({view: view}, '', '');
+                        } catch (err) {
+                        }
                         // console.log(' pushState ', view );
                     } else {
                         CALL_onpopstate = false;
