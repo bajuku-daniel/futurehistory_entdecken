@@ -374,9 +374,9 @@
                         tours_unique[tids[tid]] = data[item];
                         // tours_unique[data[item][attr]] = data[item];
                     }
-
                 }
             }
+
         }
 
         for (tourdata in tours_unique) {
@@ -438,15 +438,30 @@
         return {
             log: function() {
                 var args = Array.prototype.slice.call(arguments);
-                console.log.apply(console, args);
+                try {
+                    console.log.apply(console, args);
+                } catch (err) {
+                    // no problems when no console
+                }
+
             },
             warn: function() {
                 var args = Array.prototype.slice.call(arguments);
-                console.warn.apply(console, args);
+                try {
+                    console.warn.apply(console, args);
+                } catch (err) {
+                    // no problems when no console
+                }
+
             },
             error: function() {
                 var args = Array.prototype.slice.call(arguments);
-                console.error.apply(console, args);
+                try {
+                    console.error.apply(console, args);
+                } catch (err) {
+                    // no problems when no console
+                }
+
             }
         }
     }());
@@ -492,10 +507,6 @@
      * @param tourID
      */
     function showTourOnMap(tour_id, tourname, distance) {
-        _log("showTourOnMap");
-        console.log(tour_id);
-        console.log(tourname);
-
         disbleAllUI();
         lastShowTourOnMapCall = [tour_id, tourname, distance];
         // start the ajax request to get tour details
@@ -507,12 +518,7 @@
             dataType: 'json',
             success: function (tourdata) {
                 var original_tourdata = [];
-                console.log('check')
-                console.log(tourdata);
                 $.each(tourdata, function( index, value ) {
-                    console.log(value);
-                    console.log(value['nid']);
-                    console.log(value.nid);
                     if (typeof value !== 'undefined' && typeof value.nid !== 'undefined' ) {
                         var poi = pois_by_nid[value['nid']];
                         // _log(poi);
@@ -522,7 +528,6 @@
                     }
                 });
 
-                console.log(original_tourdata);
                 enableAllUI();
                 $(".fh-reset-filter-count").html(original_tourdata.length);
 
@@ -540,11 +545,9 @@
                 });
                 directionsDisplay.setMap(Drupal.futurehistoryEntdecken[mapIdGlobal].map);
                 directionsDisplay.setOptions({suppressMarkers: true});
-                console.log('call');
+
                 calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata.slice(), distance);
                 use_eval_to_call_last_calculateAndDisplayRoute = wrapFunction(calculateAndDisplayRoute, this, [directionsService, directionsDisplay, original_tourdata.slice(), distance]);
-
-
 
                 tourdisply_is_Active = true;
                 setStateCookie(RequestDate);
@@ -564,9 +567,7 @@
     }
 
 
-
     function initializeRequestArgIndicator() {
-
         if (tourdisply_is_Active && (requestArgIndicatorClass.indexOf("tour") == -1)) {
             requestArgIndicatorClass += ' tour';
         } else if(!tourdisply_is_Active) {
@@ -674,7 +675,6 @@
         ajaxXHR = [];
     }
 
-
     /**
      * check state cookie for initializeOnPageLoad
      * returns cookie values and set map settings on initialization or false
@@ -705,8 +705,6 @@
             if (cookie_data.RequestDate !== 'all') {
                 Drupal.futurehistoryEntdecken.DateSlider(mapIdGlobal, cookie_data.RequestDate.split("--"));
             }
-
-
             return cookie_data;
         }
         return false;
@@ -925,8 +923,6 @@ var tourStash = [];
      * @param toursFilteredData
      */
     function setUpdateTours(toursFilteredData) {
-        _log("IE TRACE "+toursFilteredData);
-        console.log(toursFilteredData);
         var $tours = $('#tour_selector');
         $tours.html('');
         var tour_url_detail = "/de/fh_view/list_tours";
@@ -968,7 +964,7 @@ var tourStash = [];
         var request_result_count = 0;
         // return;
         for (var i = 0; i < toursFilteredData.length; i++) {
-_log("tour outer loop "+i);
+
             var toursItem = toursFilteredData[i];
             var last = (i == toursFilteredData.length - 1);
 
@@ -986,10 +982,10 @@ _log("tour outer loop "+i);
                 async: false,
                 last: last,
                 success: function (allTourDetails, i) {
-                    _log("success ");
+                    // _log("success ");
                     for (var key in allTourDetails) {
                         var tourdetails = [allTourDetails[key]];
-                        _log(tourdetails);
+                        // _log(tourdetails);
                         request_result_count++;
                         if (tourdetails[0] == undefined || $('.tour_id_' + tourdetails[0].tour_id).size() > 0) {
                             return;
@@ -1087,9 +1083,6 @@ _log("tour outer loop "+i);
         var waypts = [];
         var my_origin='';
         var my_destination='';
-        console.log("calculateAndDisplayRoute");
-        console.log(distance);
-        console.log(original_tourdata);
         for (var i = 0; i < original_tourdata.length; i++) {
             // _log(original_tourdata[i]);
             if (i === 0) {
@@ -1105,9 +1098,7 @@ _log("tour outer loop "+i);
                 });
             }
         }
-        console.log(my_origin);
-        console.log(my_destination);
-        console.log(waypts);
+
         directionsService.route({
             origin: my_origin,
             destination: my_destination,
@@ -1346,7 +1337,6 @@ _log("tour outer loop "+i);
 
             // console.log('Add Listener Click-Event to marker id ', marker.id);
             google.maps.event.addListener(marker, 'click', function () {
-                console.log('click on id ', marker.id);
                 Drupal.futurehistoryEntdecken.markerStateChange(marker.id, 'click', mapId, 'MAP');
                 // TODO : JUST TESTING
                 if (use_eval_to_call_last_calculateAndDisplayRoute !== '') {
@@ -1475,7 +1465,6 @@ _log("tour outer loop "+i);
 
         var ThumbInClusterProcessing = false;
         if (src == 'THUMB') {
-            console.log('Click on Thumb ID ', markerId);
             for (var i = 0; i < RAW.length; i++) {
 
                 // first test incluster --> mark activated and leave here because zoom_event reload and reprocess all

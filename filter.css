@@ -105,7 +105,6 @@ padding-left: 60px;
     font-weight: 600;
     color: #3756a4;
     margin-top: 10px;
-  
 }
 
 
@@ -139,9 +138,6 @@ padding-bottom: 8px;
 padding-right: 8px;
 
 }
-
-
-
 
 
 .tour_selector {
@@ -464,13 +460,13 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.date {
 
     background-image:url(map-images/calendar_filter.png);
-    background-position:left center;
+    background-position: right center;
     background-repeat:no-repeat;}
 
 #thumbnail-navigation-filter-button.tour {
 
     background-image:url(map-images/tour_filter.png);
-    background-position:left center;
+    background-position:right center;
     background-repeat:no-repeat;
 
 }
@@ -479,7 +475,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.sammlung {
 
     background-image:url(map-images/collection_filter.png);
-    background-position:left center;
+    background-position:right center;
     background-repeat:no-repeat;
 
 }
@@ -488,7 +484,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.kategorie.date {
 
     background-image:url(map-images/check.png);
-    background-position:left center;
+    background-position:right center;
     background-repeat:no-repeat;
 
 }
@@ -496,7 +492,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.kategorie.sammlung {
 
     background-image:url(map-images/check.png);
-    background-position:left center;
+    background-position:right center;
     background-repeat:no-repeat;
 
 }
@@ -504,7 +500,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.kategorie.author {
 
     background-image:url(map-images/check.png);
-    background-position:left center;
+    background-position:right center;
     background-repeat:no-repeat;
 
 }
@@ -512,7 +508,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.kategorie.tour {
 
     background-image:url(map-images/check.png);
-    background-position:left center;
+    background-position:right center;
     background-repeat:no-repeat;
 
 }
@@ -520,7 +516,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.kategorie.author.date {
 
     background-image:url(map-images/check.png);
-    background-position:left center;
+    background-position:right center;
     background-repeat:no-repeat;
 
 }
@@ -528,7 +524,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.kategorie.author.date.tour {
 
     background-image:url(map-images/check.png);
-    background-position:left center;
+    background-position:right center;
     background-repeat:no-repeat;
 
 }
@@ -537,7 +533,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.kategorie.author.date.tour {
 
     background-image:url(map-images/check.png);
-    background-position:left center;
+    background-position:right center;
     background-repeat:no-repeat;
 
 }
@@ -546,7 +542,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.author.date {
 
     background-image:url(map-images/check.png);
-    background-position:left center;
+    background-position:right center;
     background-repeat:no-repeat;
 
 }
@@ -554,7 +550,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.sammlung.date {
 
     background-image:url(map-images/check.png);
-    background-position:left center;
+    background-position:right center;
     background-repeat:no-repeat;
 
 }
@@ -563,7 +559,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.sammlung.tour {
 
     background-image:url(map-images/check.png);
-    background-position:left center;
+    background-position:right center;
     background-repeat:no-repeat;
 
 }
@@ -571,7 +567,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.sammlung.kategorie {
 
     background-image:url(map-images/check.png);
-    background-position:left center;
+    background-position:right center;
     background-repeat:no-repeat;
 
 }
@@ -579,7 +575,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.sammlung.author {
 
     background-image:url(map-images/check.png);
-    background-position:left center;
+    background-position:right center;
     background-repeat:no-repeat;
 
 }     
