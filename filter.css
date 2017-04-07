@@ -140,6 +140,10 @@ padding-right: 8px;
 }
 
 
+#tour_selector {
+    max-height: 400px;
+    min-height: 120px;
+}
 .tour_selector {
 	padding-top: 5px;
 	padding-bottom: 5px;
@@ -147,7 +151,7 @@ padding-right: 8px;
 	font-size: 14px;
 	font-weight: 400;
 	background-color: #ffffff;
-    max-height: 400px;
+    min-height: 14px;
 }
 
 
@@ -435,7 +439,7 @@ margin-right: 3px;
 
 #sammlungen_selector {
     background-image:url(map-images/collection.png)!important;
-    background-position:left center;
+    /*background-position:right center;*/
     background-repeat:no-repeat;
 
 }
@@ -444,7 +448,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.kategorie {
 
     background-image:url(map-images/category_filter.png);
-    background-position:left center;
+    background-position:right center;
     background-repeat:no-repeat;
 
 }
@@ -452,7 +456,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.author {
 
     background-image:url(map-images/author_filter.png);
-    background-position:left center;
+    background-position:right center;
     background-repeat:no-repeat;
 
 }
@@ -460,7 +464,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.date {
 
     background-image:url(map-images/calendar_filter.png);
-    background-position: right center;
+    background-position:right center;
     background-repeat:no-repeat;}
 
 #thumbnail-navigation-filter-button.tour {
@@ -580,3 +584,9 @@ margin-right: 3px;
 
 }     
 
+
+.tooltipster-content h4{
+    margin-top: 0px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
