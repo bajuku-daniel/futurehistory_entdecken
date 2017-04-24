@@ -267,7 +267,7 @@
                 author = state.author;
                 mapCenter = state.mapcenter;
                 lastShowTourOnMapCall = state.lastShowTourOnMapCall;
-                // tourdisply_is_Active = state.tourdisply_is_Active;
+                // tourdisplay_is_Active = state.tourdisplay_is_Active;
                 // _log("window.firstCall END");
             }
         }
@@ -287,7 +287,7 @@
             dataType: 'json',
             success: function (data) {
                 var marker_content = data;
-                if (!tourdisply_is_Active) {
+                if (!tourdisplay_is_Active) {
                     if (directionsDisplay.setMap) {
                         directionsDisplay.setMap(null);
                         directionsDisplay.setDirections({routes: []});
@@ -404,12 +404,19 @@
     var ajaxXHR = [];
     var pois_by_nid = [];
     var directionsDisplay = [];
-    var tourdisply_is_Active = false;
+    var tourdisplay_is_Active = false;
     var tour_url = '/de/fh_view/list_tour_content';
     var use_eval_to_call_last_calculateAndDisplayRoute = '';
     var lastShowTourOnMapCall = [];
     var requestArgIndicatorClass = "";
     var currentResultCount = 0;
+
+    function _tourdisplay_is_Active(state){
+        tourdisplay_is_Active = state;
+        // Drupal.futurehistoryEntdecken.MarkerClusterer.prototype.setReady_(!state);
+        // Drupal.futurehistoryEntdecken.MarkerClusterer.prototype.onRemove();
+        // Drupal.futurehistoryEntdecken.MarkerClusterer.prototype.onAdd()
+    }
 
 // Function wrapping code.
 // fn - reference to function.
@@ -474,17 +481,18 @@
         jQuery("#time_slider").slider('enable');
         jQuery("#thumbnail-filter-box input:radio").attr('disabled', false);
         jQuery("#thumbnail-filter-box input:checkbox").attr('disabled', false);
-        $("#kategory_selector").prev().removeClass("ui-state-disabled");
-        $("#kategory_selector").removeClass("ui-state-disabled");
-        $("#author_selector").prev().removeClass("ui-state-disabled");
-        $("#author_selector").removeClass("ui-state-disabled");
+        jQuery("#kategory_selector").prev().removeClass("ui-state-disabled");
+        jQuery("#kategory_selector").removeClass("ui-state-disabled");
+        jQuery("#author_selector").prev().removeClass("ui-state-disabled");
+        jQuery("#author_selector").removeClass("ui-state-disabled");
         jQuery("#tour_selector").prev().removeClass("ui-state-disabled");
         jQuery(".tour_selector").prev().removeClass("ui-state-disabled");
-        //
+
+
     }
 
     function disbleAllUI() {
-        if(!tourdisply_is_Active){
+        if(!tourdisplay_is_Active){
             $("#tour_selector").prev().addClass("ui-state-disabled");
             $(".tour_selector").prev().addClass("ui-state-disabled");
         }
@@ -492,14 +500,16 @@
     }
 
     function disbleFilterUI() {
+
         jQuery("#time_slider").slider('disable');
         jQuery("#thumbnail-filter-box input:radio").attr('disabled', true);
         jQuery("#thumbnail-filter-box input:checkbox").attr('disabled', true);
-        $("#kategory_selector").prev().addClass("ui-state-disabled");
-        $("#kategory_selector").addClass("ui-state-disabled");
-        $("#author_selector").prev().addClass("ui-state-disabled");
-        $("#author_selector").addClass("ui-state-disabled");
-        // $("#tour_selector").prev().addClass("ui-state-disabled");
+        jQuery("#kategory_selector").prev().addClass("ui-state-disabled");
+        jQuery("#kategory_selector").addClass("ui-state-disabled");
+        jQuery("#author_selector").prev().addClass("ui-state-disabled");
+        jQuery("#author_selector").addClass("ui-state-disabled");
+
+
     }
 
     /**
@@ -549,7 +559,7 @@
                 calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata.slice(), distance);
                 use_eval_to_call_last_calculateAndDisplayRoute = wrapFunction(calculateAndDisplayRoute, this, [directionsService, directionsDisplay, original_tourdata.slice(), distance]);
 
-                tourdisply_is_Active = true;
+                _tourdisplay_is_Active(true);
                 setStateCookie(RequestDate);
                 jQuery('#tour_selector').parent().find('h3').first().find('span').last().html(tourname);
 
@@ -568,9 +578,9 @@
 
 
     function initializeRequestArgIndicator() {
-        if (tourdisply_is_Active && (requestArgIndicatorClass.indexOf("tour") == -1)) {
+        if (tourdisplay_is_Active && (requestArgIndicatorClass.indexOf("tour") == -1)) {
             requestArgIndicatorClass += ' tour';
-        } else if(!tourdisply_is_Active) {
+        } else if(!tourdisplay_is_Active) {
             requestArgIndicatorClass = '';
         }
 
@@ -653,7 +663,7 @@
             }
             directionsDisplay.setMap(null);
         }
-        tourdisply_is_Active = false;
+        _tourdisplay_is_Active(false);
         use_eval_to_call_last_calculateAndDisplayRoute = '';
 
         jQuery('#tour_selector').prev().find('span').last().html("Keine Tour gewählt");
@@ -662,7 +672,7 @@
 
     function clearFilterSettings() {
         author = [];
-        tourdisply_is_Active = false;
+        _tourdisplay_is_Active(false);
         requestArgIndicatorClass = "";
     }
 
@@ -732,7 +742,7 @@
             zoom: mapzoom
         };
 
-        activeFilters['tourdisply_is_Active'] = tourdisply_is_Active;
+        activeFilters['tourdisplay_is_Active'] = tourdisplay_is_Active;
         activeFilters['lastShowTourOnMapCall'] = lastShowTourOnMapCall;
         activeFilters['author'] = author;
         activeFilters['kategorie'] = kategorie;
@@ -817,6 +827,8 @@
             $("#fh_show_only_collections").prop( "checked", true );
             $("#fh_show_all_collections").prop( "checked", false );
         }
+
+
 
 
     }
@@ -939,13 +951,13 @@ var tourStash = [];
                     var toursItem = toursFilteredData[e];
                     var tourID = toursItem.tour_id;
                     if (tourStash[tourID][0] === dist) {
-                        tdd[tourStash[tourID][0]].appendTo($tours);
+                        tdd[tourStash[tourID][0]].clone().appendTo($tours);
                         break;
                     }
                 }
             }
 
-            $('.tourtip').tooltipster({
+            $('.tourtip:not(.tooltipstered)').tooltipster({
                 theme: 'tooltipster-noir',
                 trigger: 'hover',
                 contentAsHTML: true,
@@ -956,7 +968,7 @@ var tourStash = [];
         };
 
         // clearAjaxCalls();
-        // $("#tour_selector").html();
+        $("#tour_selector").html();
 
         // call to get tour data
         // could be one ajax call only
@@ -1035,7 +1047,7 @@ var tourStash = [];
                                 clearAjaxCalls();
                                 if ($(this).parent().hasClass('active')) {
                                     clearDirectionsMarkers();
-                                    tourdisply_is_Active = false;
+                                    _tourdisplay_is_Active(false);
                                     lastShowTourOnMapCall = false;
                                     jQuery('.tour_selector').removeClass('active');
                                     Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapIdGlobal, mapCenter);
@@ -1061,6 +1073,9 @@ var tourStash = [];
             });
         }
 
+      /*  try{
+            jQuery('.tourtip').tooltip("remove");
+        }catch(e){}*/
 
         prepareFilterOutput();
 
@@ -1139,8 +1154,8 @@ var tourStash = [];
     Drupal.futurehistoryEntdecken.setMapThumbnails = function (marker_content, mapId, mapCenter) {
         $('#thumbnail-pois').empty();
         // mylog.warn('setMapThumbnails');
-        // _log(tourdisply_is_Active);
-        if (!tourdisply_is_Active) {
+        // _log(tourdisplay_is_Active);
+        if (!tourdisplay_is_Active) {
             // thumb-sort: distance from center versus age
             if (sort == 'dist') {
                 // sort after distance from center/ or later from clicked point....
@@ -1458,8 +1473,8 @@ var tourStash = [];
 
         // if marker belongs to active tour => RE-Center tour on Map
         // but redraws route wrong
-        // _log(tourdisply_is_Active);
-        if(tourdisply_is_Active){
+        // _log(tourdisplay_is_Active);
+        if(tourdisplay_is_Active){
             use_eval_to_call_last_calculateAndDisplayRoute();
         }
 
@@ -2692,6 +2707,9 @@ var tourStash = [];
     /**
      * Add a marker to a cluster, or creates a new cluster.
      *
+     * disable visible clusters if tour is displayed
+     * @see tourdisplay_is_Active
+     *
      * @param {google.maps.Marker} marker The marker to add.
      * @private
      */
@@ -2710,7 +2728,7 @@ var tourStash = [];
             }
         }
 
-        if (clusterToAddTo && clusterToAddTo.isMarkerInClusterBounds(marker)) {
+        if (clusterToAddTo && clusterToAddTo.isMarkerInClusterBounds(marker) && !tourdisplay_is_Active) {
             // console.log('addMarker to cluster ', marker.id, ' C: ', clusterToAddTo.markers_);
             clusterToAddTo.addMarker(marker, true);
         } else {
@@ -2731,6 +2749,7 @@ var tourStash = [];
             // console.log('not ready in createClusters_()');
             return;
         }
+        mylog.log(this.ready_);
         // Get our current map view bounds.
         // Create a new bounds object so we don't affect the map.
         // console.log('ready in createClusters_()');
@@ -3521,7 +3540,7 @@ var tourStash = [];
                     var baseUrl = window.location.origin + window.location.pathname;
                     var centerControlDiv = document.createElement('div');
                     var td = '';
-                    if(tourdisply_is_Active){
+                    if(tourdisplay_is_Active){
                         td = "&t="+encodeURI(lastShowTourOnMapCall.join(','));
                     }
                     // _log("td: "+td);
