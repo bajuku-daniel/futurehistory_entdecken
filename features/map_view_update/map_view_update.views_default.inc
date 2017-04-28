@@ -33,14 +33,14 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['pager']['type'] = 'none';
   $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['row_plugin'] = 'fields';
-  /* Feld: Inhalt: Titel */
+  /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Feld: Inhalt: Bildposition */
+  /* Field: Beitrag: Bildposition */
   $handler->display->display_options['fields']['field_position_der_aufnahme']['id'] = 'field_position_der_aufnahme';
   $handler->display->display_options['fields']['field_position_der_aufnahme']['table'] = 'field_data_field_position_der_aufnahme';
   $handler->display->display_options['fields']['field_position_der_aufnahme']['field'] = 'field_position_der_aufnahme';
@@ -51,17 +51,17 @@ function map_view_update_views_default_views() {
     'skip_safe' => 0,
     'skip_empty_values' => 0,
   );
-  /* Feld: Inhalt: Nid */
+  /* Field: Content: Nid */
   $handler->display->display_options['fields']['nid']['id'] = 'nid';
   $handler->display->display_options['fields']['nid']['table'] = 'node';
   $handler->display->display_options['fields']['nid']['field'] = 'nid';
-  /* Feld: Inhalt: Kategorie */
+  /* Field: Beitrag: Kategorie */
   $handler->display->display_options['fields']['field_kategorie']['id'] = 'field_kategorie';
   $handler->display->display_options['fields']['field_kategorie']['table'] = 'field_data_field_kategorie';
   $handler->display->display_options['fields']['field_kategorie']['field'] = 'field_kategorie';
   $handler->display->display_options['fields']['field_kategorie']['type'] = 'taxonomy_term_reference_plain';
   $handler->display->display_options['fields']['field_kategorie']['delta_offset'] = '0';
-  /* Contextual filter: Benutzerdefiniert: Futurehistory Bounding box */
+  /* Contextual filter: Custom: Futurehistory Bounding box */
   $handler->display->display_options['arguments']['bbox_argument']['id'] = 'bbox_argument';
   $handler->display->display_options['arguments']['bbox_argument']['table'] = 'views';
   $handler->display->display_options['arguments']['bbox_argument']['field'] = 'bbox_argument';
@@ -71,7 +71,7 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['arguments']['bbox_argument']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['bbox_argument']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['bbox_argument']['summary_options']['items_per_page'] = '25';
-  /* Contextual filter: Inhalt: Jahr (field_jahr) */
+  /* Contextual filter: Beitrag: Jahr (field_jahr) */
   $handler->display->display_options['arguments']['field_jahr_value']['id'] = 'field_jahr_value';
   $handler->display->display_options['arguments']['field_jahr_value']['table'] = 'field_data_field_jahr';
   $handler->display->display_options['arguments']['field_jahr_value']['field'] = 'field_jahr_value';
@@ -83,7 +83,7 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['arguments']['field_jahr_value']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['field_jahr_value']['summary_options']['items_per_page'] = '25';
   $handler->display->display_options['arguments']['field_jahr_value']['break_phrase'] = TRUE;
-  /* Contextual filter: Inhalt: Has taxonomy term ID */
+  /* Contextual filter: Content: Has taxonomy term ID */
   $handler->display->display_options['arguments']['tid']['id'] = 'tid';
   $handler->display->display_options['arguments']['tid']['table'] = 'taxonomy_index';
   $handler->display->display_options['arguments']['tid']['field'] = 'tid';
@@ -96,7 +96,7 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['arguments']['tid']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['tid']['summary_options']['items_per_page'] = '25';
   $handler->display->display_options['arguments']['tid']['break_phrase'] = TRUE;
-  /* Contextual filter: Inhalt: Author uid */
+  /* Contextual filter: Content: Author uid */
   $handler->display->display_options['arguments']['uid']['id'] = 'uid';
   $handler->display->display_options['arguments']['uid']['table'] = 'node';
   $handler->display->display_options['arguments']['uid']['field'] = 'uid';
@@ -122,21 +122,21 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['arguments']['uid_1']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['uid_1']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['uid_1']['summary_options']['items_per_page'] = '25';
-  /* Filter criterion: Inhalt: Veröffentlicht */
+  /* Filter criterion: Content: Published */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
   $handler->display->display_options['filters']['status']['field'] = 'status';
   $handler->display->display_options['filters']['status']['value'] = 1;
   $handler->display->display_options['filters']['status']['group'] = 1;
   $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
-  /* Filter criterion: Inhalt: Typ */
+  /* Filter criterion: Content: Type */
   $handler->display->display_options['filters']['type']['id'] = 'type';
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
     'ansicht' => 'ansicht',
   );
-  /* Filter criterion: Inhalt: Kategorie (field_kategorie) */
+  /* Filter criterion: Beitrag: Kategorie (field_kategorie) */
   $handler->display->display_options['filters']['field_kategorie_tid']['id'] = 'field_kategorie_tid';
   $handler->display->display_options['filters']['field_kategorie_tid']['table'] = 'field_data_field_kategorie';
   $handler->display->display_options['filters']['field_kategorie_tid']['field'] = 'field_kategorie_tid';
@@ -154,7 +154,7 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['filters']['field_kategorie_tid']['reduce_duplicates'] = TRUE;
   $handler->display->display_options['filters']['field_kategorie_tid']['vocabulary'] = 'ansicht_kategorie';
   $handler->display->display_options['filters']['field_kategorie_tid']['error_message'] = FALSE;
-  /* Filter criterion: Inhalt: Author uid */
+  /* Filter criterion: Content: Author uid */
   $handler->display->display_options['filters']['uid']['id'] = 'uid';
   $handler->display->display_options['filters']['uid']['table'] = 'node';
   $handler->display->display_options['filters']['uid']['field'] = 'uid';
@@ -201,18 +201,18 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['relationships']['flag_content_rel']['required'] = 0;
   $handler->display->display_options['relationships']['flag_content_rel']['flag'] = 'bookmarks';
   $handler->display->display_options['defaults']['fields'] = FALSE;
-  /* Feld: Inhalt: Nid */
+  /* Field: Content: Nid */
   $handler->display->display_options['fields']['nid']['id'] = 'nid';
   $handler->display->display_options['fields']['nid']['table'] = 'node';
   $handler->display->display_options['fields']['nid']['field'] = 'nid';
-  /* Feld: Inhalt: Titel */
+  /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Feld: Inhalt: Bildposition */
+  /* Field: Beitrag: Bildposition */
   $handler->display->display_options['fields']['field_position_der_aufnahme']['id'] = 'field_position_der_aufnahme';
   $handler->display->display_options['fields']['field_position_der_aufnahme']['table'] = 'field_data_field_position_der_aufnahme';
   $handler->display->display_options['fields']['field_position_der_aufnahme']['field'] = 'field_position_der_aufnahme';
@@ -223,7 +223,7 @@ function map_view_update_views_default_views() {
     'skip_safe' => 0,
     'skip_empty_values' => 0,
   );
-  /* Feld: Inhalt: Jahr */
+  /* Field: Beitrag: Jahr */
   $handler->display->display_options['fields']['field_jahr']['id'] = 'field_jahr';
   $handler->display->display_options['fields']['field_jahr']['table'] = 'field_data_field_jahr';
   $handler->display->display_options['fields']['field_jahr']['field'] = 'field_jahr';
@@ -231,20 +231,20 @@ function map_view_update_views_default_views() {
     'thousand_separator' => '',
     'prefix_suffix' => 1,
   );
-  /* Feld: Inhalt: Kategorie */
+  /* Field: Beitrag: Kategorie */
   $handler->display->display_options['fields']['field_kategorie']['id'] = 'field_kategorie';
   $handler->display->display_options['fields']['field_kategorie']['table'] = 'field_data_field_kategorie';
   $handler->display->display_options['fields']['field_kategorie']['field'] = 'field_kategorie';
   $handler->display->display_options['fields']['field_kategorie']['type'] = 'taxonomy_term_reference_plain';
   $handler->display->display_options['fields']['field_kategorie']['delta_offset'] = '0';
-  /* Feld: Flags: Flagged */
+  /* Field: Flags: Flagged */
   $handler->display->display_options['fields']['flagged']['id'] = 'flagged';
   $handler->display->display_options['fields']['flagged']['table'] = 'flagging';
   $handler->display->display_options['fields']['flagged']['field'] = 'flagged';
   $handler->display->display_options['fields']['flagged']['relationship'] = 'flag_content_rel';
   $handler->display->display_options['fields']['flagged']['type'] = 'boolean';
   $handler->display->display_options['fields']['flagged']['not'] = 0;
-  /* Feld: Inhalt: Updated date */
+  /* Field: Content: Updated date */
   $handler->display->display_options['fields']['changed']['id'] = 'changed';
   $handler->display->display_options['fields']['changed']['table'] = 'node';
   $handler->display->display_options['fields']['changed']['field'] = 'changed';
@@ -252,7 +252,7 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['fields']['changed']['custom_date_format'] = 'U';
   $handler->display->display_options['fields']['changed']['second_date_format'] = 'long';
   $handler->display->display_options['fields']['changed']['timezone'] = 'Europe/Berlin';
-  /* Feld: Inhalt: Bild */
+  /* Field: Beitrag: Bild */
   $handler->display->display_options['fields']['field_bild']['id'] = 'field_bild';
   $handler->display->display_options['fields']['field_bild']['table'] = 'field_data_field_bild';
   $handler->display->display_options['fields']['field_bild']['field'] = 'field_bild';
@@ -263,7 +263,7 @@ function map_view_update_views_default_views() {
     'image_style' => 'ansicht_bild_portal',
     'image_link' => '',
   );
-  /* Feld: Inhalt: Vergleichsbild Datei */
+  /* Field: Beitrag: Vergleichsbild Datei */
   $handler->display->display_options['fields']['field_bild_overlay']['id'] = 'field_bild_overlay';
   $handler->display->display_options['fields']['field_bild_overlay']['table'] = 'field_data_field_bild_overlay';
   $handler->display->display_options['fields']['field_bild_overlay']['field'] = 'field_bild_overlay';
@@ -274,7 +274,7 @@ function map_view_update_views_default_views() {
     'image_style' => 'ansicht_bild_portal',
     'image_link' => '',
   );
-  /* Feld: Inhalt: Bild */
+  /* Field: Beitrag: Bild */
   $handler->display->display_options['fields']['field_bild_1']['id'] = 'field_bild_1';
   $handler->display->display_options['fields']['field_bild_1']['table'] = 'field_data_field_bild';
   $handler->display->display_options['fields']['field_bild_1']['field'] = 'field_bild';
@@ -286,39 +286,39 @@ function map_view_update_views_default_views() {
     'image_style' => 'ansicht_bild_thumb',
     'image_link' => '',
   );
-  /* Feld: Inhalt: Bildposition */
+  /* Field: Beitrag: Bildposition */
   $handler->display->display_options['fields']['field_stadt']['id'] = 'field_stadt';
   $handler->display->display_options['fields']['field_stadt']['table'] = 'field_data_field_stadt';
   $handler->display->display_options['fields']['field_stadt']['field'] = 'field_stadt';
   $handler->display->display_options['fields']['field_stadt']['type'] = 'taxonomy_term_reference_plain';
-  /* Feld: Flags: Flag link */
+  /* Field: Flags: Flag link */
   $handler->display->display_options['fields']['ops']['id'] = 'ops';
   $handler->display->display_options['fields']['ops']['table'] = 'flagging';
   $handler->display->display_options['fields']['ops']['field'] = 'ops';
   $handler->display->display_options['fields']['ops']['relationship'] = 'flag_content_rel';
   $handler->display->display_options['fields']['ops']['link_type'] = 'normal';
-  /* Feld: Inhalt: Bildposition */
+  /* Field: Beitrag: Bildposition */
   $handler->display->display_options['fields']['field_position_der_aufnahme_1']['id'] = 'field_position_der_aufnahme_1';
   $handler->display->display_options['fields']['field_position_der_aufnahme_1']['table'] = 'field_data_field_position_der_aufnahme';
   $handler->display->display_options['fields']['field_position_der_aufnahme_1']['field'] = 'field_position_der_aufnahme';
   $handler->display->display_options['fields']['field_position_der_aufnahme_1']['label'] = 'POI angle';
   $handler->display->display_options['fields']['field_position_der_aufnahme_1']['click_sort_column'] = 'dist';
   $handler->display->display_options['fields']['field_position_der_aufnahme_1']['type'] = 'futurehistory_angle';
-  /* Feld: Inhalt: Bildposition */
+  /* Field: Beitrag: Bildposition */
   $handler->display->display_options['fields']['field_position_der_aufnahme_2']['id'] = 'field_position_der_aufnahme_2';
   $handler->display->display_options['fields']['field_position_der_aufnahme_2']['table'] = 'field_data_field_position_der_aufnahme';
   $handler->display->display_options['fields']['field_position_der_aufnahme_2']['field'] = 'field_position_der_aufnahme';
   $handler->display->display_options['fields']['field_position_der_aufnahme_2']['label'] = 'POI direction';
   $handler->display->display_options['fields']['field_position_der_aufnahme_2']['click_sort_column'] = 'view_direction';
   $handler->display->display_options['fields']['field_position_der_aufnahme_2']['type'] = 'futurehistory_direction';
-  /* Feld: Inhalt: Bildposition */
+  /* Field: Beitrag: Bildposition */
   $handler->display->display_options['fields']['field_position_der_aufnahme_3']['id'] = 'field_position_der_aufnahme_3';
   $handler->display->display_options['fields']['field_position_der_aufnahme_3']['table'] = 'field_data_field_position_der_aufnahme';
   $handler->display->display_options['fields']['field_position_der_aufnahme_3']['field'] = 'field_position_der_aufnahme';
   $handler->display->display_options['fields']['field_position_der_aufnahme_3']['label'] = 'POI distance';
   $handler->display->display_options['fields']['field_position_der_aufnahme_3']['click_sort_column'] = 'lat';
   $handler->display->display_options['fields']['field_position_der_aufnahme_3']['type'] = 'futurehistory_distance';
-  /* Feld: Inhalt: Jahr */
+  /* Field: Beitrag: Jahr */
   $handler->display->display_options['fields']['field_overlay_jahr']['id'] = 'field_overlay_jahr';
   $handler->display->display_options['fields']['field_overlay_jahr']['table'] = 'field_data_field_overlay_jahr';
   $handler->display->display_options['fields']['field_overlay_jahr']['field'] = 'field_overlay_jahr';
@@ -327,11 +327,11 @@ function map_view_update_views_default_views() {
     'thousand_separator' => '',
     'prefix_suffix' => 1,
   );
-  /* Feld: Inhalt: Link */
+  /* Field: Content: Link */
   $handler->display->display_options['fields']['view_node']['id'] = 'view_node';
   $handler->display->display_options['fields']['view_node']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['view_node']['field'] = 'view_node';
-  /* Feld: Inhalt: Audio Datei */
+  /* Field: Beitrag: Audio Datei */
   $handler->display->display_options['fields']['field_audio_datei']['id'] = 'field_audio_datei';
   $handler->display->display_options['fields']['field_audio_datei']['table'] = 'field_data_field_audio_datei';
   $handler->display->display_options['fields']['field_audio_datei']['field'] = 'field_audio_datei';
@@ -340,7 +340,7 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['fields']['field_audio_datei']['empty_zero'] = TRUE;
   $handler->display->display_options['fields']['field_audio_datei']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_audio_datei']['type'] = 'file_url_plain';
-  /* Feld: Global: Ansicht */
+  /* Field: Global: View */
   $handler->display->display_options['fields']['view']['id'] = 'view';
   $handler->display->display_options['fields']['view']['table'] = 'views';
   $handler->display->display_options['fields']['view']['field'] = 'view';
@@ -350,7 +350,7 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['fields']['view']['view'] = 'touren_bereich_ansicht_is_in_tour';
   $handler->display->display_options['fields']['view']['display'] = 'page_1';
   $handler->display->display_options['fields']['view']['arguments'] = '[!nid]';
-  /* Feld: Inhalt: Author uid */
+  /* Field: Content: Author uid */
   $handler->display->display_options['fields']['uid']['id'] = 'uid';
   $handler->display->display_options['fields']['uid']['table'] = 'node';
   $handler->display->display_options['fields']['uid']['field'] = 'uid';
@@ -358,14 +358,14 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['fields']['uid']['link_to_user'] = FALSE;
   $handler->display->display_options['defaults']['filter_groups'] = FALSE;
   $handler->display->display_options['defaults']['filters'] = FALSE;
-  /* Filter criterion: Inhalt: Veröffentlicht */
+  /* Filter criterion: Content: Published */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
   $handler->display->display_options['filters']['status']['field'] = 'status';
   $handler->display->display_options['filters']['status']['value'] = 1;
   $handler->display->display_options['filters']['status']['group'] = 1;
   $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
-  /* Filter criterion: Inhalt: Typ */
+  /* Filter criterion: Content: Type */
   $handler->display->display_options['filters']['type']['id'] = 'type';
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
@@ -373,7 +373,7 @@ function map_view_update_views_default_views() {
     'ansicht' => 'ansicht',
   );
   $handler->display->display_options['filters']['type']['group'] = 1;
-  /* Filter criterion: Inhalt: Kategorie (field_kategorie) */
+  /* Filter criterion: Beitrag: Kategorie (field_kategorie) */
   $handler->display->display_options['filters']['field_kategorie_tid']['id'] = 'field_kategorie_tid';
   $handler->display->display_options['filters']['field_kategorie_tid']['table'] = 'field_data_field_kategorie';
   $handler->display->display_options['filters']['field_kategorie_tid']['field'] = 'field_kategorie_tid';
@@ -466,11 +466,11 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['relationships']['flag_content_rel']['field'] = 'flag_content_rel';
   $handler->display->display_options['relationships']['flag_content_rel']['label'] = 'bookmarks';
   $handler->display->display_options['relationships']['flag_content_rel']['flag'] = 'bookmarks';
-  /* Relationship: Inhalt: Autor */
+  /* Relationship: Content: Author */
   $handler->display->display_options['relationships']['uid_1']['id'] = 'uid_1';
   $handler->display->display_options['relationships']['uid_1']['table'] = 'node';
   $handler->display->display_options['relationships']['uid_1']['field'] = 'uid';
-  /* Feld: Inhalt: Bild */
+  /* Field: Beitrag: Bild */
   $handler->display->display_options['fields']['field_bild']['id'] = 'field_bild';
   $handler->display->display_options['fields']['field_bild']['table'] = 'field_data_field_bild';
   $handler->display->display_options['fields']['field_bild']['field'] = 'field_bild';
@@ -481,13 +481,13 @@ function map_view_update_views_default_views() {
     'image_style' => 'fh_grid_view',
     'image_link' => '',
   );
-  /* Feld: Inhalt: Titel */
+  /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  /* Feld: Inhalt: Jahr */
+  /* Field: Beitrag: Jahr */
   $handler->display->display_options['fields']['field_jahr']['id'] = 'field_jahr';
   $handler->display->display_options['fields']['field_jahr']['table'] = 'field_data_field_jahr';
   $handler->display->display_options['fields']['field_jahr']['field'] = 'field_jahr';
@@ -497,7 +497,7 @@ function map_view_update_views_default_views() {
     'thousand_separator' => '',
     'prefix_suffix' => 1,
   );
-  /* Feld: Flags: Flag link */
+  /* Field: Flags: Flag link */
   $handler->display->display_options['fields']['ops']['id'] = 'ops';
   $handler->display->display_options['fields']['ops']['table'] = 'flagging';
   $handler->display->display_options['fields']['ops']['field'] = 'ops';
@@ -505,14 +505,14 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['fields']['ops']['label'] = '';
   $handler->display->display_options['fields']['ops']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['ops']['link_type'] = 'normal';
-  /* Feld: Inhalt: Bildposition */
+  /* Field: Beitrag: Bildposition */
   $handler->display->display_options['fields']['field_stadt']['id'] = 'field_stadt';
   $handler->display->display_options['fields']['field_stadt']['table'] = 'field_data_field_stadt';
   $handler->display->display_options['fields']['field_stadt']['field'] = 'field_stadt';
   $handler->display->display_options['fields']['field_stadt']['label'] = '';
   $handler->display->display_options['fields']['field_stadt']['exclude'] = TRUE;
   $handler->display->display_options['fields']['field_stadt']['element_label_colon'] = FALSE;
-  /* Feld: Flags: Flagged time */
+  /* Field: Flags: Flagged time */
   $handler->display->display_options['fields']['timestamp']['id'] = 'timestamp';
   $handler->display->display_options['fields']['timestamp']['table'] = 'flagging';
   $handler->display->display_options['fields']['timestamp']['field'] = 'timestamp';
@@ -527,19 +527,19 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['sorts']['timestamp']['order'] = 'DESC';
   $handler->display->display_options['sorts']['timestamp']['exposed'] = TRUE;
   $handler->display->display_options['sorts']['timestamp']['expose']['label'] = 'Hinzugefügt am';
-  /* Sort criterion: Inhalt: Jahr (field_jahr) */
+  /* Sort criterion: Beitrag: Jahr (field_jahr) */
   $handler->display->display_options['sorts']['field_jahr_value']['id'] = 'field_jahr_value';
   $handler->display->display_options['sorts']['field_jahr_value']['table'] = 'field_data_field_jahr';
   $handler->display->display_options['sorts']['field_jahr_value']['field'] = 'field_jahr_value';
   $handler->display->display_options['sorts']['field_jahr_value']['exposed'] = TRUE;
   $handler->display->display_options['sorts']['field_jahr_value']['expose']['label'] = 'Bilddatum';
-  /* Sort criterion: Inhalt: Titel */
+  /* Sort criterion: Content: Title */
   $handler->display->display_options['sorts']['title']['id'] = 'title';
   $handler->display->display_options['sorts']['title']['table'] = 'node';
   $handler->display->display_options['sorts']['title']['field'] = 'title';
   $handler->display->display_options['sorts']['title']['exposed'] = TRUE;
   $handler->display->display_options['sorts']['title']['expose']['label'] = 'Bildtitel';
-  /* Filter criterion: Inhalt: Veröffentlicht */
+  /* Filter criterion: Content: Published */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
   $handler->display->display_options['filters']['status']['field'] = 'status';
@@ -634,12 +634,12 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['empty']['area']['empty'] = TRUE;
   $handler->display->display_options['empty']['area']['content'] = 'Es sind noch keine eigenen Bilder Vorhanden. <br> Jetzt <a href="/node/add/ansicht">eigene Bilder einstellen</a>.';
   $handler->display->display_options['empty']['area']['format'] = 'full_html';
-  /* Relationship: Inhalt: Autor */
+  /* Relationship: Content: Author */
   $handler->display->display_options['relationships']['uid']['id'] = 'uid';
   $handler->display->display_options['relationships']['uid']['table'] = 'node';
   $handler->display->display_options['relationships']['uid']['field'] = 'uid';
   $handler->display->display_options['relationships']['uid']['required'] = TRUE;
-  /* Feld: Inhalt: Bild */
+  /* Field: Beitrag: Bild */
   $handler->display->display_options['fields']['field_bild']['id'] = 'field_bild';
   $handler->display->display_options['fields']['field_bild']['table'] = 'field_data_field_bild';
   $handler->display->display_options['fields']['field_bild']['field'] = 'field_bild';
@@ -650,7 +650,7 @@ function map_view_update_views_default_views() {
     'image_style' => 'fh_grid_view',
     'image_link' => 'content',
   );
-  /* Feld: Inhalt: Titel */
+  /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
@@ -658,7 +658,7 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  /* Feld: Inhalt: Jahr */
+  /* Field: Beitrag: Jahr */
   $handler->display->display_options['fields']['field_jahr']['id'] = 'field_jahr';
   $handler->display->display_options['fields']['field_jahr']['table'] = 'field_data_field_jahr';
   $handler->display->display_options['fields']['field_jahr']['field'] = 'field_jahr';
@@ -668,7 +668,7 @@ function map_view_update_views_default_views() {
     'thousand_separator' => '',
     'prefix_suffix' => 1,
   );
-  /* Feld: Inhalt: Veröffentlicht */
+  /* Field: Content: Published */
   $handler->display->display_options['fields']['status']['id'] = 'status';
   $handler->display->display_options['fields']['status']['table'] = 'node';
   $handler->display->display_options['fields']['status']['field'] = 'status';
@@ -678,19 +678,19 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['fields']['status']['type_custom_true'] = 'Veröffentlicht';
   $handler->display->display_options['fields']['status']['type_custom_false'] = 'Entwurf';
   $handler->display->display_options['fields']['status']['not'] = 0;
-  /* Feld: Inhalt: Edit link */
+  /* Field: Content: Edit link */
   $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['label'] = '';
   $handler->display->display_options['fields']['edit_node']['element_label_colon'] = FALSE;
-  /* Feld: Inhalt: Delete link */
+  /* Field: Content: Delete link */
   $handler->display->display_options['fields']['delete_node']['id'] = 'delete_node';
   $handler->display->display_options['fields']['delete_node']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['delete_node']['field'] = 'delete_node';
   $handler->display->display_options['fields']['delete_node']['label'] = '';
   $handler->display->display_options['fields']['delete_node']['element_label_colon'] = FALSE;
-  /* Feld: Inhalt: Bildposition */
+  /* Field: Beitrag: Bildposition */
   $handler->display->display_options['fields']['field_stadt']['id'] = 'field_stadt';
   $handler->display->display_options['fields']['field_stadt']['table'] = 'field_data_field_stadt';
   $handler->display->display_options['fields']['field_stadt']['field'] = 'field_stadt';
@@ -698,26 +698,26 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['fields']['field_stadt']['exclude'] = TRUE;
   $handler->display->display_options['fields']['field_stadt']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['field_stadt']['type'] = 'taxonomy_term_reference_plain';
-  /* Sort criterion: Inhalt: Post date */
+  /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
   $handler->display->display_options['sorts']['created']['field'] = 'created';
   $handler->display->display_options['sorts']['created']['order'] = 'DESC';
   $handler->display->display_options['sorts']['created']['exposed'] = TRUE;
   $handler->display->display_options['sorts']['created']['expose']['label'] = 'Hinzugefügt am';
-  /* Sort criterion: Inhalt: Titel */
+  /* Sort criterion: Content: Title */
   $handler->display->display_options['sorts']['title']['id'] = 'title';
   $handler->display->display_options['sorts']['title']['table'] = 'node';
   $handler->display->display_options['sorts']['title']['field'] = 'title';
   $handler->display->display_options['sorts']['title']['exposed'] = TRUE;
   $handler->display->display_options['sorts']['title']['expose']['label'] = 'Bildtitel';
-  /* Sort criterion: Inhalt: Jahr (field_jahr) */
+  /* Sort criterion: Beitrag: Jahr (field_jahr) */
   $handler->display->display_options['sorts']['field_jahr_value']['id'] = 'field_jahr_value';
   $handler->display->display_options['sorts']['field_jahr_value']['table'] = 'field_data_field_jahr';
   $handler->display->display_options['sorts']['field_jahr_value']['field'] = 'field_jahr_value';
   $handler->display->display_options['sorts']['field_jahr_value']['exposed'] = TRUE;
   $handler->display->display_options['sorts']['field_jahr_value']['expose']['label'] = 'Bilddatum';
-  /* Contextual filter: Benutzer: Uid */
+  /* Contextual filter: User: Uid */
   $handler->display->display_options['arguments']['uid']['id'] = 'uid';
   $handler->display->display_options['arguments']['uid']['table'] = 'users';
   $handler->display->display_options['arguments']['uid']['field'] = 'uid';
@@ -747,7 +747,7 @@ function map_view_update_views_default_views() {
   );
   $handler->display->display_options['filters']['status_selective']['selective_display_field'] = 'status';
   $handler->display->display_options['filters']['status_selective']['selective_items_limit'] = '100';
-  /* Filter criterion: Inhalt: Typ */
+  /* Filter criterion: Content: Type */
   $handler->display->display_options['filters']['type']['id'] = 'type';
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
@@ -783,6 +783,41 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['menu']['name'] = 'user-menu';
   $handler->display->display_options['menu']['context'] = 0;
   $handler->display->display_options['menu']['context_only_inline'] = 0;
+
+  /* Display: profil */
+  $handler = $view->new_display('page', 'profil', 'profil');
+  $handler->display->display_options['defaults']['use_ajax'] = FALSE;
+  $handler->display->display_options['use_ajax'] = TRUE;
+  $handler->display->display_options['defaults']['use_more'] = FALSE;
+  $handler->display->display_options['defaults']['use_more_always'] = FALSE;
+  $handler->display->display_options['defaults']['use_more_always'] = FALSE;
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['defaults']['use_more_text'] = FALSE;
+  $handler->display->display_options['use_more_text'] = 'mehr anzeigen';
+  $handler->display->display_options['defaults']['pager'] = FALSE;
+  $handler->display->display_options['pager']['type'] = 'mini';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '6';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['options']['id'] = '0';
+  $handler->display->display_options['pager']['options']['tags']['previous'] = '‹ vorherige Seite';
+  $handler->display->display_options['pager']['options']['tags']['next'] = 'nächste Seite ›';
+  $handler->display->display_options['defaults']['sorts'] = FALSE;
+  /* Sort criterion: Content: Post date */
+  $handler->display->display_options['sorts']['created']['id'] = 'created';
+  $handler->display->display_options['sorts']['created']['table'] = 'node';
+  $handler->display->display_options['sorts']['created']['field'] = 'created';
+  $handler->display->display_options['sorts']['created']['order'] = 'DESC';
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: Content: Type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'node';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'ansicht' => 'ansicht',
+  );
+  $handler->display->display_options['filters']['type']['group'] = 1;
+  $handler->display->display_options['path'] = 'meine_anisichten/profile';
   $translatables['meine_ansichten'] = array(
     t('Master'),
     t('Meine Ansichten'),
@@ -804,6 +839,15 @@ function map_view_update_views_default_views() {
     t('Status'),
     t('Ort / Stadt'),
     t('Seite'),
+    t('profil'),
+    t('mehr anzeigen'),
+    t('Items per page'),
+    t('- All -'),
+    t('Offset'),
+    t('« first'),
+    t('‹ vorherige Seite'),
+    t('nächste Seite ›'),
+    t('last »'),
   );
   $export['meine_ansichten'] = $view;
 
@@ -831,7 +875,7 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['style_plugin'] = 'list';
   $handler->display->display_options['row_plugin'] = 'fields';
-  /* Kopfbereich: Global: Text area */
+  /* Header: Global: Text area */
   $handler->display->display_options['header']['area']['id'] = 'area';
   $handler->display->display_options['header']['area']['table'] = 'views';
   $handler->display->display_options['header']['area']['field'] = 'area';
@@ -845,20 +889,20 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['empty']['area']['content'] = '<h4>Meine Touren </h4>
 <p>Du hast noch keine Tour erstellt. <br> Erkunde den <a href="/fh-entdecken-map">entdecken Bereich</a>, erstelle eine Tour und füge Bilder zu dieser hinzu.</p>';
   $handler->display->display_options['empty']['area']['format'] = 'full_html';
-  /* Feld: Flag lists: fid */
+  /* Field: Flag lists: fid */
   $handler->display->display_options['fields']['fid']['id'] = 'fid';
   $handler->display->display_options['fields']['fid']['table'] = 'flag_lists_flags';
   $handler->display->display_options['fields']['fid']['field'] = 'fid';
   $handler->display->display_options['fields']['fid']['exclude'] = TRUE;
   $handler->display->display_options['fields']['fid']['link_to_list'] = 0;
-  /* Feld: Flag lists: List title */
+  /* Field: Flag lists: List title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'flag_lists_flags';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['title']['link_to_list'] = 1;
-  /* Feld: Global: Ansicht */
+  /* Field: Global: View */
   $handler->display->display_options['fields']['view']['id'] = 'view';
   $handler->display->display_options['fields']['view']['table'] = 'views';
   $handler->display->display_options['fields']['view']['field'] = 'view';
@@ -868,46 +912,46 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['fields']['view']['view'] = 'touren_bereich_subview_f_r_erstes_bild_der_tour';
   $handler->display->display_options['fields']['view']['display'] = 'page_1';
   $handler->display->display_options['fields']['view']['arguments'] = '[!fid]';
-  /* Feld: Flag lists: List description */
+  /* Field: Flag lists: List description */
   $handler->display->display_options['fields']['description']['id'] = 'description';
   $handler->display->display_options['fields']['description']['table'] = 'flag_lists_flags';
   $handler->display->display_options['fields']['description']['field'] = 'description';
   $handler->display->display_options['fields']['description']['label'] = '';
   $handler->display->display_options['fields']['description']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['description']['link_to_list'] = 0;
-  /* Feld: Flag lists: Tour distance in KM */
+  /* Field: Flag lists: Tour distance in KM */
   $handler->display->display_options['fields']['tour_distance']['id'] = 'tour_distance';
   $handler->display->display_options['fields']['tour_distance']['table'] = 'flag_lists_flags';
   $handler->display->display_options['fields']['tour_distance']['field'] = 'tour_distance';
   $handler->display->display_options['fields']['tour_distance']['label'] = 'Wegstrecke in Metern';
   $handler->display->display_options['fields']['tour_distance']['link_to_list'] = 0;
-  /* Feld: Flag lists: Tour start date */
+  /* Field: Flag lists: Tour start date */
   $handler->display->display_options['fields']['period_start']['id'] = 'period_start';
   $handler->display->display_options['fields']['period_start']['table'] = 'flag_lists_flags';
   $handler->display->display_options['fields']['period_start']['field'] = 'period_start';
   $handler->display->display_options['fields']['period_start']['label'] = 'Anfangsjahr';
   $handler->display->display_options['fields']['period_start']['link_to_list'] = 0;
-  /* Feld: Flag lists: Tour end date */
+  /* Field: Flag lists: Tour end date */
   $handler->display->display_options['fields']['period_end']['id'] = 'period_end';
   $handler->display->display_options['fields']['period_end']['table'] = 'flag_lists_flags';
   $handler->display->display_options['fields']['period_end']['field'] = 'period_end';
   $handler->display->display_options['fields']['period_end']['label'] = 'Endjahr';
   $handler->display->display_options['fields']['period_end']['link_to_list'] = 0;
-  /* Feld: Flag lists: Edit link */
+  /* Field: Flag lists: Edit link */
   $handler->display->display_options['fields']['edit_list']['id'] = 'edit_list';
   $handler->display->display_options['fields']['edit_list']['table'] = 'flag_lists_flags';
   $handler->display->display_options['fields']['edit_list']['field'] = 'edit_list';
   $handler->display->display_options['fields']['edit_list']['label'] = '';
   $handler->display->display_options['fields']['edit_list']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['edit_list']['text'] = 'Bearbeiten';
-  /* Feld: Flag lists: Delete link */
+  /* Field: Flag lists: Delete link */
   $handler->display->display_options['fields']['delete_list']['id'] = 'delete_list';
   $handler->display->display_options['fields']['delete_list']['table'] = 'flag_lists_flags';
   $handler->display->display_options['fields']['delete_list']['field'] = 'delete_list';
   $handler->display->display_options['fields']['delete_list']['label'] = '';
   $handler->display->display_options['fields']['delete_list']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['delete_list']['text'] = 'Tour Löschen';
-  /* Contextual filter: Benutzer: Uid */
+  /* Contextual filter: User: Uid */
   $handler->display->display_options['arguments']['uid']['id'] = 'uid';
   $handler->display->display_options['arguments']['uid']['table'] = 'users';
   $handler->display->display_options['arguments']['uid']['field'] = 'uid';
@@ -927,6 +971,17 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['menu']['name'] = 'user-menu';
   $handler->display->display_options['menu']['context'] = 0;
   $handler->display->display_options['menu']['context_only_inline'] = 0;
+
+  /* Display: profil */
+  $handler = $view->new_display('page', 'profil', 'profil');
+  $handler->display->display_options['defaults']['pager'] = FALSE;
+  $handler->display->display_options['pager']['type'] = 'mini';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '3';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['options']['id'] = '1';
+  $handler->display->display_options['pager']['options']['tags']['previous'] = '‹ vorherige Seite';
+  $handler->display->display_options['pager']['options']['tags']['next'] = 'nächste Seite ›';
+  $handler->display->display_options['path'] = 'meine_touren/profile';
   $translatables['meine_touren'] = array(
     t('Master'),
     t('Meine Touren'),
@@ -947,6 +1002,14 @@ function map_view_update_views_default_views() {
     t('Tour Löschen'),
     t('Alle'),
     t('Page'),
+    t('profil'),
+    t('Items per page'),
+    t('- All -'),
+    t('Offset'),
+    t('« first'),
+    t('‹ vorherige Seite'),
+    t('nächste Seite ›'),
+    t('last »'),
   );
   $export['meine_touren'] = $view;
 
@@ -973,7 +1036,7 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['row_plugin'] = 'fields';
-  /* Feld: Inhalt: Bild */
+  /* Field: Beitrag: Bild */
   $handler->display->display_options['fields']['field_bild']['id'] = 'field_bild';
   $handler->display->display_options['fields']['field_bild']['table'] = 'field_data_field_bild';
   $handler->display->display_options['fields']['field_bild']['field'] = 'field_bild';
@@ -1001,7 +1064,7 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['arguments']['fid']['default_argument_type'] = 'fixed';
   $handler->display->display_options['arguments']['fid']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['fid']['specify_validation'] = TRUE;
-  /* Filter criterion: Inhalt: Veröffentlicht */
+  /* Filter criterion: Content: Published */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
   $handler->display->display_options['filters']['status']['field'] = 'status';

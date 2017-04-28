@@ -4,7 +4,8 @@ git pull origin dev_rh
 
 #mkdir -p ../../../../../db_backup
 #drush sql-dump > ../../../../../db_backup/$(date +"%Y-%m-%d__%H-%M-%S".sql)
-#drush sql-dump > ../db_backup/$(date +"%Y-%m-%d__%H-%M-%S".sql)
+#drush vget > ../../../../../db_backup/$(date +"%Y-%m-%d__%H-%M-%S"_variables.txt)
+
 #drush sql-drop -y
 #drush sql-cli < 2017-03-15__15-19-01.sql
 
