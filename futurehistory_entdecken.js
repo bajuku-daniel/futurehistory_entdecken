@@ -317,8 +317,9 @@
         var toursDataInResult = [];
         var pois_by_author = [];
         var pois_by_category = [];
+        var pois_by_nid = [];
         var uidAuthorData = [];
-
+        lastResults = [];
         // reset
         // pois_by_nid = [];
 
@@ -330,6 +331,8 @@
         currentResultCount = data.length;
 
         for (item in data) {
+            lastResults.push(data[item]['Nid']);
+
             if (pois_by_author[data[item]['uname']] === undefined) {
                 pois_by_author[data[item]['uname']] = [];
             }
@@ -388,6 +391,7 @@
         }
 
 
+
         setUpdateAuthor(uidAuthorData);
         setUpdateTours(toursDataInResult);
         setUpdateCategories(pois_by_category);
@@ -408,6 +412,7 @@
     var tour_url = '/de/fh_view/list_tour_content';
     var use_eval_to_call_last_calculateAndDisplayRoute = '';
     var lastShowTourOnMapCall = [];
+    var lastResults = [];
     var requestArgIndicatorClass = "";
     var currentResultCount = 0;
 
@@ -749,7 +754,9 @@
         activeFilters['filter_by_collection'] = filter_by_collection;
         activeFilters['bounds'] = bounds;
         activeFilters['RequestDate'] = RequestDate;
+        activeFilters['lastResults'] = lastResults;
         // _log("setStateCookie");
+
         $.cookie('fh_state_cookie', JSON.stringify(activeFilters), {path: '/'});
         // _log(activeFilters);
     }
@@ -1079,11 +1086,8 @@ var tourStash = [];
 
         // tours on pageload must be loaded after other filters have been processed
         // Filter mostly (!cat) do rely on valid results
-        _log(lastShowTourOnMapCall.length);
-        _log(lastShowTourOnMapCall);
-        _log(window.firstCall);
+
         if(lastShowTourOnMapCall.length === 3 && window.firstCall === 'active'){
-            _log("-----------> RECHECK LOGIC HERE");
             window.firstCall = "second";
             $('.tour_id_'+lastShowTourOnMapCall[0]+" .info").trigger('click');
         }
