@@ -317,7 +317,7 @@
         var toursDataInResult = [];
         var pois_by_author = [];
         var pois_by_category = [];
-        var pois_by_nid = [];
+        // var pois_by_nid = [];
         var uidAuthorData = [];
         lastResults = [];
         // reset
@@ -389,7 +389,6 @@
         for (user in pois_by_author) {
             uidAuthorData[user] = {count: pois_by_author[user].length, uid: pois_by_author[user][0]['uid']};
         }
-
 
 
         setUpdateAuthor(uidAuthorData);
@@ -532,6 +531,7 @@
             data: "tour_id=" + tour_id,
             dataType: 'json',
             success: function (tourdata) {
+
                 var original_tourdata = [];
                 $.each(tourdata, function( index, value ) {
                     if (typeof value !== 'undefined' && typeof value.nid !== 'undefined' ) {
@@ -1058,6 +1058,7 @@ var tourStash = [];
                                     Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapIdGlobal, mapCenter);
 
                                 } else {
+
                                     jQuery('.tour_selector').removeClass('active');
                                     $(this).parent().addClass('active');
                                     showTourOnMap($(this).data('tourid'), $(this).data('tourtitel'), $(this).data('distance'));
@@ -1102,6 +1103,7 @@ var tourStash = [];
      * @param distance
      */
     function calculateAndDisplayRoute(directionsService, directionsDisplay, original_tourdata, distance) {
+
         var waypts = [];
         var my_origin='';
         var my_destination='';
@@ -1120,6 +1122,7 @@ var tourStash = [];
                 });
             }
         }
+
 
         directionsService.route({
             origin: my_origin,
