@@ -698,6 +698,12 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['fields']['field_stadt']['exclude'] = TRUE;
   $handler->display->display_options['fields']['field_stadt']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['field_stadt']['type'] = 'taxonomy_term_reference_plain';
+  /* Field: Beitrag: Bildposition */
+  $handler->display->display_options['fields']['field_position_der_aufnahme']['id'] = 'field_position_der_aufnahme';
+  $handler->display->display_options['fields']['field_position_der_aufnahme']['table'] = 'field_data_field_position_der_aufnahme';
+  $handler->display->display_options['fields']['field_position_der_aufnahme']['field'] = 'field_position_der_aufnahme';
+  $handler->display->display_options['fields']['field_position_der_aufnahme']['click_sort_column'] = 'lat';
+  $handler->display->display_options['fields']['field_position_der_aufnahme']['type'] = 'futurehistory_text';
   /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
@@ -776,6 +782,66 @@ function map_view_update_views_default_views() {
 
   /* Display: Seite */
   $handler = $view->new_display('page', 'Seite', 'page_1');
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Beitrag: Bild */
+  $handler->display->display_options['fields']['field_bild']['id'] = 'field_bild';
+  $handler->display->display_options['fields']['field_bild']['table'] = 'field_data_field_bild';
+  $handler->display->display_options['fields']['field_bild']['field'] = 'field_bild';
+  $handler->display->display_options['fields']['field_bild']['label'] = '';
+  $handler->display->display_options['fields']['field_bild']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_bild']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_bild']['settings'] = array(
+    'image_style' => 'fh_grid_view',
+    'image_link' => 'content',
+  );
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+  /* Field: Beitrag: Jahr */
+  $handler->display->display_options['fields']['field_jahr']['id'] = 'field_jahr';
+  $handler->display->display_options['fields']['field_jahr']['table'] = 'field_data_field_jahr';
+  $handler->display->display_options['fields']['field_jahr']['field'] = 'field_jahr';
+  $handler->display->display_options['fields']['field_jahr']['label'] = '';
+  $handler->display->display_options['fields']['field_jahr']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_jahr']['settings'] = array(
+    'thousand_separator' => '',
+    'prefix_suffix' => 1,
+  );
+  /* Field: Content: Published */
+  $handler->display->display_options['fields']['status']['id'] = 'status';
+  $handler->display->display_options['fields']['status']['table'] = 'node';
+  $handler->display->display_options['fields']['status']['field'] = 'status';
+  $handler->display->display_options['fields']['status']['label'] = '';
+  $handler->display->display_options['fields']['status']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['status']['type'] = 'custom';
+  $handler->display->display_options['fields']['status']['type_custom_true'] = 'Veröffentlicht';
+  $handler->display->display_options['fields']['status']['type_custom_false'] = 'Entwurf';
+  $handler->display->display_options['fields']['status']['not'] = 0;
+  /* Field: Content: Edit link */
+  $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['label'] = '';
+  $handler->display->display_options['fields']['edit_node']['element_label_colon'] = FALSE;
+  /* Field: Content: Delete link */
+  $handler->display->display_options['fields']['delete_node']['id'] = 'delete_node';
+  $handler->display->display_options['fields']['delete_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['delete_node']['field'] = 'delete_node';
+  $handler->display->display_options['fields']['delete_node']['label'] = '';
+  $handler->display->display_options['fields']['delete_node']['element_label_colon'] = FALSE;
+  /* Field: Beitrag: Bildposition */
+  $handler->display->display_options['fields']['field_stadt']['id'] = 'field_stadt';
+  $handler->display->display_options['fields']['field_stadt']['table'] = 'field_data_field_stadt';
+  $handler->display->display_options['fields']['field_stadt']['field'] = 'field_stadt';
+  $handler->display->display_options['fields']['field_stadt']['label'] = '';
+  $handler->display->display_options['fields']['field_stadt']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_stadt']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_stadt']['type'] = 'taxonomy_term_reference_plain';
   $handler->display->display_options['path'] = 'user/meine_ansichten';
   $handler->display->display_options['menu']['type'] = 'normal';
   $handler->display->display_options['menu']['title'] = 'Eigene Bilder';
@@ -796,11 +862,92 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['use_more_text'] = 'mehr anzeigen';
   $handler->display->display_options['defaults']['pager'] = FALSE;
   $handler->display->display_options['pager']['type'] = 'mini';
-  $handler->display->display_options['pager']['options']['items_per_page'] = '6';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '10';
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['pager']['options']['id'] = '0';
   $handler->display->display_options['pager']['options']['tags']['previous'] = '‹ vorherige Seite';
   $handler->display->display_options['pager']['options']['tags']['next'] = 'nächste Seite ›';
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Beitrag: Bild */
+  $handler->display->display_options['fields']['field_bild']['id'] = 'field_bild';
+  $handler->display->display_options['fields']['field_bild']['table'] = 'field_data_field_bild';
+  $handler->display->display_options['fields']['field_bild']['field'] = 'field_bild';
+  $handler->display->display_options['fields']['field_bild']['label'] = '';
+  $handler->display->display_options['fields']['field_bild']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_bild']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_bild']['settings'] = array(
+    'image_style' => 'fh_grid_view',
+    'image_link' => 'content',
+  );
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+  /* Field: Beitrag: Jahr */
+  $handler->display->display_options['fields']['field_jahr']['id'] = 'field_jahr';
+  $handler->display->display_options['fields']['field_jahr']['table'] = 'field_data_field_jahr';
+  $handler->display->display_options['fields']['field_jahr']['field'] = 'field_jahr';
+  $handler->display->display_options['fields']['field_jahr']['label'] = '';
+  $handler->display->display_options['fields']['field_jahr']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_jahr']['settings'] = array(
+    'thousand_separator' => '',
+    'prefix_suffix' => 1,
+  );
+  /* Field: Content: Published */
+  $handler->display->display_options['fields']['status']['id'] = 'status';
+  $handler->display->display_options['fields']['status']['table'] = 'node';
+  $handler->display->display_options['fields']['status']['field'] = 'status';
+  $handler->display->display_options['fields']['status']['label'] = '';
+  $handler->display->display_options['fields']['status']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['status']['type'] = 'custom';
+  $handler->display->display_options['fields']['status']['type_custom_true'] = 'Veröffentlicht';
+  $handler->display->display_options['fields']['status']['type_custom_false'] = 'Entwurf';
+  $handler->display->display_options['fields']['status']['not'] = 0;
+  /* Field: Content: Edit link */
+  $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['label'] = '';
+  $handler->display->display_options['fields']['edit_node']['element_label_colon'] = FALSE;
+  /* Field: Content: Delete link */
+  $handler->display->display_options['fields']['delete_node']['id'] = 'delete_node';
+  $handler->display->display_options['fields']['delete_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['delete_node']['field'] = 'delete_node';
+  $handler->display->display_options['fields']['delete_node']['label'] = '';
+  $handler->display->display_options['fields']['delete_node']['element_label_colon'] = FALSE;
+  /* Field: Beitrag: Bildposition */
+  $handler->display->display_options['fields']['field_stadt']['id'] = 'field_stadt';
+  $handler->display->display_options['fields']['field_stadt']['table'] = 'field_data_field_stadt';
+  $handler->display->display_options['fields']['field_stadt']['field'] = 'field_stadt';
+  $handler->display->display_options['fields']['field_stadt']['label'] = '';
+  $handler->display->display_options['fields']['field_stadt']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_stadt']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_stadt']['type'] = 'taxonomy_term_reference_plain';
+  /* Field: Beitrag: Bildposition */
+  $handler->display->display_options['fields']['field_position_der_aufnahme']['id'] = 'field_position_der_aufnahme';
+  $handler->display->display_options['fields']['field_position_der_aufnahme']['table'] = 'field_data_field_position_der_aufnahme';
+  $handler->display->display_options['fields']['field_position_der_aufnahme']['field'] = 'field_position_der_aufnahme';
+  $handler->display->display_options['fields']['field_position_der_aufnahme']['label'] = 'lat';
+  $handler->display->display_options['fields']['field_position_der_aufnahme']['alter']['text'] = '[field_position_der_aufnahme-lat] ,[field_position_der_aufnahme-lng]
+';
+  $handler->display->display_options['fields']['field_position_der_aufnahme']['click_sort_column'] = 'lat';
+  $handler->display->display_options['fields']['field_position_der_aufnahme']['type'] = 'futurehistory_lat';
+  $handler->display->display_options['fields']['field_position_der_aufnahme']['settings'] = array(
+    'data_element_key' => '',
+    'skip_safe' => 0,
+    'skip_empty_values' => 0,
+  );
+  /* Field: Beitrag: Bildposition */
+  $handler->display->display_options['fields']['field_position_der_aufnahme_1']['id'] = 'field_position_der_aufnahme_1';
+  $handler->display->display_options['fields']['field_position_der_aufnahme_1']['table'] = 'field_data_field_position_der_aufnahme';
+  $handler->display->display_options['fields']['field_position_der_aufnahme_1']['field'] = 'field_position_der_aufnahme';
+  $handler->display->display_options['fields']['field_position_der_aufnahme_1']['label'] = 'lon';
+  $handler->display->display_options['fields']['field_position_der_aufnahme_1']['click_sort_column'] = 'lat';
+  $handler->display->display_options['fields']['field_position_der_aufnahme_1']['type'] = 'futurehistory_lon';
   $handler->display->display_options['defaults']['sorts'] = FALSE;
   /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
@@ -832,6 +979,7 @@ function map_view_update_views_default_views() {
     t('author'),
     t('Veröffentlicht'),
     t('Entwurf'),
+    t('Bildposition'),
     t('Hinzugefügt am'),
     t('Bildtitel'),
     t('Bilddatum'),
@@ -848,6 +996,10 @@ function map_view_update_views_default_views() {
     t('‹ vorherige Seite'),
     t('nächste Seite ›'),
     t('last »'),
+    t('lat'),
+    t('[field_position_der_aufnahme-lat] ,[field_position_der_aufnahme-lng]
+'),
+    t('lon'),
   );
   $export['meine_ansichten'] = $view;
 
@@ -976,7 +1128,7 @@ function map_view_update_views_default_views() {
   $handler = $view->new_display('page', 'profil', 'profil');
   $handler->display->display_options['defaults']['pager'] = FALSE;
   $handler->display->display_options['pager']['type'] = 'mini';
-  $handler->display->display_options['pager']['options']['items_per_page'] = '3';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '5';
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['pager']['options']['id'] = '1';
   $handler->display->display_options['pager']['options']['tags']['previous'] = '‹ vorherige Seite';
