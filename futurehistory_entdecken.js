@@ -1079,8 +1079,11 @@ var tourStash = [];
 
         // tours on pageload must be loaded after other filters have been processed
         // Filter mostly (!cat) do rely on valid results
+        _log(lastShowTourOnMapCall.length);
+        _log(lastShowTourOnMapCall);
+        _log(window.firstCall);
         if(lastShowTourOnMapCall.length === 3 && window.firstCall === 'active'){
-            // _log("-----------> RECHECK LOGIC HERE");
+            _log("-----------> RECHECK LOGIC HERE");
             window.firstCall = "second";
             $('.tour_id_'+lastShowTourOnMapCall[0]+" .info").trigger('click');
         }
@@ -3416,10 +3419,15 @@ var tourStash = [];
                     }
                     filter_by_collection = url_suid;
 
+                    console.log("url_t");
+                    console.log(url_t);
+
                     if(url_t !== '' || url_t != undefined){
                         url_t = decodeURI(url_t);
+                        console.log(url_t);
                         lastShowTourOnMapCall = url_t.split(',');
                         window.firstCall = 'active'
+                        console.log(lastShowTourOnMapCall);
                     }
 
 
