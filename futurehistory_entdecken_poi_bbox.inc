@@ -78,65 +78,66 @@ class futurehistory_entdecken_poi_bbox extends views_plugin_style {
       '#options' => $field_options,
       '#default_value' => $this->options['marker_position_field'],
     );
- $form['marker_changed_field'] = array(
+    $form['marker_changed_field'] = array(
       '#title' => t('Marker Ansicht Changed field'),
       '#type' => 'select',
       '#options' => $field_options,
       '#default_value' => $this->options['marker_changed_field'],
     );
-
- $form['marker_img_main_field'] = array(
+    $form['marker_img_main_field'] = array(
       '#title' => t('Marker Ansicht Hauptbild field'),
       '#type' => 'select',
       '#options' => $field_options,
       '#default_value' => $this->options['marker_img_main_field'],
     );
-
- $form['marker_img_thumb_field'] = array(
+    $form['marker_img_thumb_field'] = array(
       '#title' => t('Marker Ansicht Thumbnail field'),
       '#type' => 'select',
       '#options' => $field_options,
       '#default_value' => $this->options['marker_img_thumb_field'],
     );
-
- $form['marker_img_overlay_field'] = array(
+    $form['marker_img_overlay_field'] = array(
       '#title' => t('Marker Ansicht Overlay field'),
       '#type' => 'select',
       '#options' => $field_options,
       '#default_value' => $this->options['marker_img_overlay_field'],
     );
- $form['marker_flagged_field'] = array(
+    $form['marker_flagged_field'] = array(
       '#title' => t('Marker flagged boolean field'),
       '#type' => 'select',
       '#options' => $field_options,
       '#default_value' => $this->options['marker_flagged_field'],
     );
-
- $form['marker_flagged_link_field'] = array(
+    $form['marker_flagged_link_field'] = array(
       '#title' => t('Marker flagged link field'),
       '#type' => 'select',
       '#options' => $field_options,
       '#default_value' => $this->options['marker_flagged_link_field'],
     );
-
- $form['marker_kategorie_field'] = array(
+    $form['marker_kategorie_field'] = array(
       '#title' => t('Marker kategorie field'),
       '#type' => 'select',
       '#options' => $field_options,
       '#default_value' => $this->options['marker_kategorie_field'],
     );
     $form['marker_overlay_year_field'] = array(
-         '#title' => t('Marker overlay picture year field'),
-         '#type' => 'select',
-         '#options' => $field_options,
-         '#default_value' => $this->options['marker_overlay_year_field'],
-       );
-    $form['marker_is_in_tour'] = array(
+       '#title' => t('Marker overlay picture year field'),
+       '#type' => 'select',
+       '#options' => $field_options,
+       '#default_value' => $this->options['marker_overlay_year_field'],
+     );
+     $form['marker_is_in_tour'] = array(
       '#title' => t('list of tour IDs'),
       '#type' => 'select',
       '#options' => $field_options,
       '#default_value' => $this->options['marker_is_in_tour'],
-      );
+    );
+    $form['purchase_id'] = array(
+      '#title' => t('The Purchase ID if Commercial Tour'),
+      '#type' => 'select',
+      '#options' => $field_options,
+      '#default_value' => $this->options['purchase_id'],
+    );
   }
 
   /**
@@ -234,7 +235,11 @@ class futurehistory_entdecken_poi_bbox extends views_plugin_style {
         $marker_is_in_tour = preg_replace('/\s+/', '', $marker_is_in_tour_unformated);
         //$marker_is_in_tour = json_encode($marker_is_in_tour_unformated);
       }
-
+      $purchase_id= '';
+      if ($this->options['purchase_id']) {
+        $purchase_id_unformated = $this->view->render_field($this->options['purchase_id'], $row_index);
+        $purchase_id = preg_replace('/\s+/', '', $purchase_id_unformated);
+      }
       $marker_uid = '';
       $marker_uname = '';
 
@@ -269,6 +274,8 @@ class futurehistory_entdecken_poi_bbox extends views_plugin_style {
           'kategorie' => $marker_kategorie,
           'overlay-year' => $marker_overlay_year,
           'tour_id' => $marker_is_in_tour,
+          'purchase_id' => $purchase_id,
+
           'uid' => $marker_uid,
           'uname' => $marker_uname,
         );
