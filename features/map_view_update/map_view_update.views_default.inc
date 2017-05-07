@@ -853,13 +853,18 @@ function map_view_update_views_default_views() {
   /* Display: profil */
   $handler = $view->new_display('page', 'profil', 'profil');
   $handler->display->display_options['defaults']['use_ajax'] = FALSE;
-  $handler->display->display_options['use_ajax'] = TRUE;
   $handler->display->display_options['defaults']['use_more'] = FALSE;
   $handler->display->display_options['defaults']['use_more_always'] = FALSE;
   $handler->display->display_options['defaults']['use_more_always'] = FALSE;
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['defaults']['use_more_text'] = FALSE;
   $handler->display->display_options['use_more_text'] = 'mehr anzeigen';
+  $handler->display->display_options['defaults']['exposed_form'] = FALSE;
+  $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['exposed_form']['options']['reset_button_label'] = 'Zurücksetzen';
+  $handler->display->display_options['exposed_form']['options']['exposed_sorts_label'] = 'Sortierung';
+  $handler->display->display_options['exposed_form']['options']['expose_sort_order'] = FALSE;
+  $handler->display->display_options['exposed_form']['options']['autosubmit'] = TRUE;
   $handler->display->display_options['defaults']['pager'] = FALSE;
   $handler->display->display_options['pager']['type'] = 'mini';
   $handler->display->display_options['pager']['options']['items_per_page'] = '10';
@@ -964,7 +969,36 @@ function map_view_update_views_default_views() {
     'ansicht' => 'ansicht',
   );
   $handler->display->display_options['filters']['type']['group'] = 1;
+  /* Filter criterion: Bildposition (field_stadt) (selective) */
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['id'] = 'field_stadt_tid_selective';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['table'] = 'field_data_field_stadt';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['field'] = 'field_stadt_tid_selective';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['ui_name'] = 'Bildposition (field_stadt) (selective)';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['expose']['operator_id'] = '';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['expose']['label'] = 'Ort / Stadt';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['expose']['identifier'] = 'field_stadt_tid_selective';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    4 => 0,
+    6 => 0,
+    5 => 0,
+    3 => 0,
+  );
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['selective_display_field'] = 'field_stadt';
+  $handler->display->display_options['filters']['field_stadt_tid_selective']['selective_items_limit'] = '100';
   $handler->display->display_options['path'] = 'meine_anisichten/profile';
+
+  /* Display: Block */
+  $handler = $view->new_display('block', 'Block', 'block_1');
+  $handler->display->display_options['defaults']['pager'] = FALSE;
+  $handler->display->display_options['pager']['type'] = 'mini';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '10';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['options']['id'] = '0';
+  $handler->display->display_options['pager']['options']['tags']['previous'] = '‹ vorherige Seite';
+  $handler->display->display_options['pager']['options']['tags']['next'] = 'nächste Seite ›';
   $translatables['meine_ansichten'] = array(
     t('Master'),
     t('Meine Ansichten'),
@@ -1000,6 +1034,7 @@ function map_view_update_views_default_views() {
     t('[field_position_der_aufnahme-lat] ,[field_position_der_aufnahme-lng]
 '),
     t('lon'),
+    t('Block'),
   );
   $export['meine_ansichten'] = $view;
 
@@ -1126,6 +1161,8 @@ function map_view_update_views_default_views() {
 
   /* Display: profil */
   $handler = $view->new_display('page', 'profil', 'profil');
+  $handler->display->display_options['defaults']['use_ajax'] = FALSE;
+  $handler->display->display_options['use_ajax'] = TRUE;
   $handler->display->display_options['defaults']['pager'] = FALSE;
   $handler->display->display_options['pager']['type'] = 'mini';
   $handler->display->display_options['pager']['options']['items_per_page'] = '5';
