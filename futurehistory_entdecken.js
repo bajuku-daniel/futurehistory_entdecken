@@ -1004,9 +1004,12 @@ var tourStash = [];
                     // _log("success ");
                     for (var key in allTourDetails) {
                         var tourdetails = [allTourDetails[key]];
-                        // _log(tourdetails);
+
+
+_log(tourdetails[0]);
+_log(tourdetails[0].purchase_id);
                         request_result_count++;
-                        if (tourdetails[0] == undefined || $('.tour_id_' + tourdetails[0].tour_id).size() > 0) {
+                        if (tourdetails[0] == undefined || $('.tour_id_' + tourdetails[0].tour_id).size() > 0 || tourdetails[0].purchase_id == "A") {
                             return;
                         }
                         var distance = tourdetails[0].distance;
