@@ -1008,10 +1008,10 @@ var tourStash = [];
                         var tourdetails = [allTourDetails[key]];
 
 
-_log(tourdetails[0]);
-_log(tourdetails[0].purchase_id);
                         request_result_count++;
-                        if (tourdetails[0] == undefined || $('.tour_id_' + tourdetails[0].tour_id).size() > 0 || tourdetails[0].purchase_id == "A") {
+
+                        //|| (typeof tourdetails[0].purchase_id === 'undefined') || tourdetails[0].purchase_id == ""
+                        if (tourdetails[0] == undefined || $('.tour_id_' + tourdetails[0].tour_id).size() > 0) {
                             return;
                         }
                         var distance = tourdetails[0].distance;
@@ -1020,6 +1020,7 @@ _log(tourdetails[0].purchase_id);
                         var autor = tourdetails[0].name;
                         var tour_id = tourdetails[0].tour_id;
                         var description = tourdetails[0].description;
+                        var purchase_id = tourdetails[0].purchase_id == ""?'':'hidden';
 
                         var buildTourMarkup = function () {
 
@@ -1034,7 +1035,7 @@ _log(tourdetails[0].purchase_id);
                                 return distanceC;
                             };
 
-                            var $tour = $('<div />', {'class': 'tour_id_' + tour_id + " tour_selector"});
+                            var $tour = $('<div />', {'class': 'tour_id_' + tour_id + " tour_selector "+purchase_id});
                             var $tour_status = $('<div />', {'class': 'status ui-icon-caret-1-e'});
                             var $tour_info = $('<div />', {
                                 'class': 'info',
@@ -1078,7 +1079,10 @@ _log(tourdetails[0].purchase_id);
                             tourStash[tour_id] = [distance, $tour];
                         }
 
+
                         buildTourMarkup();
+
+
                     }
                 }
             });
