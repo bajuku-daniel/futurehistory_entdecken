@@ -26,7 +26,7 @@
 
       <div id="sammlungen_selector">
         <form>
-          <input type="radio" id="fh_show_only_collections" name="show_collections" /> <label for="fh_show_only_collections"> <?php print t('Nur Sammlung anzeigen'); ?> </label>
+          <input type="radio" id="fh_show_only_collections" name="show_collections" data-uid="<?php print $user->uid ?>" /> <label for="fh_show_only_collections"> <?php print t('Nur Sammlung anzeigen'); ?> </label>
           <input type="radio" checked="checked" id="fh_show_all_collections" name="show_collections" /> <label for="fh_show_all_collections"> <?php print t('Alles anzeigen'); ?></label>
         </form>
       </div>
