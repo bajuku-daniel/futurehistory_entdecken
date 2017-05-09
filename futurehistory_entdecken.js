@@ -226,6 +226,15 @@
     Drupal.futurehistoryEntdecken.DateSlider = function (mapId, InitYearRange) {
         // the Date Range : date=all <-- all dates, date=--1990 <-- all bevfore 1990, date=1990-- <-- all after 1990, date=1800--1990 <-- all between 1800 and 1990
         // date slider stuff (linde@webgis.de, 2016/05)
+
+
+
+        if(InitYearRange[0] !== InitYearRange[0]){
+            // NaN set to first_date / last_date
+            InitYearRange = [Drupal.settings.futurehistoryEntdecken.first_date,Drupal.settings.futurehistoryEntdecken.last_date];
+        }
+
+        // String(Drupal.settings.futurehistoryEntdecken.first_date) + '--' + String(Drupal.settings.futurehistoryEntdecken.last_date)
         $("#time_slider").slider({
             range: true,
             min: parseInt(Drupal.settings.futurehistoryEntdecken.first_date),
@@ -333,6 +342,11 @@
         for (item in data) {
             lastResults.push(data[item]['Nid']);
 
+
+            // console.log("Drupal.settings.futurehistoryEntdecken.first_date");
+            // console.log(Drupal.settings.futurehistoryEntdecken.first_date);
+            // console.log(data[item]);
+
             if (pois_by_author[data[item]['uname']] === undefined) {
                 pois_by_author[data[item]['uname']] = [];
             }
@@ -439,7 +453,7 @@
     function _log(value) {
         try {
             // console.log(arguments.callee.caller.name+': ',value);
-            mylog.log(arguments.callee.caller.name+': ',value);
+            // mylog.log(arguments.callee.caller.name+': ',value);
         } catch (err) {
             // no problems when no console
         }
@@ -450,7 +464,7 @@
             log: function() {
                 var args = Array.prototype.slice.call(arguments);
                 try {
-                    console.log.apply(console, args);
+                    // console.log.apply(console, args);
                 } catch (err) {
                     // no problems when no console
                 }
@@ -459,7 +473,7 @@
             warn: function() {
                 var args = Array.prototype.slice.call(arguments);
                 try {
-                    console.warn.apply(console, args);
+                    // console.warn.apply(console, args);
                 } catch (err) {
                     // no problems when no console
                 }
@@ -468,7 +482,7 @@
             error: function() {
                 var args = Array.prototype.slice.call(arguments);
                 try {
-                    console.error.apply(console, args);
+                    // console.error.apply(console, args);
                 } catch (err) {
                     // no problems when no console
                 }
@@ -565,7 +579,7 @@
                 use_eval_to_call_last_calculateAndDisplayRoute = wrapFunction(calculateAndDisplayRoute, this, [directionsService, directionsDisplay, original_tourdata.slice(), distance]);
 
                 _tourdisplay_is_Active(true);
-                setStateCookie(RequestDate);
+
                 jQuery('#tour_selector').parent().find('h3').first().find('span').last().html(tourname);
 
                 // timeout needed to set markers - sometimes they dont show up - possibly due directions && marker update interference
@@ -574,6 +588,7 @@
                         Drupal.futurehistoryEntdecken.setMapMarkers(original_tourdata.slice(), mapIdGlobal);
                         Drupal.futurehistoryEntdecken.setMapThumbnails(original_tourdata.slice(), mapIdGlobal, mapCenter);
                         clearTimeout(tout);
+                        setStateCookie(RequestDate);
 
                     }, 500);
             }
@@ -754,8 +769,13 @@
         activeFilters['filter_by_collection'] = filter_by_collection;
         activeFilters['bounds'] = bounds;
         activeFilters['RequestDate'] = RequestDate;
+        lastResults=[]
+        $('#thumbnail-pois li').each(function(i,k){
+            lastResults.push($(k).attr('id').split('_')[1]);
+        });
         activeFilters['lastResults'] = lastResults;
-        // _log("setStateCookie");
+        _log("setStateCookie");
+        _log(lastResults);
 
         $.cookie('fh_state_cookie', JSON.stringify(activeFilters), {path: '/'});
         // _log(activeFilters);
@@ -1170,8 +1190,13 @@ var tourStash = [];
     // list the marker Thumbnails and fill the LI elements wit IDs
     Drupal.futurehistoryEntdecken.setMapThumbnails = function (marker_content, mapId, mapCenter) {
         $('#thumbnail-pois').empty();
-        // mylog.warn('setMapThumbnails');
-        // _log(tourdisplay_is_Active);
+        mylog.log('setMapThumbnails');
+        _log(marker_content);
+        lastResults=[]
+        $.each(marker_content,function($i,$k){
+
+        });
+        // lastResults
         if (!tourdisplay_is_Active) {
             // thumb-sort: distance from center versus age
             if (sort == 'dist') {
@@ -3270,8 +3295,8 @@ var tourStash = [];
 
     Drupal.behaviors.futurehistoryEntdecken = {
         attach: function (context, settings) {
-            console.log("Drupal.behaviors.futurehistoryEntdecken");
-            console.log("INIT");
+            // console.log("Drupal.behaviors.futurehistoryEntdecken");
+            // console.log("INIT");
             var mapId = '';
             var placesId = '';
 
@@ -3423,7 +3448,7 @@ var tourStash = [];
 
                     YearRange[0] = parseInt(url_d.split('--')[0]);
                     YearRange[1] = parseInt(url_d.split('--')[1]);
-                    RequestDate = (url_d === 'all')?url_d:String(YearRange[0]) + '--' + String(YearRange[1]);
+                    RequestDate = (url_d === 'all')?'all':String(YearRange[0]) + '--' + String(YearRange[1]);
 
                     sort = url_s;
                     author = url_a === 'all'?url_a:[url_a];
@@ -3435,15 +3460,12 @@ var tourStash = [];
                     }
                     filter_by_collection = url_suid;
 
-                    console.log("url_t");
-                    console.log(url_t);
+
 
                     if(url_t !== '' || url_t != undefined){
                         url_t = decodeURI(url_t);
-                        console.log(url_t);
                         lastShowTourOnMapCall = url_t.split(',');
                         window.firstCall = 'active'
-                        console.log(lastShowTourOnMapCall);
                     }
 
 
