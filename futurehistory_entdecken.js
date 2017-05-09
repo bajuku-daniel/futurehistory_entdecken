@@ -276,6 +276,7 @@
                 author = state.author;
                 mapCenter = state.mapcenter;
                 lastShowTourOnMapCall = state.lastShowTourOnMapCall;
+
                 // tourdisplay_is_Active = state.tourdisplay_is_Active;
                 // _log("window.firstCall END");
             }
@@ -604,6 +605,7 @@
             requestArgIndicatorClass = '';
         }
 
+
         // check kategorie for changes
         if (isArray(kategorie) && kategorie.length > 0 && kategorie[0] !== 'all' && (requestArgIndicatorClass.indexOf("kategorie") ==-1)) {
             requestArgIndicatorClass = requestArgIndicatorClass + ' kategorie';
@@ -819,7 +821,7 @@
         }
 
         // AUTOR HEADER
-        // todo: auto filter not working yet - view has to be extended
+
         var selectedAutorlables = '';
         jQuery("#author_selector input:checked").each(function () {
             var nexttext = $(this).parent().text();
@@ -1190,12 +1192,12 @@ var tourStash = [];
     // list the marker Thumbnails and fill the LI elements wit IDs
     Drupal.futurehistoryEntdecken.setMapThumbnails = function (marker_content, mapId, mapCenter) {
         $('#thumbnail-pois').empty();
-        mylog.log('setMapThumbnails');
-        _log(marker_content);
-        lastResults=[]
-        $.each(marker_content,function($i,$k){
 
-        });
+        if(tourdisplay_is_Active){
+            console.log('setMapThumbnails:: tourdisplay_is_Active');
+            initializeRequestArgIndicator();
+        }
+
         // lastResults
         if (!tourdisplay_is_Active) {
             // thumb-sort: distance from center versus age
