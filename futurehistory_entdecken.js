@@ -296,12 +296,22 @@
             data: RequestArgs,
             dataType: 'json',
             success: function (data) {
-                var marker_content = data;
+
+                var marker_content = [];
                 if (!tourdisplay_is_Active) {
                     if (directionsDisplay.setMap) {
                         directionsDisplay.setMap(null);
                         directionsDisplay.setDirections({routes: []});
                     }
+
+                    var marker_purchased = data;
+                    //filter purchase_id items
+                    for (var item in marker_purchased) {
+                        if(!hasPurchaseId(marker_purchased[item]['purchase_id'])){
+                           marker_content.push(marker_purchased[item]);
+                        }
+                    }
+
                     Drupal.futurehistoryEntdecken.setMapMarkers(marker_content, mapId);
                     Drupal.futurehistoryEntdecken.setMapThumbnails(marker_content, mapId, mapCenter);
                     Drupal.futurehistoryEntdecken.initializeToursAuthorCategoryData(data);
@@ -341,6 +351,8 @@
         currentResultCount = data.length;
 
         for (item in data) {
+
+
             lastResults.push(data[item]['Nid']);
 
 
@@ -404,7 +416,6 @@
         for (user in pois_by_author) {
             uidAuthorData[user] = {count: pois_by_author[user].length, uid: pois_by_author[user][0]['uid']};
         }
-
 
         setUpdateAuthor(uidAuthorData);
         setUpdateTours(toursDataInResult);
@@ -858,10 +869,20 @@
         }
 
 
-
-
     }
 
+    /**
+     * A Simple value check helper
+     * @param value
+     * @returns {boolean}
+     */
+
+    function hasPurchaseId(value){
+        if(value === "" || value === "null" || value === "Null" || value === "NULL"){
+            return false;
+        }
+        return true;
+    }
 
     /**
      * setUpdateAuthor - set Author filter UI
@@ -1042,7 +1063,11 @@ var tourStash = [];
                         var autor = tourdetails[0].name;
                         var tour_id = tourdetails[0].tour_id;
                         var description = tourdetails[0].description;
-                        var purchase_id = tourdetails[0].purchase_id == ""?'':'hidden';
+                        var purchase_id = hasPurchaseId(tourdetails[0].purchase_id)?'hidden':'';
+
+
+
+
 
                         var buildTourMarkup = function () {
 
@@ -1194,7 +1219,7 @@ var tourStash = [];
         $('#thumbnail-pois').empty();
 
         if(tourdisplay_is_Active){
-            console.log('setMapThumbnails:: tourdisplay_is_Active');
+            // console.log('setMapThumbnails:: tourdisplay_is_Active');
             initializeRequestArgIndicator();
         }
 
