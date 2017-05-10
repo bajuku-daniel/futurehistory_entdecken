@@ -259,33 +259,33 @@
     //Returns a Marker array from the bbox request // sets class indictor according to selected filters
     //Parameters: bounds, date, kategorie
 
-    Drupal.futurehistoryEntdecken.getMarkers = function (bounds, RequestDate, kategorie, sort, mapId, mapCenter) {
+    Drupal.futurehistoryEntdecken.getMarkers = function (bounds, RequestDateLoc, kategorieLoc, sort, mapId, mapCenterLoc) {
+        RequestDate = RequestDateLoc;
+        mapCenter = mapCenterLoc;
+        mapIdGlobal = mapId;
+        kategorie = kategorieLoc;
 
         // _log(window.firstCall);
         if (window.firstCall === undefined) {
             window.firstCall = false;
             var state = checkStateCookie();
-            // _log("state",state);
-            // _log(state);
-            if(state !== false){
 
+            if(state !== false){
+                // this should happen in checkStateCookie
                 window.firstCall = 'active';
-                // _log(state.initializeOnPageLoad);
                 RequestDate = state.RequestDate;
-                kategorie = state.kategorie;
                 author = state.author;
-                mapCenter = state.mapcenter;
                 lastShowTourOnMapCall = state.lastShowTourOnMapCall;
 
-                // tourdisplay_is_Active = state.tourdisplay_is_Active;
-                // _log("window.firstCall END");
+                mapCenter = state.mapcenter;
+                kategorie = state.kategorie;
             }
         }
         disbleAllUI();
         clearAjaxCalls();
         initializeRequestArgIndicator();
 
-        var RequestArgs = getRequestArgs(bounds, RequestDate, kategorie);
+        var RequestArgs = getRequestArgs(bounds);
 
         // _log("start the ajax getMarkers ");
         //
@@ -314,12 +314,14 @@
 
                     Drupal.futurehistoryEntdecken.setMapMarkers(marker_content, mapId);
                     Drupal.futurehistoryEntdecken.setMapThumbnails(marker_content, mapId, mapCenter);
-                    Drupal.futurehistoryEntdecken.initializeToursAuthorCategoryData(data);
+                    Drupal.futurehistoryEntdecken.initializeToursAuthorCategoryData(marker_content);
                     setStateCookie(RequestDate);
                     enableAllUI();
                 }
             }
         });
+
+
     }
 
 
@@ -429,6 +431,7 @@
      *
      */
     var author = [];
+    var kategorie = [];
     var filter_by_collection = 'all';
     var ajaxXHR = [];
     var pois_by_nid = [];
@@ -610,6 +613,7 @@
 
 
     function initializeRequestArgIndicator() {
+        console.info("initializeRequestArgIndicator");
         if (tourdisplay_is_Active && (requestArgIndicatorClass.indexOf("tour") == -1)) {
             requestArgIndicatorClass += ' tour';
         } else if(!tourdisplay_is_Active) {
@@ -639,6 +643,15 @@
         // check date range for changes
         var dateDefaultStateCheck = (RequestDate !== 'all') &&
             (RequestDate !== (parseInt(Drupal.settings.futurehistoryEntdecken.first_date) + "--" + parseInt(Drupal.settings.futurehistoryEntdecken.last_date)));
+
+
+       // console.log(dateDefaultStateCheck);
+       console.log(RequestDate);
+       // console.log((RequestDate !== 'all'));
+       // console.log((RequestDate !== (parseInt(Drupal.settings.futurehistoryEntdecken.first_date) + "--" + parseInt(Drupal.settings.futurehistoryEntdecken.last_date))));
+       // console.log((requestArgIndicatorClass.indexOf("date") == -1));
+
+
         if (dateDefaultStateCheck && (requestArgIndicatorClass.indexOf("date") == -1)) {
             requestArgIndicatorClass = requestArgIndicatorClass + ' date';
         }
@@ -652,7 +665,7 @@
         }
     }
 
-    function getRequestArgs(bounds, RequestDate, kategorie) {
+    function getRequestArgs(bounds) {
         var bbox_bottom = bounds.getSouthWest().lat();
         var bbox_top = bounds.getNorthEast().lat();
         var bbox_right = bounds.getNorthEast().lng();
@@ -710,11 +723,18 @@
     }
 
     function clearAjaxCalls() {
-        // _log("clearAjaxCalls");
+        console.warn("clearAjaxCalls");
+        console.log(ajaxXHR);
         // clear running xhr processes
         for (var i = 0; i < ajaxXHR.length; i++) {
+            // console.log(ajaxXHR[i].abort);
+            // ajaxXHR[i].abort;
             ajaxXHR[i].abort();
         }
+        if((typeof ajaxXHR["gm"] !== 'undefined')){
+            ajaxXHR["gm"].abort();
+        }
+
         ajaxXHR = [];
     }
 
@@ -725,29 +745,29 @@
      * @returns {boolean}
      */
     function checkStateCookie() {
-        // _log("checkStateCookie");
+        console.info("checkStateCookie");
         var cookie_data = JSON.parse($.cookie("fh_state_cookie"));
-        // _log(cookie_data);
-        // flag-lists/add/ansich
-        // check referer condition to set value for autoCookieInitialisation
 
         var referrer = document.referrer;
         if ((referrer.indexOf("flag-lists/add/ansicht") !== -1)) {
             cookie_data.initializeOnPageLoad = true;
         }
 
-
+        console.warn(cookie_data.RequestDate);
         if ((cookie_data) && (cookie_data.initializeOnPageLoad !== 'undefined' || cookie_data.initializeOnPageLoad !== null) && Boolean(cookie_data.initializeOnPageLoad) === true) {
             // _log(cookie_data);
             author = cookie_data.author;
             kategorie = cookie_data.kategorie;
-            filter_by_collection  = cookie_data.filter_by_collection;
+            filter_by_collection = cookie_data.filter_by_collection;
             mapCenter = new google.maps.LatLng(parseFloat(cookie_data.lat), parseFloat(cookie_data.lng));
             Drupal.futurehistoryEntdecken[mapIdGlobal].map.setCenter(mapCenter);
             Drupal.futurehistoryEntdecken[mapIdGlobal].map.setZoom(parseFloat(cookie_data.zoom));
             if (cookie_data.RequestDate !== 'all') {
                 Drupal.futurehistoryEntdecken.DateSlider(mapIdGlobal, cookie_data.RequestDate.split("--"));
             }
+
+            console.log(cookie_data.RequestDate);
+
             return cookie_data;
         }
         return false;
@@ -760,6 +780,16 @@
      * @param RequestDate
      */
     function setStateCookie(RequestDate){
+        console.info("setStateCookie");
+        var reqDate = String($("#time_slider").slider("values", 0) + "--" + $("#time_slider").slider("values", 1));
+        if(reqDate !== RequestDate){
+            console.error('CHECK RequestDate');
+
+        }
+        // todo test if this is OK
+        RequestDate = reqDate;
+
+
         var mapzoom = Drupal.futurehistoryEntdecken[mapIdGlobal].map.getZoom();
         var mapcenter = Drupal.futurehistoryEntdecken[mapIdGlobal].map.getCenter();
         var maplat = mapcenter.lat();
@@ -787,8 +817,8 @@
             lastResults.push($(k).attr('id').split('_')[1]);
         });
         activeFilters['lastResults'] = lastResults;
-        _log("setStateCookie");
-        _log(lastResults);
+
+
 
         $.cookie('fh_state_cookie', JSON.stringify(activeFilters), {path: '/'});
         // _log(activeFilters);
@@ -3514,6 +3544,7 @@ var tourStash = [];
                     Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
                     Drupal.futurehistoryEntdecken[mapId].map.setZoom(mapZoom);
                 } else if (fh_geolocation_cookie_data != null) {
+                    console.error("WHY ARE WE HERE !!! CHECK 1");
                     // if the cookie fh_geolocation_cookie_data contains a viewport override the map zoom with the viewport
                     // console.log('No URL instructions, use fh_geolocation_cookie_data ', fh_geolocation_cookie_data);
                     // Overwrite: 2016-11-23: Zoomstufe bei
@@ -3535,6 +3566,7 @@ var tourStash = [];
                     // console.log(' delete fh_geolocation_cookie ');
                     $.cookie('fh_geolocation_cookie', null, {path: '/'});
                 } else if (fh_lastview_cookiedata != null) {
+                    console.error("WHY ARE WE HERE !!! CHECK 2");
                     // Back from BildDetail
                     // console.log('Back from BildDetail fh_lastview_cookiedata ', fh_lastview_cookiedata);
                     if (fh_lastview_cookiedata.viewport == '1') {
@@ -3567,9 +3599,8 @@ var tourStash = [];
 
                 // https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onpopstate
                 window.onpopstate = function (event) {
+                    console.warn("window.onpopstate DISABLED");
                     CALL_onpopstate = true;
-                    // console.log(" !! onpopstate location: " + document.location + " state ==  " + JSON.stringify(event.state));
-
                     var laststate = JSON.parse(JSON.stringify(event.state));
                     if (laststate) {
                         // console.log(' HISTORY back...', laststate.view );
