@@ -350,6 +350,16 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['fields']['view']['view'] = 'touren_bereich_ansicht_is_in_tour';
   $handler->display->display_options['fields']['view']['display'] = 'page_1';
   $handler->display->display_options['fields']['view']['arguments'] = '[!nid]';
+  /* Field: Global: View */
+  $handler->display->display_options['fields']['view_1']['id'] = 'view_1';
+  $handler->display->display_options['fields']['view_1']['table'] = 'views';
+  $handler->display->display_options['fields']['view_1']['field'] = 'view';
+  $handler->display->display_options['fields']['view_1']['label'] = '';
+  $handler->display->display_options['fields']['view_1']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['view_1']['element_default_classes'] = FALSE;
+  $handler->display->display_options['fields']['view_1']['view'] = 'kommerzielle_ansicht_purchase_id_subview';
+  $handler->display->display_options['fields']['view_1']['display'] = 'page_1';
+  $handler->display->display_options['fields']['view_1']['arguments'] = '[!nid]';
   /* Field: Content: Author uid */
   $handler->display->display_options['fields']['uid']['id'] = 'uid';
   $handler->display->display_options['fields']['uid']['table'] = 'node';
@@ -392,6 +402,23 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['filters']['field_kategorie_tid']['reduce_duplicates'] = TRUE;
   $handler->display->display_options['filters']['field_kategorie_tid']['vocabulary'] = 'ansicht_kategorie';
   $handler->display->display_options['filters']['field_kategorie_tid']['error_message'] = FALSE;
+  /* Filter criterion: Content: Author uid */
+  $handler->display->display_options['filters']['uid']['id'] = 'uid';
+  $handler->display->display_options['filters']['uid']['table'] = 'node';
+  $handler->display->display_options['filters']['uid']['field'] = 'uid';
+  $handler->display->display_options['filters']['uid']['value'] = '';
+  $handler->display->display_options['filters']['uid']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['uid']['expose']['operator_id'] = 'uid_op';
+  $handler->display->display_options['filters']['uid']['expose']['label'] = 'Author uid';
+  $handler->display->display_options['filters']['uid']['expose']['operator'] = 'uid_op';
+  $handler->display->display_options['filters']['uid']['expose']['identifier'] = 'uid';
+  $handler->display->display_options['filters']['uid']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    4 => 0,
+    3 => 0,
+    5 => 0,
+  );
   $handler->display->display_options['path'] = 'fh_view/fh_bbox_pois';
   $translatables['fh_view_bbox'] = array(
     t('Master'),
@@ -424,6 +451,7 @@ function map_view_update_views_default_views() {
     t('Link'),
     t('Audio Datei'),
     t('NULL'),
+    t('Author uid'),
   );
   $export['fh_view_bbox'] = $view;
 
