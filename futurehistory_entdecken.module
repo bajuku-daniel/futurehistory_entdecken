@@ -40,7 +40,13 @@ function futurehistory_entdecken_views_pre_render(&$view) {
   }
 }
 
-
+/**
+ * Implement hook_init
+ */
+function futurehistory_entdecken_init() {
+  global $user;
+  drupal_add_js(array('currentUser' => $user->uid), 'setting');
+}
 
 
 

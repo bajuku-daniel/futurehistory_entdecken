@@ -112,9 +112,9 @@
                 icon: fh_marker_location,
                 zIndex: google.maps.Marker.MAX_ZINDEX
             });
-            // console.log('new center mark ', Drupal.futurehistoryEntdecken[mapId].center_marker.getPosition().lat(), Drupal.futurehistoryEntdecken[mapId].center_marker.getPosition().lng());
+
         } else {
-            // console.log('move center mark to ', Center);
+
             Drupal.futurehistoryEntdecken[mapId].center_marker.setPosition(Center);
         }
     };
@@ -125,7 +125,7 @@
         // remove marker viewdirection
         marker.pie.setMap(null);
         marker.activated = false;
-        // console.log(' del marker viewdir', marker.id);
+
         return false;
     }
 
@@ -142,7 +142,7 @@
     // deactivate all Marker
     Drupal.futurehistoryEntdecken.deactivateAllMarker = function (mapId) {
         for (var i = 0; i < RAW.length; i++) {
-            // console.log('call Deactivate Marker', RAW[i].id);
+
             Drupal.futurehistoryEntdecken.deactivateMarker(mapId, RAW[i].id);
         }
     }
@@ -152,10 +152,10 @@
     Drupal.futurehistoryEntdecken.deactivateMarker = function (id, mapId) {
         for (var i = 0; i < RAW.length; i++) {
             if (RAW[i].id === id) {
-                // console.log('func deactM ', RAW[i].id);
+
                 RAW[i].activated = false;
                 if (RAW[i].hideother) {
-                    // console.log('set fh_marker_blue_cross ', RAW[i].id);
+
                     RAW[i].setIcon(fh_marker_blue_cross);
                     // iterate through hidden marker list
                     for (var x = 0; x < RAW[i].hidePOIs.length; x++) {
@@ -200,7 +200,6 @@
         var point_a = google.maps.geometry.spherical.computeOffset(standpunkt, distance, heading - half_openangle);
         var point_b = google.maps.geometry.spherical.computeOffset(standpunkt, distance, heading + half_openangle);
 
-        // console.log('setMapArrow lat: ', marker.getPosition().lat(), ' lng: ', marker.getPosition().lng());
         marker.pie = new google.maps.Polygon({
             paths: [standpunkt, point_a, point_b],
             strokeColor: '#9E1F81',
@@ -213,7 +212,6 @@
 
         // Wrapper around addDomListener that removes the listener after the first event
         google.maps.event.addDomListenerOnce(marker.pie, 'click', function () {
-            // console.log(' oneway click event on viewpos  ', i, ' map ', mapId);
             Drupal.futurehistoryEntdecken.deactivateViewPos(i, mapId);
             Drupal.futurehistoryEntdecken.resetMarkerIcon(i, mapId);
             // close all on parent click --> Drupal.futurehistoryEntdecken.deactivateMarker(i, mapId);
@@ -307,7 +305,7 @@
                     var marker_purchased = data;
                     //filter purchase_id items
                     for (var item in marker_purchased) {
-                        if(!hasPurchaseId(marker_purchased[item]['purchase_id'])){
+                        if(!hasPurchaseId(marker_purchased[item])){
                            marker_content.push(marker_purchased[item]);
                         }
                     }
@@ -357,10 +355,6 @@
 
             lastResults.push(data[item]['Nid']);
 
-
-            // console.log("Drupal.settings.futurehistoryEntdecken.first_date");
-            // console.log(Drupal.settings.futurehistoryEntdecken.first_date);
-            // console.log(data[item]);
 
             if (pois_by_author[data[item]['uname']] === undefined) {
                 pois_by_author[data[item]['uname']] = [];
@@ -443,6 +437,7 @@
     var lastResults = [];
     var requestArgIndicatorClass = "";
     var currentResultCount = 0;
+
 
     function _tourdisplay_is_Active(state){
         tourdisplay_is_Active = state;
@@ -613,7 +608,6 @@
 
 
     function initializeRequestArgIndicator() {
-        console.info("initializeRequestArgIndicator");
         if (tourdisplay_is_Active && (requestArgIndicatorClass.indexOf("tour") == -1)) {
             requestArgIndicatorClass += ' tour';
         } else if(!tourdisplay_is_Active) {
@@ -627,9 +621,9 @@
         }
 
         // check author for changes
-        if (author.constructor === Array && author.length > 1 && (requestArgIndicatorClass.indexOf("author") ==-1)) {
+        if (isArray(author) && author.length > 1 && (requestArgIndicatorClass.indexOf("author") ==-1)) {
             requestArgIndicatorClass = requestArgIndicatorClass + ' author';
-        } else if (author.constructor === Array && author.length == 1 && (requestArgIndicatorClass.indexOf("author") ==-1)) {
+        } else if (isArray(author) && author.length == 1 && (requestArgIndicatorClass.indexOf("author") ==-1)) {
             requestArgIndicatorClass = requestArgIndicatorClass + ' author';
         }
 
@@ -644,12 +638,6 @@
         var dateDefaultStateCheck = (RequestDate !== 'all') &&
             (RequestDate !== (parseInt(Drupal.settings.futurehistoryEntdecken.first_date) + "--" + parseInt(Drupal.settings.futurehistoryEntdecken.last_date)));
 
-
-       // console.log(dateDefaultStateCheck);
-       console.log(RequestDate);
-       // console.log((RequestDate !== 'all'));
-       // console.log((RequestDate !== (parseInt(Drupal.settings.futurehistoryEntdecken.first_date) + "--" + parseInt(Drupal.settings.futurehistoryEntdecken.last_date))));
-       // console.log((requestArgIndicatorClass.indexOf("date") == -1));
 
 
         if (dateDefaultStateCheck && (requestArgIndicatorClass.indexOf("date") == -1)) {
@@ -723,8 +711,6 @@
     }
 
     function clearAjaxCalls() {
-        console.warn("clearAjaxCalls");
-        console.log(ajaxXHR);
         // clear running xhr processes
         for (var i = 0; i < ajaxXHR.length; i++) {
             // console.log(ajaxXHR[i].abort);
@@ -745,7 +731,6 @@
      * @returns {boolean}
      */
     function checkStateCookie() {
-        console.info("checkStateCookie");
         var cookie_data = JSON.parse($.cookie("fh_state_cookie"));
 
         var referrer = document.referrer;
@@ -753,7 +738,6 @@
             cookie_data.initializeOnPageLoad = true;
         }
 
-        console.warn(cookie_data.RequestDate);
         if ((cookie_data) && (cookie_data.initializeOnPageLoad !== 'undefined' || cookie_data.initializeOnPageLoad !== null) && Boolean(cookie_data.initializeOnPageLoad) === true) {
             // _log(cookie_data);
             author = cookie_data.author;
@@ -766,7 +750,7 @@
                 Drupal.futurehistoryEntdecken.DateSlider(mapIdGlobal, cookie_data.RequestDate.split("--"));
             }
 
-            console.log(cookie_data.RequestDate);
+
 
             return cookie_data;
         }
@@ -780,10 +764,10 @@
      * @param RequestDate
      */
     function setStateCookie(RequestDate){
-        console.info("setStateCookie");
+
         var reqDate = String($("#time_slider").slider("values", 0) + "--" + $("#time_slider").slider("values", 1));
         if(reqDate !== RequestDate){
-            console.error('CHECK RequestDate');
+            // console.error('CHECK RequestDate');
 
         }
         // todo test if this is OK
@@ -907,10 +891,32 @@
      * @returns {boolean}
      */
 
-    function hasPurchaseId(value){
+    function hasPurchaseId(item){
+       var value = item['purchase_id'];
+
         if(value === "" || value === "null" || value === "Null" || value === "NULL"){
             return false;
         }
+
+
+        var from_user = false;
+        var uid = Drupal.settings.currentUser;
+        if(item['user_id']){
+            from_user = (item['user_id'] === uid);
+            if(from_user){
+                console.log("return false t" +item['user_id']);
+                console.log(item);
+                return false;
+            }
+        }
+        if(item['uid']){
+            from_user = (item['uid'] === uid);
+            if(from_user){
+                console.log("return false i " +item['uid']);
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -1093,7 +1099,7 @@ var tourStash = [];
                         var autor = tourdetails[0].name;
                         var tour_id = tourdetails[0].tour_id;
                         var description = tourdetails[0].description;
-                        var purchase_id = hasPurchaseId(tourdetails[0].purchase_id)?'hidden':'';
+                        var purchase_id = hasPurchaseId(tourdetails[0])?'hidden':'';
 
 
 
@@ -1111,6 +1117,10 @@ var tourStash = [];
                                 }
                                 return distanceC;
                             };
+
+
+                            // console.log("tourdetails[0]");
+                            // console.log(tourdetails[0]);
 
                             var $tour = $('<div />', {'class': 'tour_id_' + tour_id + " tour_selector "+purchase_id});
                             var $tour_status = $('<div />', {'class': 'status ui-icon-caret-1-e'});
@@ -3544,7 +3554,7 @@ var tourStash = [];
                     Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
                     Drupal.futurehistoryEntdecken[mapId].map.setZoom(mapZoom);
                 } else if (fh_geolocation_cookie_data != null) {
-                    console.error("WHY ARE WE HERE !!! CHECK 1");
+
                     // if the cookie fh_geolocation_cookie_data contains a viewport override the map zoom with the viewport
                     // console.log('No URL instructions, use fh_geolocation_cookie_data ', fh_geolocation_cookie_data);
                     // Overwrite: 2016-11-23: Zoomstufe bei
@@ -3566,7 +3576,7 @@ var tourStash = [];
                     // console.log(' delete fh_geolocation_cookie ');
                     $.cookie('fh_geolocation_cookie', null, {path: '/'});
                 } else if (fh_lastview_cookiedata != null) {
-                    console.error("WHY ARE WE HERE !!! CHECK 2");
+                    // console.error("WHY ARE WE HERE !!! CHECK 2");
                     // Back from BildDetail
                     // console.log('Back from BildDetail fh_lastview_cookiedata ', fh_lastview_cookiedata);
                     if (fh_lastview_cookiedata.viewport == '1') {
@@ -3593,13 +3603,13 @@ var tourStash = [];
                         }
                     }
                     // use cookie only once, remove
-                    // console.log(' delete fh_lastview_cookiedata ');
+
                     $.cookie('fh_lastview_cookie', null, {path: '/'});
                 }
 
                 // https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onpopstate
                 window.onpopstate = function (event) {
-                    console.warn("window.onpopstate DISABLED");
+
                     CALL_onpopstate = true;
                     var laststate = JSON.parse(JSON.stringify(event.state));
                     if (laststate) {
@@ -3685,7 +3695,7 @@ var tourStash = [];
 
                 // switch the map type on established zoom level
                 google.maps.event.addListener(Drupal.futurehistoryEntdecken[mapId].map, 'zoom_changed', function () {
-                    // console.log(' zoom_changed, pushState ');
+
                     var coords = Drupal.futurehistoryEntdecken[mapId].map.getCenter();
                     var zoomLevel = Drupal.futurehistoryEntdecken[mapId].map.getZoom();
                     if (zoomLevel <= 18) {
@@ -3702,7 +3712,7 @@ var tourStash = [];
                             history.pushState({view: view}, '', '');
                         } catch (err) {
                         }
-                        // console.log(' pushState ', view );
+
                     } else {
                         CALL_onpopstate = false;
                     }
@@ -3737,7 +3747,7 @@ var tourStash = [];
                     $("#time_slider").slider('values', InitYearRange); // reset
                     $("#time_range").val("Jahr " + InitYearRange[0] + " - Jahr " + InitYearRange[1]);
                     RequestDate = String(InitYearRange[0]) + '--' + String(InitYearRange[1]);
-                    // console.log(' kategorie array: ', kategorie);
+
                     Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
 
                 });
@@ -3745,13 +3755,13 @@ var tourStash = [];
                 // sort checkboxes
                 $("#fh_sort_dist").change(function () {
                     $(this).prop("checked") ? sort = 'dist' : sort = 'year';
-                    // console.log('sort criteria change to ', sort);
+
                     Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
                     $('#thumbnail-pois').scrollTo($('#thumbnail-pois li').filter(":first"), 10, {offset: 3});
                 });
                 $("#fh_sort_year").change(function () {
                     $(this).prop("checked") ? sort = 'year' : sort = 'dist';
-                    // console.log('sort criteria change to ', sort);
+
                     Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
                     $('#thumbnail-pois').scrollTo($('#thumbnail-pois li').filter(":first"), 10, {offset: 3});
                 });
@@ -3781,7 +3791,7 @@ var tourStash = [];
             for (key in CAT) {
                 if (kategorie.indexOf(key) > -1) {
                     $('#cat_' + key).prop('checked', true);
-                    //console.log('Activate checkbox ', CAT[key]);
+
                 } else {
                     $('#cat_' + key).prop('checked', false);
                 }
@@ -3789,7 +3799,7 @@ var tourStash = [];
 
             function toggleCategory(IDcat) {
                 $('#cat_' + IDcat).change(function (IDcat) {
-                    // console.log('cat checkbox ', $(this).val(),' checked ? ',  $(this).prop("checked"));
+
                     var actKat = $(this).val();
                     // rebuild kategorie arry depending on checkbox state
                     $(this).prop("checked") ? kategorie.push($(this).val()) : kategorie = $.grep(kategorie, function (v) {
@@ -3806,7 +3816,7 @@ var tourStash = [];
                             }
                         }
                     }
-                    // console.log(' using kategorie array for new Request: ', kategorie);
+
                     Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
                 });
             }
