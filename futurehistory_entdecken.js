@@ -892,9 +892,10 @@
      */
 
     function hasPurchaseId(item){
+
        var value = item['purchase_id'];
 
-        if(value === "" || value === "null" || value === "Null" || value === "NULL"){
+        if(value === "" || value === "null" || value === "Null" || value === "NULL" || value === undefined){
             return false;
         }
 
@@ -906,6 +907,7 @@
             if(from_user){
                 console.log("return false t" +item['user_id']);
                 console.log(item);
+
                 return false;
             }
         }
