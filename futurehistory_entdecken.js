@@ -257,11 +257,12 @@
     //Returns a Marker array from the bbox request // sets class indictor according to selected filters
     //Parameters: bounds, date, kategorie
 
-    Drupal.futurehistoryEntdecken.getMarkers = function (bounds, RequestDateLoc, kategorieLoc, sort, mapId, mapCenterLoc) {
+    Drupal.futurehistoryEntdecken.getMarkers = function (bounds, RequestDateLoc, kategorieLoc, sortLoc, mapId, mapCenterLoc) {
         RequestDate = RequestDateLoc;
         mapCenter = mapCenterLoc;
         mapIdGlobal = mapId;
         kategorie = kategorieLoc;
+        sort = sortLoc;
 
         // _log(window.firstCall);
         if (window.firstCall === undefined) {
@@ -285,7 +286,9 @@
 
         var RequestArgs = getRequestArgs(bounds);
 
-        // _log("start the ajax getMarkers ");
+        _log("find SORT CHANGE");
+        _log(sort);
+        _log(RequestArgs);
         //
         // start the ajax request
         ajaxXHR["gm"] = $.ajax({
@@ -462,7 +465,7 @@
 
     function _log(value) {
         try {
-            // console.log(arguments.callee.caller.name+': ',value);
+            console.log(arguments.callee.caller.name+': ',value);
             // mylog.log(arguments.callee.caller.name+': ',value);
         } catch (err) {
             // no problems when no console
@@ -651,6 +654,10 @@
         }else{
             $("#reset-filter-link").show();
         }
+
+
+        $('#thumbnail-navigation-sort-button').attr('class', sort);
+
     }
 
     function getRequestArgs(bounds) {
