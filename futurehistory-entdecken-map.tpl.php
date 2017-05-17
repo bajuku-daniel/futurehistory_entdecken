@@ -18,6 +18,10 @@
 
     <div id="thumbnail-filter-box">
 
+
+
+
+
       <div id="fh-reset-filter">
         <div class="fh-reset-filter-count"></div>
         <a class="reset-filter-link" id="reset-filter-link"><?php print t('X Filter zurücksetzen'); ?></a>
@@ -51,8 +55,58 @@
         <h3><?php print t('Autor'); ?> |
           <span><?php print t('Kein Autor gewählt'); ?></span></h3>
         <div id="author_selector"></div>
-      </div>
 
+        <h3><?php print t('Suchbegriffe / Tags'); ?> | <span><?php print t('Kein Tags gewählt'); ?></span>
+        </h3>
+        <div id="tag_selector">
+
+          <div id="tag_list">
+            <!--        ansicht_schlagworte-->
+<?php
+              $vocab = taxonomy_vocabulary_machine_name_load('ansicht_schlagworte');
+              $vid = $vocab->vid;
+              $results = db_query("SELECT tid, name FROM {taxonomy_term_data} WHERE vid = $vid")->fetchAll();
+              $options = array();
+              $worker = function ($tags_return) {
+                $count_data = futurehistory_count_nodes_with_tid();
+                $term_matches = array();
+                foreach ($tags_return as $tidR => $nameR) {
+                  $name = $nameR->name;
+                  $tid = $nameR->tid;
+                  // Term names containing commas or quotes must be wrapped in quotes.
+                  if (strpos($name, ',') !== FALSE || strpos($name, '"') !== FALSE) {
+                    $n = '"' . str_replace('"', '""', $name) . '"';
+                  }
+                  if (FALSE) {
+                    $term_matches[check_plain($name)] = check_plain($name);
+                  }
+                  else {
+                    $term_matches[$tid] = check_plain($name) . ' (' . $count_data[$tid] . ')';
+                  }
+                }
+                if (TRUE) {
+                  uasort($term_matches, function ($a, $b) {
+                    $b_count = (substr($b, (strpos($b, '(') + 1), (strpos($b, ')') - strpos($b, '(')) - 1));
+                    $a_count = (substr($a, (strpos($a, '(') + 1), (strpos($a, ')') - strpos($a, '(')) - 1));
+                    if ($b_count == $a_count) {
+                      return strcmp($a, $b);
+                    }
+                    return $b_count - $a_count;
+                  });
+                }
+                return $term_matches;
+              };
+
+              $term_matches = $worker($results);
+              print theme('select', array(
+                'element' => array('#options' => $term_matches)
+              ));
+              ?>
+          </div>
+        </div>
+
+
+      </div>
 
 
 

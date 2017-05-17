@@ -122,6 +122,18 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['arguments']['uid_1']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['uid_1']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['uid_1']['summary_options']['items_per_page'] = '25';
+  /* Contextual filter: Content: Has taxonomy term ID */
+  $handler->display->display_options['arguments']['tid_1']['id'] = 'tid_1';
+  $handler->display->display_options['arguments']['tid_1']['table'] = 'taxonomy_index';
+  $handler->display->display_options['arguments']['tid_1']['field'] = 'tid';
+  $handler->display->display_options['arguments']['tid_1']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['tid_1']['exception']['title'] = 'Alle';
+  $handler->display->display_options['arguments']['tid_1']['default_argument_type'] = 'query';
+  $handler->display->display_options['arguments']['tid_1']['default_argument_options']['parameter'] = 'tags';
+  $handler->display->display_options['arguments']['tid_1']['default_argument_options']['default_value'] = 'all';
+  $handler->display->display_options['arguments']['tid_1']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['tid_1']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['tid_1']['summary_options']['items_per_page'] = '25';
   /* Filter criterion: Content: Published */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
@@ -366,6 +378,81 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['fields']['uid']['field'] = 'uid';
   $handler->display->display_options['fields']['uid']['label'] = 'uid';
   $handler->display->display_options['fields']['uid']['link_to_user'] = FALSE;
+  $handler->display->display_options['defaults']['arguments'] = FALSE;
+  /* Contextual filter: Custom: Futurehistory Bounding box */
+  $handler->display->display_options['arguments']['bbox_argument']['id'] = 'bbox_argument';
+  $handler->display->display_options['arguments']['bbox_argument']['table'] = 'views';
+  $handler->display->display_options['arguments']['bbox_argument']['field'] = 'bbox_argument';
+  $handler->display->display_options['arguments']['bbox_argument']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['bbox_argument']['exception']['title'] = 'Alle';
+  $handler->display->display_options['arguments']['bbox_argument']['default_argument_type'] = 'querystring';
+  $handler->display->display_options['arguments']['bbox_argument']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['bbox_argument']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['bbox_argument']['summary_options']['items_per_page'] = '25';
+  /* Contextual filter: Beitrag: Jahr (field_jahr) */
+  $handler->display->display_options['arguments']['field_jahr_value']['id'] = 'field_jahr_value';
+  $handler->display->display_options['arguments']['field_jahr_value']['table'] = 'field_data_field_jahr';
+  $handler->display->display_options['arguments']['field_jahr_value']['field'] = 'field_jahr_value';
+  $handler->display->display_options['arguments']['field_jahr_value']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['field_jahr_value']['exception']['title'] = 'Alle';
+  $handler->display->display_options['arguments']['field_jahr_value']['default_argument_type'] = 'query';
+  $handler->display->display_options['arguments']['field_jahr_value']['default_argument_options']['parameter'] = 'date';
+  $handler->display->display_options['arguments']['field_jahr_value']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['field_jahr_value']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['field_jahr_value']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['field_jahr_value']['break_phrase'] = TRUE;
+  /* Contextual filter: Content: Has taxonomy term ID */
+  $handler->display->display_options['arguments']['tid']['id'] = 'tid';
+  $handler->display->display_options['arguments']['tid']['table'] = 'taxonomy_index';
+  $handler->display->display_options['arguments']['tid']['field'] = 'tid';
+  $handler->display->display_options['arguments']['tid']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['tid']['exception']['title'] = 'Alle';
+  $handler->display->display_options['arguments']['tid']['default_argument_type'] = 'query';
+  $handler->display->display_options['arguments']['tid']['default_argument_options']['parameter'] = 'kategorie_id';
+  $handler->display->display_options['arguments']['tid']['default_argument_options']['default_value'] = 'all';
+  $handler->display->display_options['arguments']['tid']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['tid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['tid']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['tid']['break_phrase'] = TRUE;
+  /* Contextual filter: Content: Author uid */
+  $handler->display->display_options['arguments']['uid']['id'] = 'uid';
+  $handler->display->display_options['arguments']['uid']['table'] = 'node';
+  $handler->display->display_options['arguments']['uid']['field'] = 'uid';
+  $handler->display->display_options['arguments']['uid']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['uid']['exception']['title'] = 'Alle';
+  $handler->display->display_options['arguments']['uid']['default_argument_type'] = 'query';
+  $handler->display->display_options['arguments']['uid']['default_argument_options']['parameter'] = 'autor_uid';
+  $handler->display->display_options['arguments']['uid']['default_argument_options']['default_value'] = 'all';
+  $handler->display->display_options['arguments']['uid']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['uid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['uid']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['uid']['break_phrase'] = TRUE;
+  /* Contextual filter: Flags: User uid */
+  $handler->display->display_options['arguments']['uid_1']['id'] = 'uid_1';
+  $handler->display->display_options['arguments']['uid_1']['table'] = 'flagging';
+  $handler->display->display_options['arguments']['uid_1']['field'] = 'uid';
+  $handler->display->display_options['arguments']['uid_1']['relationship'] = 'flag_content_rel';
+  $handler->display->display_options['arguments']['uid_1']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['uid_1']['exception']['title'] = 'Alle';
+  $handler->display->display_options['arguments']['uid_1']['default_argument_type'] = 'query';
+  $handler->display->display_options['arguments']['uid_1']['default_argument_options']['parameter'] = 'suid';
+  $handler->display->display_options['arguments']['uid_1']['default_argument_options']['default_value'] = 'all';
+  $handler->display->display_options['arguments']['uid_1']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['uid_1']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['uid_1']['summary_options']['items_per_page'] = '25';
+  /* Contextual filter: Content: Has taxonomy term ID */
+  $handler->display->display_options['arguments']['tid_1']['id'] = 'tid_1';
+  $handler->display->display_options['arguments']['tid_1']['table'] = 'taxonomy_index';
+  $handler->display->display_options['arguments']['tid_1']['field'] = 'tid';
+  $handler->display->display_options['arguments']['tid_1']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['tid_1']['exception']['title'] = 'Alle';
+  $handler->display->display_options['arguments']['tid_1']['default_argument_type'] = 'query';
+  $handler->display->display_options['arguments']['tid_1']['default_argument_options']['parameter'] = 'tags';
+  $handler->display->display_options['arguments']['tid_1']['default_argument_options']['default_value'] = 'all';
+  $handler->display->display_options['arguments']['tid_1']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['tid_1']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['tid_1']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['tid_1']['break_phrase'] = TRUE;
   $handler->display->display_options['defaults']['filter_groups'] = FALSE;
   $handler->display->display_options['defaults']['filters'] = FALSE;
   /* Filter criterion: Content: Published */
@@ -419,6 +506,12 @@ function map_view_update_views_default_views() {
     3 => 0,
     5 => 0,
   );
+  /* Filter criterion: Content: Has taxonomy term */
+  $handler->display->display_options['filters']['tid']['id'] = 'tid';
+  $handler->display->display_options['filters']['tid']['table'] = 'taxonomy_index';
+  $handler->display->display_options['filters']['tid']['field'] = 'tid';
+  $handler->display->display_options['filters']['tid']['value'] = '';
+  $handler->display->display_options['filters']['tid']['vocabulary'] = 'ansicht_schlagworte';
   $handler->display->display_options['path'] = 'fh_view/fh_bbox_pois';
   $translatables['fh_view_bbox'] = array(
     t('Master'),

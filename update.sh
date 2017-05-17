@@ -10,7 +10,7 @@ git pull origin dev_rh
 #drush sql-cli < 2017-03-15__15-19-01.sql
 
 #drush en -y map_view_update
-#drush fr -y map_view_update
+drush fr -y map_view_update
 
 
 

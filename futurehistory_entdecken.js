@@ -69,6 +69,8 @@
         new google.maps.Point(7, 32) //anchor point
     );
 
+
+
     // Function: generateModal
     // Generate the Modal "add to tour / collection" - modal link structure in flag_list.module and futurehistory-entdecken-map.tpl.php
     Drupal.futurehistoryEntdecken.generateModal = function (nid, mapId) {
@@ -286,9 +288,7 @@
 
         var RequestArgs = getRequestArgs(bounds);
 
-        _log("find SORT CHANGE");
-        _log(sort);
-        _log(RequestArgs);
+
         //
         // start the ajax request
         ajaxXHR["gm"] = $.ajax({
@@ -518,8 +518,18 @@
         jQuery("#author_selector").removeClass("ui-state-disabled");
         jQuery("#tour_selector").prev().removeClass("ui-state-disabled");
         jQuery(".tour_selector").prev().removeClass("ui-state-disabled");
+        jQuery("#tag_selector").prev().removeClass("ui-state-disabled");
+        jQuery("#tag_selector").removeClass("ui-state-disabled");
+        jQuery(".tag_selector").prev().removeClass("ui-state-disabled");
 
-
+        $("#accordion").accordion({
+            icons: icons,
+            collapsible: true,
+            active : 'none',
+            autoHeight: false,
+            // clearStyle: true, autoHeight: false,
+            heightStyle: "fill"
+        });
     }
 
     function disbleAllUI() {
@@ -539,6 +549,8 @@
         jQuery("#kategory_selector").addClass("ui-state-disabled");
         jQuery("#author_selector").prev().addClass("ui-state-disabled");
         jQuery("#author_selector").addClass("ui-state-disabled");
+        jQuery("#tag_selector").prev().addClass("ui-state-disabled");
+        jQuery("#tag_selector").addClass("ui-state-disabled");
 
 
     }
@@ -647,6 +659,12 @@
             requestArgIndicatorClass = requestArgIndicatorClass + ' date';
         }
 
+
+
+        if ($("#tag_list .chosen-select").val() && $("#tag_list .chosen-select").val().length > 0 && (requestArgIndicatorClass.indexOf("tags") == -1)) {
+            requestArgIndicatorClass = requestArgIndicatorClass + ' tags';
+        }
+
         // update class on filter button
         $('#thumbnail-navigation-filter-button').attr('class', requestArgIndicatorClass);
         if(requestArgIndicatorClass === ""){
@@ -690,6 +708,16 @@
             // TODO get current user ID
             RequestArgs['suid'] =  $("#fh_show_only_collections").data("uid");
         }
+
+        RequestArgs['tags'] =  'all';
+        if ($("#tag_list .chosen-select").val() && $("#tag_list .chosen-select").val().length > 0) {
+            // 1,2,3 (AND) and 1+2+3(OR).
+            // RequestArgs['tags'] =  $("#tag_list .chosen-select").val();
+            var tagrequest = $("#tag_list .chosen-select").val().join('+');
+            _log(tagrequest);
+            RequestArgs['tags'] =  tagrequest;
+        }
+
 
         return RequestArgs;
     }
@@ -749,6 +777,9 @@
             // _log(cookie_data);
             author = cookie_data.author;
             kategorie = cookie_data.kategorie;
+            // set tags
+            _log(cookie_data.tags);
+            $("#tag_list .chosen-select").val(cookie_data.tags).trigger('chosen:updated');
             filter_by_collection = cookie_data.filter_by_collection;
             mapCenter = new google.maps.LatLng(parseFloat(cookie_data.lat), parseFloat(cookie_data.lng));
             Drupal.futurehistoryEntdecken[mapIdGlobal].map.setCenter(mapCenter);
@@ -756,8 +787,6 @@
             if (cookie_data.RequestDate !== 'all') {
                 Drupal.futurehistoryEntdecken.DateSlider(mapIdGlobal, cookie_data.RequestDate.split("--"));
             }
-
-
 
             return cookie_data;
         }
@@ -808,6 +837,7 @@
             lastResults.push($(k).attr('id').split('_')[1]);
         });
         activeFilters['lastResults'] = lastResults;
+        activeFilters['tags'] = $("#tag_list .chosen-select").val();
 
 
 
@@ -889,6 +919,21 @@
             $("#fh_show_all_collections").prop( "checked", false );
         }
 
+
+        // Suchbegriffe / Tags
+
+        if ($("#tag_list .chosen-select").val() && $("#tag_list .chosen-select").val().length > 0) {
+            var options = $("#tag_list option:selected");
+
+            var values = $.map(options, function (option) {
+                return option.text;
+            });
+            _log(values);
+            // jQuery('#tag_selector').prev().find('span').last().html($("#tag_list option:selected").text());
+            jQuery('#tag_selector').prev().find('span').last().html(values.join(', '));
+        } else {
+            jQuery('#tag_selector').prev().find('span').last().html("Keine Tags gewählt");
+        }
 
     }
 
@@ -3415,6 +3460,12 @@ var tourStash = [];
 
             $('.futurehistory-entdecken-map', context).each(function () {
 
+// initialize choosen lib on selectbox for taxonomy/tag filter
+                $("#tag_list select").val([]).attr('multiple','multiple').attr('data-placeholder','Kein Tag gewählt').addClass('chosen-select').chosen({ width: '100%' });
+                $("#tag_list select").on('change', function(evt, params) {
+                   _log("choosen CHANGED");
+                    Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+                });
 
                 // MAP STUFF
                 // The MAP div is located in "futurehistory-entdecken-map.tpl.php"
@@ -3511,6 +3562,7 @@ var tourStash = [];
                     var url_t = param('t');
                     var url_suid = param('suid');
                     var url_fi = param('fi');
+                    var url_tags = param('tags');
                     mapCenter = new google.maps.LatLng(parseFloat(url_y), parseFloat(url_x));
                     if (url_k.substring(0, 1) == ',') {
                         url_k = url_k.substring(1);
@@ -3558,8 +3610,9 @@ var tourStash = [];
                     }
                     //
 
-
-
+                    if(url_tags !== '' || url_tags != undefined){
+                        $("#tag_list .chosen-select").val(url_tags.split(',')).trigger('chosen:updated');
+                    }
                     Drupal.futurehistoryEntdecken[mapId].map.setCenter(mapCenter);
                     Drupal.futurehistoryEntdecken[mapId].map.setZoom(mapZoom);
                 } else if (fh_geolocation_cookie_data != null) {
