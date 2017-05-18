@@ -3532,7 +3532,7 @@ var tourStash = [];
 
 // initialize choosen lib on selectbox for taxonomy/tag filter
                chosenClone =  $("#tag_list select").clone();
-                $("#tag_list select").val([]).attr('multiple','multiple').attr('data-placeholder','Kein Tag gewählt ...').addClass('chosen-select').chosen({ width: '100%' });
+                $("#tag_list select").val([]).attr('multiple','multiple').attr('data-placeholder','Stichwort eingeben').addClass('chosen-select').chosen({ width: '100%' });
                 $("#tag_list select").on('change', function(evt, params) {
                    _log("choosen CHANGED");
                     Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);

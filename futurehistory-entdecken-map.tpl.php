@@ -56,7 +56,7 @@
           <span><?php print t('Kein Autor gewählt'); ?></span></h3>
         <div id="author_selector"></div>
 
-        <h3><?php print t('Suchbegriffe / Tags'); ?> | <span><?php print t('Kein Tags gewählt'); ?></span>
+        <h3><i class="material-icons search_tags">search</i><?php print t('Suchbegriffe / Tags'); ?> | <span><?php print t('Kein Tags gewählt'); ?></span>
         </h3>
         <div id="tag_selector">
 

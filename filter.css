@@ -307,6 +307,10 @@ background-repeat: no-repeat;
 
 }
 
+h3 .search_tags{
+    position: absolute;
+    left: 25px;
+}
 
 .accordion h3 {
 padding-left: 50px!important;
