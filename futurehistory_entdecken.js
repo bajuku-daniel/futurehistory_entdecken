@@ -340,6 +340,7 @@
         var toursDataInResult = [];
         var pois_by_author = [];
         var pois_by_category = [];
+        var pois_by_tags = [];
         // var pois_by_nid = [];
         var uidAuthorData = [];
         lastResults = [];
@@ -389,6 +390,29 @@
                 }
             }
 
+
+
+            if (data[item]['tags'] !== null) {
+                // categories can be in csv format
+                var tags_texts = data[item]['tags'];
+                if (tags_texts.indexOf(',') != -1) {
+                    tags_texts = data[item]['tags'].split(',');
+                } else {
+                    tags_texts = [tags_texts];
+                }
+
+                var len = tags_texts.length;
+
+                while (len--) {
+                    var tag = $.trim(tags_texts.splice(0, 1)[0]);
+                    if (pois_by_tags[tag] == undefined) {
+                        pois_by_tags[tag] = 0;
+                    }
+                    pois_by_tags[tag]++;
+                }
+            }
+
+
             for (attr in data[item]) {
                 pois_by_nid[data[item]['Nid']] = data[item];
                 if (attr === "tour_id" && data[item][attr] !== "NULL") {
@@ -419,6 +443,8 @@
         setUpdateAuthor(uidAuthorData);
         setUpdateTours(toursDataInResult);
         setUpdateCategories(pois_by_category);
+        setUpdateTags(pois_by_tags);
+
         initializeAccordions();
     }
 
@@ -427,6 +453,7 @@
      * global variables
      *
      */
+    var chosenClone;
     var author = [];
     var kategorie = [];
     var filter_by_collection = 'all';
@@ -523,7 +550,6 @@
         jQuery(".tag_selector").prev().removeClass("ui-state-disabled");
 
         $("#accordion").accordion({
-            icons: icons,
             collapsible: true,
             active : 'none',
             autoHeight: false,
@@ -778,6 +804,7 @@
             author = cookie_data.author;
             kategorie = cookie_data.kategorie;
             // set tags
+            _log("set tags");
             _log(cookie_data.tags);
             $("#tag_list .chosen-select").val(cookie_data.tags).trigger('chosen:updated');
             filter_by_collection = cookie_data.filter_by_collection;
@@ -800,11 +827,9 @@
      * @param RequestDate
      */
     function setStateCookie(RequestDate){
-
         var reqDate = String($("#time_slider").slider("values", 0) + "--" + $("#time_slider").slider("values", 1));
         if(reqDate !== RequestDate){
             // console.error('CHECK RequestDate');
-
         }
         // todo test if this is OK
         RequestDate = reqDate;
@@ -832,10 +857,12 @@
         activeFilters['filter_by_collection'] = filter_by_collection;
         activeFilters['bounds'] = bounds;
         activeFilters['RequestDate'] = RequestDate;
+
         lastResults=[]
         $('#thumbnail-pois li').each(function(i,k){
             lastResults.push($(k).attr('id').split('_')[1]);
         });
+        _log("lastResults"+lastResults);
         activeFilters['lastResults'] = lastResults;
         activeFilters['tags'] = $("#tag_list .chosen-select").val();
 
@@ -1042,8 +1069,51 @@
         });
     }
 
+
+    /**
+     * Update tags from current results on selectbox
+     *
+     * @param pois_by_tags
+     */
+    function setUpdateTags(pois_by_tags) {
+
+        var storeSelection = $("#tag_list .chosen-select").val();
+        function sortProperties(obj)
+        {
+            // convert object into array
+            var sortable=[];
+            for(var key in obj)
+                if(obj.hasOwnProperty(key))
+                    sortable.push([key, obj[key]]); // each item is an array in format [name, count]
+
+            // sort items by value
+            sortable.sort(function(a, b)
+            {
+                return a[1]-b[1]; // compare numbers
+            });
+            return sortable; // array in format [ [ key1, val1 ], [ key2, val2 ], ... ]
+        }
+
+        // sort tags by usagecount // we can't sort object properties so array is converted
+        var sortedPois_by_tags=sortProperties(pois_by_tags).reverse();
+
+        $("#tag_list .chosen-select").empty();
+        // select options from clone where text matches tag + add count number
+        for (var item in sortedPois_by_tags) {
+            chosenClone.find('option:contains("'+sortedPois_by_tags[item][0]+'")').filter(function () {return $(this).text() == sortedPois_by_tags[item][0]; }).clone().text(sortedPois_by_tags[item][0]+" ("+sortedPois_by_tags[item][1]+")").appendTo("#tag_list .chosen-select");
+
+        }
+        // reset previous selection
+        $("#tag_list .chosen-select").val(storeSelection);
+        // update chosen
+        $("#tag_list .chosen-select").trigger("chosen:updated");
+    }
+
+    // jQuery("#tag_list .chosen-select otion").serialize()
     /**
      * Updates/sets the result count on category filters
+     *
+     * 150
      *
      * @param pois_by_category
      */
@@ -3461,10 +3531,16 @@ var tourStash = [];
             $('.futurehistory-entdecken-map', context).each(function () {
 
 // initialize choosen lib on selectbox for taxonomy/tag filter
-                $("#tag_list select").val([]).attr('multiple','multiple').attr('data-placeholder','Kein Tag gewählt').addClass('chosen-select').chosen({ width: '100%' });
+               chosenClone =  $("#tag_list select").clone();
+                $("#tag_list select").val([]).attr('multiple','multiple').attr('data-placeholder','Kein Tag gewählt ...').addClass('chosen-select').chosen({ width: '100%' });
                 $("#tag_list select").on('change', function(evt, params) {
                    _log("choosen CHANGED");
                     Drupal.futurehistoryEntdecken.getMarkers(bounds, RequestDate, kategorie, sort, mapId, mapCenter);
+                });
+                $("#tag_list select").one('chosen:ready', function(evt, params) {
+                   _log("chosen:ready");
+                   _log(chosenClone);
+
                 });
 
                 // MAP STUFF

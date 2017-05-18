@@ -82,6 +82,7 @@
                   }
                   else {
                     $term_matches[$tid] = check_plain($name) . ' (' . $count_data[$tid] . ')';
+//                    $term_matches[$tid] = check_plain($name);
                   }
                 }
                 if (TRUE) {
@@ -94,10 +95,16 @@
                     return $b_count - $a_count;
                   });
                 }
+                $R=0;
+                foreach ($term_matches as $id => $name) {
+                  $term_matches[$id] = trim(substr($term_matches[$id],0,strpos($term_matches[$id], '(')));
+                }
+                $R=0;
                 return $term_matches;
               };
 
               $term_matches = $worker($results);
+
               print theme('select', array(
                 'element' => array('#options' => $term_matches)
               ));

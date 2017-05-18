@@ -378,6 +378,13 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['fields']['uid']['field'] = 'uid';
   $handler->display->display_options['fields']['uid']['label'] = 'uid';
   $handler->display->display_options['fields']['uid']['link_to_user'] = FALSE;
+  /* Field: Beitrag: Suchbegriffe / Tags */
+  $handler->display->display_options['fields']['field_tags']['id'] = 'field_tags';
+  $handler->display->display_options['fields']['field_tags']['table'] = 'field_data_field_tags';
+  $handler->display->display_options['fields']['field_tags']['field'] = 'field_tags';
+  $handler->display->display_options['fields']['field_tags']['label'] = 'Tags';
+  $handler->display->display_options['fields']['field_tags']['type'] = 'taxonomy_term_reference_plain';
+  $handler->display->display_options['fields']['field_tags']['delta_offset'] = '0';
   $handler->display->display_options['defaults']['arguments'] = FALSE;
   /* Contextual filter: Custom: Futurehistory Bounding box */
   $handler->display->display_options['arguments']['bbox_argument']['id'] = 'bbox_argument';
@@ -453,6 +460,7 @@ function map_view_update_views_default_views() {
   $handler->display->display_options['arguments']['tid_1']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['tid_1']['summary_options']['items_per_page'] = '25';
   $handler->display->display_options['arguments']['tid_1']['break_phrase'] = TRUE;
+  $handler->display->display_options['arguments']['tid_1']['reduce_duplicates'] = TRUE;
   $handler->display->display_options['defaults']['filter_groups'] = FALSE;
   $handler->display->display_options['defaults']['filters'] = FALSE;
   /* Filter criterion: Content: Published */
@@ -544,6 +552,7 @@ function map_view_update_views_default_views() {
     t('Link'),
     t('Audio Datei'),
     t('NULL'),
+    t('Tags'),
     t('Author uid'),
   );
   $export['fh_view_bbox'] = $view;

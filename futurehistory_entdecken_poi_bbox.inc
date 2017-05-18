@@ -20,6 +20,7 @@ class futurehistory_entdecken_poi_bbox extends views_plugin_style {
     $options['marker_flagged_field'] = array('default' => '');
     $options['marker_flagged_link_field'] = array('default' => '');
     $options['marker_kategorie_field'] = array('default' => '');
+    $options['marker_tags_field'] = array('default' => '');
     $options['marker_overlay_year_field'] = array('default' => '');
     $options['marker_is_in_tour'] = array('default' => '');
 
@@ -119,6 +120,12 @@ class futurehistory_entdecken_poi_bbox extends views_plugin_style {
       '#type' => 'select',
       '#options' => $field_options,
       '#default_value' => $this->options['marker_kategorie_field'],
+    );
+    $form['marker_tags_field'] = array(
+      '#title' => t('Marker tags field'),
+      '#type' => 'select',
+      '#options' => $field_options,
+      '#default_value' => $this->options['marker_tags_field'],
     );
     $form['marker_overlay_year_field'] = array(
        '#title' => t('Marker overlay picture year field'),
@@ -225,6 +232,11 @@ class futurehistory_entdecken_poi_bbox extends views_plugin_style {
       if ($this->options['marker_kategorie_field']) {
         $marker_kategorie = $this->view->render_field($this->options['marker_kategorie_field'],$row_index);
       }
+      $marker_tags = '';
+      if (isset($this->options['marker_tags_field'])) {
+        $marker_tags = $this->view->render_field('field_tags',$row_index);
+        $R=0;
+      }
       $marker_overlay_year = '';
       if ($this->options['marker_overlay_year_field']) {
         $marker_overlay_year = $this->view->render_field($this->options['marker_overlay_year_field'], $row_index);
@@ -272,6 +284,7 @@ class futurehistory_entdecken_poi_bbox extends views_plugin_style {
           'flagged' => $marker_flagged,
           'flagged-link' => $marker_flagged_link,
           'kategorie' => $marker_kategorie,
+          'tags' => $marker_tags,
           'overlay-year' => $marker_overlay_year,
           'tour_id' => $marker_is_in_tour,
           'purchase_id' => $purchase_id,
