@@ -492,7 +492,7 @@
 
     function _log(value) {
         try {
-            console.log(arguments.callee.caller.name+': ',value);
+            // console.log(arguments.callee.caller.name+': ',value);
             // mylog.log(arguments.callee.caller.name+': ',value);
         } catch (err) {
             // no problems when no console
@@ -745,7 +745,7 @@
         if ($("#tag_list .chosen-select").val() && $("#tag_list .chosen-select").val().length > 0) {
             // 1,2,3 (AND) and 1+2+3(OR).
             // RequestArgs['tags'] =  $("#tag_list .chosen-select").val();
-            var tagrequest = $("#tag_list .chosen-select").val().join('+');
+            var tagrequest = $("#tag_list .chosen-select").val().join(',');
 
             RequestArgs['tags'] =  tagrequest;
         }
@@ -991,8 +991,8 @@
         if(item['user_id']){
             from_user = (item['user_id'] === uid);
             if(from_user){
-                console.log("return false t" +item['user_id']);
-                console.log(item);
+                // console.log("return false t" +item['user_id']);
+                // console.log(item);
 
                 return false;
             }
@@ -1000,7 +1000,7 @@
         if(item['uid']){
             from_user = (item['uid'] === uid);
             if(from_user){
-                console.log("return false i " +item['uid']);
+                // console.log("return false i " +item['uid']);
                 return false;
             }
         }
