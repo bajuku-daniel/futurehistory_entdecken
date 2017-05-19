@@ -491,7 +491,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.tags {
 
     background-image:url(map-images/ic_search_white_24dp_1x.png);
-    background-position:right 5px center;
+    background-position:right 13px center;
     background-repeat:no-repeat;
 
 }
@@ -499,7 +499,7 @@ margin-right: 3px;
 #thumbnail-navigation-filter-button.multiple {
 
 background-image:url(map-images/check.png);
-background-position:right 13px center;
+background-position:right 5px center;
 background-repeat:no-repeat;
 }
 
