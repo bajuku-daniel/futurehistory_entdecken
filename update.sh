@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-git pull origin dev_rh
+git pull origin master
 
-#mkdir -p ../../../../../db_backup
-#drush sql-dump > ../../../../../db_backup/$(date +"%Y-%m-%d__%H-%M-%S".sql)
-#drush vget > ../../../../../db_backup/$(date +"%Y-%m-%d__%H-%M-%S"_variables.txt)
+mkdir -p ../../../../../db_backup
+drush sql-dump > ../../../../../db_backup/$(date +"%Y-%m-%d__%H-%M-%S".sql)
+drush vget > ../../../../../db_backup/$(date +"%Y-%m-%d__%H-%M-%S"_variables.txt)
 
 #drush sql-drop -y
 #drush sql-cli < 2017-03-15__15-19-01.sql
@@ -14,8 +14,8 @@ drush fr -y map_view_update
 
 
 
-cd ../../themes/future_history/ && git stash && git checkout dev && git pull origin dev && cd -
-cd ../futurehistory/  && git stash && git checkout dev && git pull origin dev && cd -
+cd ../../themes/future_history/ && git stash && git checkout master && git pull origin master && cd -
+cd ../futurehistory/  && git stash && git checkout master && git pull origin master && cd -
 
 drush cc all
 
