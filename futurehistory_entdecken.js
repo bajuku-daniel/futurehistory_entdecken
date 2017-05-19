@@ -691,6 +691,12 @@
             requestArgIndicatorClass = requestArgIndicatorClass + ' tags';
         }
 
+
+        _log("check "+requestArgIndicatorClass.split(" ").length);
+        if(requestArgIndicatorClass.split(" ").length > 2){
+            requestArgIndicatorClass = requestArgIndicatorClass + ' multiple';
+        }
+
         // update class on filter button
         $('#thumbnail-navigation-filter-button').attr('class', requestArgIndicatorClass);
         if(requestArgIndicatorClass === ""){
@@ -740,7 +746,7 @@
             // 1,2,3 (AND) and 1+2+3(OR).
             // RequestArgs['tags'] =  $("#tag_list .chosen-select").val();
             var tagrequest = $("#tag_list .chosen-select").val().join('+');
-            _log(tagrequest);
+
             RequestArgs['tags'] =  tagrequest;
         }
 
@@ -767,6 +773,7 @@
 
     function clearFilterSettings() {
         author = [];
+        $("#tag_list .chosen-select").val([]);
         _tourdisplay_is_Active(false);
         requestArgIndicatorClass = "";
     }

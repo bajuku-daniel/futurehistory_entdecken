@@ -488,106 +488,39 @@ margin-right: 3px;
 
 }
 
+#thumbnail-navigation-filter-button.tags {
 
-#thumbnail-navigation-filter-button.kategorie.date {
-
-    background-image:url(map-images/check.png);
+    background-image:url(map-images/ic_search_white_24dp_1x.png);
     background-position:right 5px center;
     background-repeat:no-repeat;
 
 }
 
-#thumbnail-navigation-filter-button.kategorie.sammlung {
+#thumbnail-navigation-filter-button.multiple {
 
-    background-image:url(map-images/check.png);
-    background-position:right 5px center;
-    background-repeat:no-repeat;
-
-}
-
-#thumbnail-navigation-filter-button.kategorie.author {
-
-    background-image:url(map-images/check.png);
-    background-position:right 5px center;
-    background-repeat:no-repeat;
-
-}
-
-#thumbnail-navigation-filter-button.kategorie.tour {
-
-    background-image:url(map-images/check.png);
-    background-position:right 5px center;
-    background-repeat:no-repeat;
-
-}
-
-#thumbnail-navigation-filter-button.kategorie.author.date {
-
-    background-image:url(map-images/check.png);
-    background-position:right 5px center;
-    background-repeat:no-repeat;
-
-}
-
-#thumbnail-navigation-filter-button.kategorie.author.date.tour {
-
-    background-image:url(map-images/check.png);
-    background-position:right 5px center;
-    background-repeat:no-repeat;
-
+background-image:url(map-images/check.png);
+background-position:right 13px center;
+background-repeat:no-repeat;
 }
 
 
-#thumbnail-navigation-filter-button.kategorie.author.date.tour {
+#thumbnail-navigation-sort-button.dist {
 
-    background-image:url(map-images/check.png);
-    background-position:right 5px center;
+    background-image:url(map-images/ic_directions_walk_white_24dp_1x.png);
+    background-position:right 10px center;
     background-repeat:no-repeat;
 
 }
+#thumbnail-navigation-sort-button.year {
 
-
-#thumbnail-navigation-filter-button.author.date {
-
-    background-image:url(map-images/check.png);
-    background-position:right 5px center;
+    background-image:url(map-images/ic_date_range_white_24dp_1x.png);
+    background-position:right 10px center;
     background-repeat:no-repeat;
 
 }
-
-#thumbnail-navigation-filter-button.sammlung.date {
-
-    background-image:url(map-images/check.png);
-    background-position:right 5px center;
-    background-repeat:no-repeat;
-
+.chosen-container .chosen-choices .search-field:only-child input {
+    width: 100% !important;
 }
-
-
-#thumbnail-navigation-filter-button.sammlung.tour {
-
-    background-image:url(map-images/check.png);
-    background-position:right 5px center;
-    background-repeat:no-repeat;
-
-}
-
-#thumbnail-navigation-filter-button.sammlung.kategorie {
-
-    background-image:url(map-images/check.png);
-    background-position:right 5px center;
-    background-repeat:no-repeat;
-
-}
-
-#thumbnail-navigation-filter-button.sammlung.author {
-
-    background-image:url(map-images/check.png);
-    background-position:right 5px center;
-    background-repeat:no-repeat;
-
-}     
-
 
 .tooltipster-content h4{
     margin-top: 0px;

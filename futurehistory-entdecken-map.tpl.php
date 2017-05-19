@@ -11,7 +11,7 @@
       <div id="thumbnail-navigation-filter-button">
         <span><?php print t('Filter'); ?></span>
       </div>
-      <div id="thumbnail-navigation-sort-button">
+      <div id="thumbnail-navigation-sort-button" class="dist">
         <span><?php print t('Sortieren'); ?></span>
       </div>
     </div>
