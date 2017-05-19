@@ -122,8 +122,8 @@
     <div id="thumbnail-sort-box">
       <div id="sort_selector">
         <form>
-          <div class="sort-box"><input type="radio" checked="checked" id="fh_sort_dist" name="fh_sort" /> <label for="fh_sort_dist"> <?php print t('Entfernung'); ?> </label></div><br>
-          <div class="sort-box"><input type="radio" id="fh_sort_year" name="fh_sort" /> <label for="fh_sort_year"> <?php print t('Zeit'); ?></label></div>
+          <div class="sort-box"><i class="material-icons">directions_walk</i><input type="radio" checked="checked" id="fh_sort_dist" name="fh_sort" /> <label for="fh_sort_dist"> <?php print t('Entfernung'); ?> </label></div><br>
+          <div class="sort-box"><i class="material-icons">date_range</i><input type="radio" id="fh_sort_year" name="fh_sort" /> <label for="fh_sort_year"> <?php print t('Zeit'); ?></label></div>
         </form>
       </div>
       <div class="sort-close"><a href="#"><?php print t('SCHLIEßEN'); ?></a></div>
