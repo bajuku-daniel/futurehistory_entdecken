@@ -317,3 +317,8 @@ div.ui-slider-range.ui-widget-header {
 .tour_selector .tourtip{
   margin: 0 5px 0 5px;
 }
+
+
+#sort_selector .material-icons{
+  margin-right: 10px;
+}
