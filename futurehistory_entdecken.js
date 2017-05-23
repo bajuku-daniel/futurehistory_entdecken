@@ -3802,6 +3802,14 @@ var tourStash = [];
                     }
                     // _log("td: "+td);
 
+                    var tags =  '&tags=all';
+                    if ($("#tag_list .chosen-select").val() && $("#tag_list .chosen-select").val().length > 0) {
+                        // 1,2,3 (AND) and 1+2+3(OR).
+                        // RequestArgs['tags'] =  $("#tag_list .chosen-select").val();
+                        tags = '&tags='+$("#tag_list .chosen-select").val().join(',');
+                    }
+
+
                     var permaUrl = baseUrl + encodeURI('?y=' + coords.lat() +
                             '&x=' + coords.lng() +
                             '&z=' + Drupal.futurehistoryEntdecken[mapId].map.getZoom() +
@@ -3809,7 +3817,7 @@ var tourStash = [];
                             '&d=' + reqDate +
                             '&a=' + author +
                             '&suid=' + filter_by_collection +
-                            '&s=' + sort + td);
+                            '&s=' + sort + td + tags);
 
                     var permalink = '<a href="' + permaUrl + '">' + permaUrl + '</a>';
                     centerControlDiv.index = 1;
